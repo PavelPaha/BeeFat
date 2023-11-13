@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.App\\BeeFat.App.csproj",
+      "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.App\\BeeFat.App.csproj",
       "projectName": "BeeFat.App",
-      "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.App\\BeeFat.App.csproj",
+      "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.App\\BeeFat.App.csproj",
       "packagesPath": "C:\\Users\\Mi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.App\\obj\\",
+      "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.App\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mi\\AppData\\Roaming\\NuGet\\NuGet.Config",

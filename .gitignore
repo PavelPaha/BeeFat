@@ -1,0 +1,21 @@
+﻿# Compiled output
+/.idea/
+**/bin/
+**/obj/Debug
+
+# Dependencies
+/nuget/
+/packages/
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Other
+*.tmp
+*.swp
+Thumbs.db
+
+# Misc

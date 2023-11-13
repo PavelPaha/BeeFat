@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj": {}
+    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj": {
+    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj",
         "projectName": "BeeFat.Domain",
-        "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj",
+        "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.Domain\\BeeFat.Domain.csproj",
         "packagesPath": "C:\\Users\\Mi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Domain\\obj\\",
+        "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\Activity\\BeeFat\\BeeFat.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mi\\AppData\\Roaming\\NuGet\\NuGet.Config",
