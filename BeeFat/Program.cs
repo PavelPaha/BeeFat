@@ -1,4 +1,3 @@
-using BeeFat.Client.Pages;
 using BeeFat.Components;
 using BeeFat.Components.Account;
 using BeeFat.Data;
@@ -59,8 +58,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddInteractiveWebAssemblyRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

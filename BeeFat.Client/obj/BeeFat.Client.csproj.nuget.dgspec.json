@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {}
+    "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {
+    "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj",
+        "projectUniqueName": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj",
         "projectName": "BeeFat.Client",
-        "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj",
-        "packagesPath": "C:\\Users\\Mi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\obj\\",
+        "projectPath": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj",
+        "packagesPath": "C:\\Users\\MagicBook\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Mi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\MagicBook\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,6 +40,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Components": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.AspNetCore.Components.WebAssembly": {
               "target": "Package",
               "version": "[8.0.0, )"

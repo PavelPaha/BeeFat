@@ -1,7 +1,60 @@
 ﻿@page "/"
 
+@inherits LayoutComponentBase
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<head>
+    <link rel="stylesheet" href="css/Home.css"/>
+</head>
 
-Welcome to your new app.
+
+<div class="container">
+    <!-- Левая колонка -->
+    <div class="home-sidebar">
+        <h2>Имя трека</h2>
+        <button>Редактировать трек</button>
+        <button>Изменить параметры тела</button>
+        <button>Калибровка</button>
+    </div>
+
+    <!-- Средняя колонка -->
+    <div class="main-content">
+        <div class="daily-plan">
+            
+            <h2>План питания на сегодня</h2>
+            <ul class="daily-food-list">
+                <li><input type="checkbox">
+                    <label>Еда 1</label>
+                </li>
+                <li><input type="checkbox">
+                    <label>Еда 2</label>
+                </li>
+                <li><input type="checkbox">
+                    <label>Еда 3</label>
+                </li>
+            </ul>
+        </div>
+        <div class="next-days-plan">
+            <h3>План питания на следующие дни</h3>
+            <ul>
+                <li>Завтра: Еда 5, Еда 6, Еда 7</li>
+                <li>Послезавтра: Еда 8, Еда 9, Еда 10</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Правая колонка -->
+    <div class="home-sidebar">
+        <div class="user-info">
+            <img src="avatar.jpg">
+            <h2>Имя Фамилия</h2>
+        </div>
+        <div class="parameters">
+            <h3>Параметры</h3>
+            <p>Масса: <span>xxx кг</span></p>
+            <p>Рост: <span>xxx см</span></p>
+            <p>Желаемые калории: <span>xxx ккал</span></p>
+        </div>
+    </div>
+</div>

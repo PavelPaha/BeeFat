@@ -1926,6 +1926,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "Microsoft.AspNetCore.Components": "8.0.0",
           "Microsoft.AspNetCore.Components.WebAssembly": "8.0.0",
           "Microsoft.AspNetCore.Components.WebAssembly.Authentication": "8.0.0"
         },
@@ -5022,19 +5023,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mi\\.nuget\\packages\\": {}
+    "C:\\Users\\MagicBook\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat\\BeeFat.csproj",
+      "projectUniqueName": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat\\BeeFat.csproj",
       "projectName": "BeeFat",
-      "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat\\BeeFat.csproj",
-      "packagesPath": "C:\\Users\\Mi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat\\obj\\",
+      "projectPath": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat\\BeeFat.csproj",
+      "packagesPath": "C:\\Users\\MagicBook\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Mi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\MagicBook\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5048,8 +5049,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {
-              "projectPath": "C:\\Users\\Mi\\Desktop\\Проектирование C#\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj"
+            "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj": {
+              "projectPath": "C:\\Users\\MagicBook\\Documents\\GitHub\\bf\\BeeFat\\BeeFat.Client\\BeeFat.Client.csproj"
             }
           }
         }
