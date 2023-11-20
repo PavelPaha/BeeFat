@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using BeeFat.Domain.Models.User;
 using NUnit.Framework;
 
 namespace BeeFat.Domain.Infrastructure;

@@ -1,3 +1,4 @@
+using BeeFat.Domain.Models.User;
 using NUnit.Framework;
 using FluentAssertions;
 

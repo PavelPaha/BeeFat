@@ -1,8 +1,13 @@
-﻿namespace BeeFat.Domain.Infrastructure;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public class Entity<TId>(TId id) where TId : struct
+namespace BeeFat.Domain.Infrastructure;
+
+public class Entity<TId> where TId : struct
 {
-    public TId Id { get; } = id;
+    [SetsRequiredMembers]
+    protected Entity(TId id) => Id = id;
+
+    public required TId Id { get; init; }
 
     protected bool Equals(Entity<TId> other)
     {
@@ -11,9 +16,12 @@ public class Entity<TId>(TId id) where TId : struct
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != this.GetType())
+            return false;
         return Equals((Entity<TId>)obj);
     }
 
