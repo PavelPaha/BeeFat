@@ -4,10 +4,11 @@ namespace BeeFat.Domain.Infrastructure;
 
 public class Entity<TId> where TId : struct
 {
+    public required TId Id { get; init; }
+
+
     [SetsRequiredMembers]
     protected Entity(TId id) => Id = id;
-
-    public required TId Id { get; init; }
 
     protected bool Equals(Entity<TId> other)
     {

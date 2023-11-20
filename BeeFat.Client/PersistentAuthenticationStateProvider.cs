@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using BeeFat.Domain.Models.User;
 
 namespace BeeFat.Client
 {
@@ -21,15 +22,17 @@ namespace BeeFat.Client
 
         public PersistentAuthenticationStateProvider(PersistentComponentState state)
         {
-            if (!state.TryTakeFromJson<UserInfo>(nameof(UserInfo), out var userInfo) || userInfo is null)
+            if (!state.TryTakeFromJson<User>(nameof(User), out var user) || user is null)
             {
                 return;
             }
 
-            Claim[] claims = [
-                new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
-                new Claim(ClaimTypes.Name, userInfo.Email),
-                new Claim(ClaimTypes.Email, userInfo.Email)];
+            Claim[] claims =
+            [
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Email, user.Email)
+            ];
 
             authenticationStateTask = Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims,

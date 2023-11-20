@@ -1,6 +1,4 @@
-﻿using BeeFat.Domain.Infrastructure;
-
-namespace BeeFat.Domain;
+﻿namespace BeeFat.Domain.Infrastructure;
 
 public class Address : ValueType<Address>
 {
