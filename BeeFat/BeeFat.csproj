@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-BeeFat-3b25a96c-8d67-4610-b617-e979a9fbfb43</UserSecretsId>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
