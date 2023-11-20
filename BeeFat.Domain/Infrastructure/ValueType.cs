@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class ValueType<T> where T : ValueType<T>
+public abstract class ValueType<T> where T : ValueType<T>
 {
     private const int FnvPrime = 16777619;
 

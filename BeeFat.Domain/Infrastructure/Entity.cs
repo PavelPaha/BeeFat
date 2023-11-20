@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class Entity<TId> where TId : struct
+public abstract class Entity<TId> where TId : struct
 {
     public required TId Id { get; init; }
 
@@ -15,7 +15,7 @@ public class Entity<TId> where TId : struct
         return EqualityComparer<TId>.Default.Equals(Id, other.Id);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;
