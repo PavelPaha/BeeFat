@@ -93,7 +93,7 @@ namespace BeeFat.Components.Account
 
                 if (userId != null && email != null)
                 {
-                    state.PersistAsJson(nameof(User), new User(uint.Parse(userId), email));
+                    state.PersistAsJson(nameof(User), new User(userId, email));
                 }
             }
         }

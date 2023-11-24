@@ -3,15 +3,15 @@ using BeeFat.Domain.Infrastructure;
 
 namespace BeeFat.Domain.Models;
 
-public class Track : Entity<uint>
+public class Track : Entity
 {
-    public required string Title { get; set; }
-    public required string Description { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
 
     public required List<Day> Days { get; set; }
 
     [SetsRequiredMembers]
-    public Track(uint id, string title, string description) : base(id)
+    public Track(string id, string title, string description) : base(id)
     {
         Title = title;
         Description = description;

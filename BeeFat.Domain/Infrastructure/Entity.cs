@@ -1,18 +1,14 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace BeeFat.Domain.Infrastructure;
 
-public abstract class Entity<TId> where TId : struct
+public abstract class Entity
 {
-    public required TId Id { get; init; }
+    public readonly string Id;
 
+    protected Entity(string id) => Id = id;
 
-    [SetsRequiredMembers]
-    protected Entity(TId id) => Id = id;
-
-    protected bool Equals(Entity<TId> other)
+    private bool Equals(Entity other)
     {
-        return EqualityComparer<TId>.Default.Equals(Id, other.Id);
+        return EqualityComparer<string>.Default.Equals(Id, other.Id);
     }
 
     public override bool Equals(object? obj)
@@ -23,12 +19,12 @@ public abstract class Entity<TId> where TId : struct
             return true;
         if (obj.GetType() != this.GetType())
             return false;
-        return Equals((Entity<TId>)obj);
+        return Equals((Entity)obj);
     }
 
     public override int GetHashCode()
     {
-        return EqualityComparer<TId>.Default.GetHashCode(Id);
+        return EqualityComparer<string>.Default.GetHashCode(Id);
     }
 
     public override string ToString()
