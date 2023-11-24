@@ -1,9 +1,10 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class ValueType<T> where T : ValueType<T>
+public class ValueType<T>  where T : ValueType<T>
 {
     private const int FnvPrime = 16777619;
 
