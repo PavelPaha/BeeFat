@@ -3,6 +3,7 @@ using System;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BeeFat.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231125193319_EntityFoodCreated")]
+    partial class EntityFoodCreated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,8 +34,17 @@ namespace BeeFat.Migrations
                     b.Property<int>("Carbohydrates")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DateUpdated")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Fats")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -41,6 +53,12 @@ namespace BeeFat.Migrations
 
                     b.Property<int>("Proteins")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("UserCreated")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserUpdated")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Weight")
                         .HasColumnType("integer");

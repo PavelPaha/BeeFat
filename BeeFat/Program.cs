@@ -1,6 +1,7 @@
 using BeeFat.Components;
 using BeeFat.Components.Account;
 using BeeFat.Data;
+using BeeFat.Domain.Infrastructure;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,12 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 
-// builder.Services.AddAuthentication(options =>
-//     {
-//         options.DefaultScheme = IdentityConstants.ApplicationScheme;
-//         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-//     })
-//     .AddIdentityCookies();
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -38,6 +39,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
 
 builder.Services.AddControllersWithViews();
 

@@ -19,7 +19,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <ProjectReference Include="..\BeeFat.Domain\BeeFat.Domain.csproj" />
   </ItemGroup>
 
