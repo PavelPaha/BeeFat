@@ -1,9 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace BeeFat.Domain.Infrastructure;
 
-public class Day(List<Food> foodProducts) : ValueType<Day>
+public class Day : Entity
 {
+    [SetsRequiredMembers]
+    protected Day(DaysOfWeek weekDay, List<Food> foodProducts)
+    {
+        WeekDay = weekDay;
+        FoodProducts = foodProducts;
+    }
+
     public DaysOfWeek WeekDay { get; set; }
-    public List<Food> FoodProducts { get; } = foodProducts;
+    
+    public List<Food> FoodProducts { get; }
 
     public int GetTotalFats 
         => FoodProducts.Select(food => food.Fats).Sum();

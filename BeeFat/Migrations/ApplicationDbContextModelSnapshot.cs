@@ -50,6 +50,29 @@ namespace BeeFat.Migrations
                     b.ToTable("Foods");
                 });
 
+            modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("FoodId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsEaten")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FoodId")
+                        .IsUnique();
+
+                    b.ToTable("FoodProducts");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -260,6 +283,17 @@ namespace BeeFat.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
+                });
+
+            modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProduct", b =>
+                {
+                    b.HasOne("BeeFat.Domain.Infrastructure.Food", "Food")
+                        .WithOne()
+                        .HasForeignKey("BeeFat.Domain.Infrastructure.FoodProduct", "FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
@@ -7,6 +8,7 @@ public class Entity<TId> where TId : struct
     [SetsRequiredMembers]
     protected Entity(TId id) => Id = id;
 
+    [Key]
     public required TId Id { get; init; }
 
     protected bool Equals(Entity<TId> other)
@@ -34,4 +36,10 @@ public class Entity<TId> where TId : struct
     {
         return $"{GetType().Name}({nameof(Id)}: {Id})";
     }
+}
+
+public class Entity : Entity<Guid>
+{
+    [SetsRequiredMembers]
+    protected Entity() : base(Guid.NewGuid()) { }
 }
