@@ -5,35 +5,20 @@ namespace BeeFat.Domain.Infrastructure;
 public class Day : Entity
 {
     [SetsRequiredMembers]
-    protected Day(DaysOfWeek weekDay, List<Food> foodProducts)
+    protected Day(DaysOfWeek weekDay, List<FoodProduct> foodProducts)
     {
         WeekDay = weekDay;
         FoodProducts = foodProducts;
     }
-
+    
+    [SetsRequiredMembers]
+    public Day()
+    {
+    }
+    
     public DaysOfWeek WeekDay { get; set; }
     
-    public List<Food> FoodProducts { get; }
-
-    public int GetTotalFats 
-        => FoodProducts.Select(food => food.Fats).Sum();
-    
-    public int GetTotalCarbohydrates 
-        => FoodProducts.Select(food => food.Carbohydrates).Sum();
-    
-    public int GetTotalProteins 
-        => FoodProducts.Select(food => food.Proteins).Sum();
-    
-
-    public void AddFood(Food food)
-    {
-        FoodProducts.Add(food);
-    }
-
-    public void RemoveFoodByIndex(int index)
-    {
-        FoodProducts.RemoveAt(index);
-    }
+    public List<FoodProduct> FoodProducts { get; }
 }
 
 public enum DaysOfWeek

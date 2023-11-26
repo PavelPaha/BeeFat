@@ -59,6 +59,9 @@ namespace BeeFat.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("FoodId")
                         .HasColumnType("uuid");
 

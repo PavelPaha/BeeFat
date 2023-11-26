@@ -11,12 +11,23 @@ public class FoodProduct : Entity
 
     [ForeignKey("FoodId")]
     public required Food Food { get ; set; }
+    
+    public DayOfWeek DayOfWeek { get; set; } 
 
     public bool IsEaten { get; set; }
     
     [SetsRequiredMembers]
     public FoodProduct()
     {
+    }
+
+    [SetsRequiredMembers]
+    public FoodProduct(int count, Guid foodId, DayOfWeek dayOfWeek, bool isEaten)
+    {
+        Count = count;
+        FoodId = foodId;
+        DayOfWeek = dayOfWeek;
+        IsEaten = isEaten;
     }
 }
 

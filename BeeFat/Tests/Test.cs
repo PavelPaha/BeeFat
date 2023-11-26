@@ -1,10 +1,11 @@
+using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Domain.Models.User;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
-namespace BeeFat.Data;
+namespace BeeFat.Tests;
 
 [TestFixture]
 [Parallelizable]
@@ -20,6 +21,7 @@ public class ApplicationDbContextTests
             .Options;
     }
 
+    
     [SetUp]
     public void Setup()
     {
@@ -31,27 +33,28 @@ public class ApplicationDbContextTests
         _options = GetOptions();
     }
 
+    
     [Test]
     public void User_ShouldAddUserToDatabaseAndRemove()
     {
+        var user = new ApplicationUser()
+        {
+            UserName = "testuser",
+            PersonName = new PersonName
+            {
+                FirstName = "Кирилл",
+                LastName = "Сарычев"
+            }
+        };
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var user = new ApplicationUser()
-            {
-                UserName = "testuser",
-                PersonName = new PersonName
-                {
-                    FirstName = "Кирилл",
-                    LastName = "Сарычев"
-                }
-            };
             context.BeeFatUsers.Add(user);
             context.SaveChanges();
         }
 
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var createdUser = context.BeeFatUsers.FirstOrDefault();
+            var createdUser = context.BeeFatUsers.FirstOrDefault(u => u.Id == user.Id);
             createdUser.Should().NotBeNull();
             createdUser.Should().Match<ApplicationUser>(user =>
                 user.UserName == "testuser" &&
@@ -69,22 +72,35 @@ public class ApplicationDbContextTests
             var deletedUser = context.BeeFatUsers.FirstOrDefault(u => u.UserName == "testuser");
             deletedUser.Should().BeNull();
         }
-        
     }
+    
+    
+    [Explicit]
+    [Test]
+    public void DeleteAllEntriesFromUsers()
+    {
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var users = context.Users.ToList();
+            context.Users.RemoveRange(users);
+            context.SaveChanges();
+        }
+    }
+    
     
     [Test]
     public void Food_ShouldAddFoodToDatabaseAndRemove()
     {
+        var food = new Food("Apple", 10, 20, 1, 150);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var food = new Food("Apple", 10, 20, 1, 150);
             context.Foods.Add(food);
             context.SaveChanges();
         }
         
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var createdFood = context.Foods.FirstOrDefault(f => f.Name == "Apple");
+            var createdFood = context.Foods.FirstOrDefault(f => f.Id == food.Id);
             createdFood.Should().NotBeNull();
             createdFood.Should().Match<Food>(f =>
                 f.Name == "Apple" &&
@@ -97,35 +113,54 @@ public class ApplicationDbContextTests
         
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var foodToDelete = context.Foods.FirstOrDefault(u => u.Name == "Apple");
+            var foodToDelete = context.Foods.FirstOrDefault(f => f.Id == food.Id);
             foodToDelete.Should().NotBeNull();
             context.Foods.Remove(foodToDelete);
             context.SaveChanges();
-            var deletedFood = context.Foods.FirstOrDefault(u => u.Name == "Apple");
+            var deletedFood = context.Foods.FirstOrDefault(f => f.Id == food.Id);
             deletedFood.Should().BeNull();
         }
     }
+    
+    
+    [Explicit]
+    [Test]
+    public void DeleteAllEntriesFromFoods()
+    {
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var foods = context.Foods.ToList();
+            context.Foods.RemoveRange(foods);
+            context.SaveChanges();
+        }
+    }
 
+    
     [Test]
     public void FoodProduct_ShouldAddFoodProductToDatabaseAndRemove()
     {
-        FoodProduct foodProduct = null;
+        var food = new Food("Water", 0, 0, 0, 1000);;
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var food = new Food("Water", 0, 0, 0, 1000);
-            foodProduct = new FoodProduct { Count = 2, Food = food, IsEaten = false };
-            context.FoodProducts.Add(foodProduct);
+            context.Foods.Add(food);
             context.SaveChanges();
         }
 
+        var foodProduct = new FoodProduct(2, food.Id, DayOfWeek.Monday, false);
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.FoodProducts.Add(foodProduct);
+            context.SaveChanges();
+        }
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             var createdFoodProduct = context.FoodProducts
                 .Include(fp => fp.Food)
                 .FirstOrDefault(fp => fp.Id == foodProduct.Id);
-
+        
             createdFoodProduct.Should().NotBeNull();
             createdFoodProduct.Should().Match<FoodProduct>(p =>
+                p.DayOfWeek == DayOfWeek.Monday &&
                 p.Count == 2 &&
                 p.Food.Name == "Water" &&
                 p.Food.Carbohydrates == 0 &&
@@ -133,40 +168,28 @@ public class ApplicationDbContextTests
                 p.Food.Proteins == 0 &&
                 p.Food.Weight == 1000
             );
-
+            
             context.FoodProducts.Remove(createdFoodProduct);
             context.SaveChanges();
         }
-
+        
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             var deletedFoodProduct = context.FoodProducts.FirstOrDefault(fp => fp.Id == foodProduct.Id);
             deletedFoodProduct.Should().BeNull();
         }
     }
-
     
+    
+    [Explicit]
     [Test]
-    public void T()
+    public void DeleteAllEntriesFromFoodProducts()
     {
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var food = context.Foods.FirstOrDefault();
-
-            if (food != null)
-            {
-                var foodProduct = new FoodProduct
-                {
-                    Count = 2,
-                };
-                
-                context.FoodProducts.Add(foodProduct);
-                context.SaveChanges();
-                foodProduct.Food = food;
-                context.SaveChanges();
-            }
+            var foodProducts = context.FoodProducts.ToList();
+            context.FoodProducts.RemoveRange(foodProducts);
+            context.SaveChanges();
         }
-
-
     }
 }
