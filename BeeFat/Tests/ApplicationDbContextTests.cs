@@ -65,11 +65,11 @@ public class ApplicationDbContextTests
 
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var userToDelete = context.BeeFatUsers.FirstOrDefault(u => u.UserName == "testuser");
+            var userToDelete = context.BeeFatUsers.FirstOrDefault(u => u.Id == user.Id);
             userToDelete.Should().NotBeNull();
             context.BeeFatUsers.Remove(userToDelete);
             context.SaveChanges();
-            var deletedUser = context.BeeFatUsers.FirstOrDefault(u => u.UserName == "testuser");
+            var deletedUser = context.BeeFatUsers.FirstOrDefault(u => u.Id == user.Id);
             deletedUser.Should().BeNull();
         }
     }
@@ -104,9 +104,9 @@ public class ApplicationDbContextTests
             createdFood.Should().NotBeNull();
             createdFood.Should().Match<Food>(f =>
                 f.Name == "Apple" &&
-                f.Carbohydrates == 20 &&
-                f.Fats == 10 &&
-                f.Proteins == 1 &&
+                f.Proteins == 10 &&
+                f.Fats == 20 &&
+                f.Carbohydrates == 1 &&
                 f.Weight == 150
             );
         }
@@ -137,47 +137,79 @@ public class ApplicationDbContextTests
 
 
     [Test]
-    public void FoodProduct_ShouldAddFoodProductToDatabaseAndRemove()
+    public void FoodProductPiece_ShouldAddFoodProductPieceToDatabaseAndRemove()
     {
-        var food = new Food("Water", 0, 0, 0, 1000);
-        ;
+        var food = new Food("Chicken egg", 7, 1, 7, 60);
+        var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            context.Foods.Add(food);
-            context.SaveChanges();
-        }
-
-        var foodProduct = new FoodProduct(2, food.Id, DayOfWeek.Monday, false);
-        using (var context = new ApplicationDbContext(_options, _configuration))
-        {
-            context.FoodProducts.Add(foodProduct);
+            context.FoodProductsPieces.Add(foodProduct);
             context.SaveChanges();
         }
 
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var createdFoodProduct = context.FoodProducts
+            var createdFoodProduct = context.FoodProductsPieces
                 .Include(fp => fp.Food)
                 .FirstOrDefault(fp => fp.Id == foodProduct.Id);
 
             createdFoodProduct.Should().NotBeNull();
-            createdFoodProduct.Should().Match<FoodProduct>(p =>
+            createdFoodProduct.Should().Match<FoodProductPiece>(p =>
                 p.DayOfWeek == DayOfWeek.Monday &&
-                p.Count == 2 &&
-                p.Food.Name == "Water" &&
-                p.Food.Carbohydrates == 0 &&
-                p.Food.Fats == 0 &&
-                p.Food.Proteins == 0 &&
-                p.Food.Weight == 1000
+                p.Pieces == 5 &&
+                p.Food.Name == "Chicken egg" &&
+                p.Food.Proteins == 7 &&
+                p.Food.Fats == 1 &&
+                p.Food.Carbohydrates == 7 &&
+                p.Food.Weight == 60
             );
 
-            context.FoodProducts.Remove(createdFoodProduct);
+            context.FoodProductsPieces.Remove(createdFoodProduct);
             context.SaveChanges();
         }
 
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var deletedFoodProduct = context.FoodProducts.FirstOrDefault(fp => fp.Id == foodProduct.Id);
+            var deletedFoodProduct = context.FoodProductsPieces.FirstOrDefault(fp => fp.Id == foodProduct.Id);
+            deletedFoodProduct.Should().BeNull();
+        }
+    }
+    
+    [Test]
+    public void FoodProductGram_ShouldAddFoodProductGramToDatabaseAndRemove()
+    {
+        var food = new Food("Water", 0, 0, 0, 1);
+        var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, false);
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.FoodProductsGrams.Add(foodProduct);
+            context.SaveChanges();
+        }
+
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var createdFoodProduct = context.FoodProductsGrams
+                .Include(fp => fp.Food)
+                .FirstOrDefault(fp => fp.Id == foodProduct.Id);
+
+            createdFoodProduct.Should().NotBeNull();
+            createdFoodProduct.Should().Match<FoodProductGram>(p =>
+                p.DayOfWeek == DayOfWeek.Monday &&
+                p.Grams == 2000 &&
+                p.Food.Name == "Water" &&
+                p.Food.Carbohydrates == 0 &&
+                p.Food.Fats == 0 &&
+                p.Food.Proteins == 0 &&
+                p.Food.Weight == 1
+            );
+
+            context.FoodProductsGrams.Remove(createdFoodProduct);
+            context.SaveChanges();
+        }
+
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var deletedFoodProduct = context.FoodProductsGrams.FirstOrDefault(fp => fp.Id == foodProduct.Id);
             deletedFoodProduct.Should().BeNull();
         }
     }
@@ -189,8 +221,11 @@ public class ApplicationDbContextTests
     {
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var foodProducts = context.FoodProducts.ToList();
-            context.FoodProducts.RemoveRange(foodProducts);
+            var foodProductsPieces = context.FoodProductsPieces.ToList();
+            context.FoodProductsPieces.RemoveRange(foodProductsPieces);
+            
+            var foodProductsGrams = context.FoodProductsGrams.ToList();
+            context.FoodProductsGrams.RemoveRange(foodProductsGrams);
             context.SaveChanges();
         }
     }

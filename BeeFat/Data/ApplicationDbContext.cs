@@ -8,7 +8,11 @@ namespace BeeFat.Data
     {
         public DbSet<ApplicationUser> BeeFatUsers { get; set; }
         public DbSet<Food> Foods { get; set; }
-        public DbSet<FoodProduct> FoodProducts { get; set; }
+        // public DbSet<FoodProduct> FoodProducts { get; set; }
+        
+        public DbSet<FoodProductGram> FoodProductsGrams { get; set; }
+        
+        public DbSet<FoodProductPiece> FoodProductsPieces { get; set; }
         
         // public DbSet<Day> Days { get; set; }
         

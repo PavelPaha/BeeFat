@@ -3,9 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class FoodProduct : Entity
+public abstract class FoodProduct : Entity
 {
-    public required int Count { get; set; }
+    public required string Name { get; set; }
     
     public Guid FoodId { get; set; }
 
@@ -17,17 +17,25 @@ public class FoodProduct : Entity
     public bool IsEaten { get; set; }
     
     [SetsRequiredMembers]
-    public FoodProduct()
+    protected FoodProduct()
     {
     }
 
     [SetsRequiredMembers]
-    public FoodProduct(int count, Guid foodId, DayOfWeek dayOfWeek, bool isEaten)
+    protected FoodProduct(Food food, DayOfWeek dayOfWeek, bool isEaten)
     {
-        Count = count;
-        FoodId = foodId;
+        Food = food;
+        FoodId = Food.Id;
         DayOfWeek = dayOfWeek;
         IsEaten = isEaten;
+    }
+
+    public abstract void ChangePortionSize(int newPortionSize);
+
+    protected virtual void EnsurePortionSize(int portionSize)
+    {
+        if (portionSize < 0)
+            throw new ArgumentException("Размер порции должен быть неотрицательным");
     }
 }
 

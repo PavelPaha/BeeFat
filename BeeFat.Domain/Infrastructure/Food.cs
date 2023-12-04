@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
@@ -7,7 +5,7 @@ namespace BeeFat.Domain.Infrastructure;
 public class Food : Entity
 {
     [SetsRequiredMembers]
-    public Food(string name, int fats, int carbohydrates, int proteins, int weight)
+    public Food(string name, int proteins, int fats, int carbohydrates,  int weight)
     {
         Name = name;
         Fats = fats;
@@ -21,4 +19,30 @@ public class Food : Entity
     public required int Carbohydrates { get; set; }
     public required int Proteins { get; set; }
     public required int Weight { get; set; }
+
+    public void EditFats(int fats)
+    {
+        EnsureMacronutrientValue(fats);
+        Fats = fats;
+    }
+    
+    public void EditCarbohydrates(int carbohydrates)
+    {
+        EnsureMacronutrientValue(carbohydrates);
+        Carbohydrates = carbohydrates;
+    }
+    
+    public void EditProteins(int proteins)
+    {
+        EnsureMacronutrientValue(proteins);
+        Proteins = proteins;
+    }
+
+    private static void EnsureMacronutrientValue(int value)
+    {
+        if (value < 0)
+        {
+            throw new ArgumentException("Значение макроэлемента должно быть больше или равно нулю.");
+        }
+    }
 }

@@ -3,6 +3,7 @@ using System;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BeeFat.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231126184117_EntityDayDeleted")]
+    partial class EntityDayDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,20 @@ namespace BeeFat.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Day", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("WeekDay")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Day");
+                });
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.Food", b =>
                 {
@@ -56,13 +73,11 @@ namespace BeeFat.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("DayOfWeek")
+                    b.Property<int>("Count")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
+                    b.Property<Guid>("DayId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("FoodId")
                         .HasColumnType("uuid");
@@ -70,20 +85,14 @@ namespace BeeFat.Migrations
                     b.Property<bool>("IsEaten")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("DayId");
 
                     b.HasIndex("FoodId")
                         .IsUnique();
 
-                    b.ToTable("FoodProduct");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("FoodProduct");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("FoodProducts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -291,26 +300,6 @@ namespace BeeFat.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProductGram", b =>
-                {
-                    b.HasBaseType("BeeFat.Domain.Infrastructure.FoodProduct");
-
-                    b.Property<int>("Grams")
-                        .HasColumnType("integer");
-
-                    b.HasDiscriminator().HasValue("FoodProductGram");
-                });
-
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProductPiece", b =>
-                {
-                    b.HasBaseType("BeeFat.Domain.Infrastructure.FoodProduct");
-
-                    b.Property<int>("Pieces")
-                        .HasColumnType("integer");
-
-                    b.HasDiscriminator().HasValue("FoodProductPiece");
-                });
-
             modelBuilder.Entity("BeeFat.Data.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -320,11 +309,19 @@ namespace BeeFat.Migrations
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProduct", b =>
                 {
+                    b.HasOne("BeeFat.Domain.Infrastructure.Day", "Day")
+                        .WithMany("FoodProducts")
+                        .HasForeignKey("DayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BeeFat.Domain.Infrastructure.Food", "Food")
                         .WithOne()
                         .HasForeignKey("BeeFat.Domain.Infrastructure.FoodProduct", "FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Day");
 
                     b.Navigation("Food");
                 });
@@ -405,6 +402,11 @@ namespace BeeFat.Migrations
 
                     b.Navigation("PersonName")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Day", b =>
+                {
+                    b.Navigation("FoodProducts");
                 });
 #pragma warning restore 612, 618
         }
