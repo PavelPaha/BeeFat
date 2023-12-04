@@ -24,9 +24,11 @@
     <!-- Левая колонка -->
     <div class="home-sidebar">
         <h2>Имя трека</h2>
-        <button>Редактировать трек</button>
-        <button>Изменить параметры тела</button>
-        <button>Калибровка</button>
+        <ul>
+            <li><button>Редактировать трек</button></li>
+            <li><button>Изменить параметры тела</button></li>
+            <li><button>Калибровка</button></li>
+        </ul>
     </div>
 
     <!-- Средняя колонка -->
@@ -59,13 +61,13 @@
     <div class="home-sidebar">
         <div class="user-info">
             <img src="avatar.jpg">
-            @{
+            <span class="username">@{
                 using (var context = new ApplicationDbContext(options, configuration))
                 {
                     var user = context.BeeFatUsers.FirstOrDefault();
                     <h2>@user.UserName.ToString()</h2>
                 }
-            }
+            }</span>
         </div>
         <div class="parameters">
             <h3>Параметры</h3>

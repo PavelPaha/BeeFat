@@ -1,0 +1,66 @@
+@page "/edit"
+
+@inherits LayoutComponentBase
+
+<PageTitle>TrackEditor</PageTitle>
+
+<!DOCTYPE html>
+
+<div class="container">
+    <div class="home-sidebar">
+        <h2>Дни недели</h2>
+        <ul>
+            <li> <button class="day-of-week"> Понедельник </button></li>
+            <li> <button class="day-of-week"> Вторник </button></li>
+            <li> <button class="day-of-week"> Среда </button></li>
+            <li> <button class="day-of-week"> Четверг </button></li>
+            <li> <button class="day-of-week"> Пятница </button></li>
+            <li> <button class="day-of-week"> Суббота </button></li>
+            <li> <button class="day-of-week"> Воскресенье </button></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2 class="track-header">
+            Заголовок трека
+        </h2>
+       <div class="daily-plan">
+           <ul class="product-list">
+               <li>
+                   <span class="product-name">Продукт 1</span>
+                   <div class="action-buttons">
+                       <button class="edit-button">Изменить</button>
+                       <button class="delete-button">Удалить</button>
+                   </div>
+               </li>
+               <li>
+                   <span class="product-name">Продукт 2</span>
+                   <div class="action-buttons">
+                       <button class="edit-button">Изменить</button>   
+                       <button class="delete-button">Удалить</button>
+                   </div>
+               </li>
+               <li>
+                   <span class="product-name">Продукт 3</span>
+                   <div class="action-buttons">
+                        <button class="edit-button">Изменить</button>
+                        <button class="delete-button">Удалить</button>
+                   </div>
+               </li>
+           </ul>
+       </div>
+    </div>
+      
+    <div class="home-sidebar">
+        <div class="user-info">
+            <img src="avatar.jpg">
+            <span class="username">Пользователь</span>
+        </div>
+        <div class="parameters">
+            <h3>Параметры</h3>
+            <p>Масса: <span>xxx кг</span></p>
+            <p>Рост: <span>xxx см</span></p>
+            <p>Желаемые калории: <span>xxx ккал</span></p>
+        </div>
+        </div>
+</div>
