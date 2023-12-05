@@ -18,6 +18,8 @@ public class FoodProductPiece : FoodProduct
         Name = Food.Name;
     }
 
+    public override int PortionSize => Pieces;
+
     public override void ChangePortionSize(int newPortionSize)
     {
         EnsurePortionSize(newPortionSize);

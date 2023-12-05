@@ -16,6 +16,8 @@ public abstract class FoodProduct : Entity
 
     public bool IsEaten { get; set; }
     
+    public abstract int PortionSize { get; }
+    
     [SetsRequiredMembers]
     protected FoodProduct()
     {

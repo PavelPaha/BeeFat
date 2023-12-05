@@ -19,6 +19,8 @@ public class FoodProductGram : FoodProduct
         Name = Food.Name;
     }
 
+    public override int PortionSize => Grams;
+
     public override void ChangePortionSize(int newPortionSize)
     {
         EnsurePortionSize(newPortionSize);
