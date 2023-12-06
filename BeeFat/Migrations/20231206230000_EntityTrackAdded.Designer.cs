@@ -3,6 +3,7 @@ using System;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BeeFat.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231206230000_EntityTrackAdded")]
+    partial class EntityTrackAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,40 +120,16 @@ namespace BeeFat.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("TrackId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FoodId")
                         .IsUnique();
-
-                    b.HasIndex("TrackId");
 
                     b.ToTable("FoodProduct");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("FoodProduct");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Track", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tracks");
                 });
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProductGram", b =>
@@ -239,20 +218,7 @@ namespace BeeFat.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeeFat.Domain.Infrastructure.Track", "Track")
-                        .WithMany("FoodProducts")
-                        .HasForeignKey("TrackId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Food");
-
-                    b.Navigation("Track");
-                });
-
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Track", b =>
-                {
-                    b.Navigation("FoodProducts");
                 });
 #pragma warning restore 612, 618
         }

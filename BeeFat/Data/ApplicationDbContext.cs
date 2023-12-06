@@ -12,6 +12,8 @@ namespace BeeFat.Data
         public DbSet<FoodProductGram> FoodProductsGrams { get; set; }
 
         public DbSet<FoodProductPiece> FoodProductsPieces { get; set; }
+        
+        public DbSet<Track> Tracks { get; set; }
 
         private IConfiguration _configuration;
 
@@ -46,10 +48,11 @@ namespace BeeFat.Data
                 .HasOne(fp => fp.Food)
                 .WithOne()
                 .HasForeignKey<FoodProduct>(fp => fp.FoodId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Track>()
-                .HasMany<FoodProduct>(t => t.FoodProducts)
+                .HasMany(t => t.FoodProducts)
                 .WithOne(fp => fp.Track)
                 .HasForeignKey(fp => fp.TrackId)
                 .IsRequired();
