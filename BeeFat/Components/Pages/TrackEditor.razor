@@ -1,6 +1,9 @@
 @page "/edit"
 
+@using BeeFat.Domain.Infrastructure
 @inherits LayoutComponentBase
+
+@inject HomeHelper HomeHelper
 
 <PageTitle>TrackEditor</PageTitle>
 
@@ -25,37 +28,31 @@
             Заголовок трека
         </h2>
        <div class="daily-plan">
-           <ul class="product-list">
-               <li>
-                    <div class="product">
-                       <span class="product-name">Греча</span>
-                       <span class="portion-size">300 грамм</span>
-                    </div>
-                   <div class="action-buttons">
-                       <button class="action-button edit-button">Изменить</button>
-                       <button class="action-button delete-button">Удалить</button>
-                   </div>
-               </li>
-               <li>
-                   <div class="product">
-                       <span class="product-name">Яйцо куриное</span>
-                       <span class="portion-size">5 шт</span>
-                    </div>
-                   <div class="action-buttons">
-                       <button class="action-button edit-button">Изменить</button>   
-                       <button class="action-button delete-button">Удалить</button>
-                   </div>
-               </li>
-               <li>
-                   <div class="product">
-                       <span class="product-name">Молоко</span>
-                       <span class="portion-size">900 грамм</span>
-                    </div>
-                   <div class="action-buttons">
-                        <button class="action-button edit-button">Изменить</button>
-                        <button class="action-button delete-button">Удалить</button>
-                   </div>
-               </li>
+           <ul class="daily-food-list product-list">
+              <li>
+                      <div>Название продукта</div>
+                      <div>Масса</div>
+                      <div>Белки</div>
+                      <div>Жиры</div>
+                      <div>Углеводы</div>
+                      <div>Калории</div>
+                  </li>
+               @{
+                   foreach (var product in HomeHelper.GetProductsByDay(DayOfWeek.Tuesday))
+                   {
+                       var foodInfo = product.Food.Macronutrient;
+                       <li>
+                           <div>@product.Name</div>
+                           <div><span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span></div>
+                           <div><span class="portion-size">@foodInfo.Proteins г</span></div>
+                           <div><span class="portion-size">@foodInfo.Fats г</span></div>
+                           <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
+                           <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
+                           <button class="action-button edit-button">Изменить</button>
+                           <button class="action-button delete-button">Удалить</button>
+                       </li>
+                   }
+               }
            </ul>
 
            <button class="action-button add-product"><span>+</span></button>
@@ -72,9 +69,9 @@
         </div>
         <div class="parameters">
             <h3>Параметры</h3>
-            <p>Масса: <span>xxx кг</span></p>
-            <p>Рост: <span>xxx см</span></p>
-            <p>Желаемые калории: <span>xxx ккал</span></p>
+            <p>Масса: <span class="parameter">xxx кг</span></p>
+            <p>Рост: <span class="parameter">xxx см</span></p>
+            <p>Желаемые калории: <span class="parameter">xxx ккал</span></p>
         </div>
         </div>
 </div>

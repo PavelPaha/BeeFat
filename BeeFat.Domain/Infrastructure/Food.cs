@@ -5,46 +5,29 @@ namespace BeeFat.Domain.Infrastructure;
 public class Food : Entity
 {
     [SetsRequiredMembers]
-    public Food(string name, int proteins, int fats, int carbohydrates, int calories, int weight)
+    public Food(string name, Macronutrient macronutrient, int weight)
     {
         Name = name;
-        Fats = fats;
-        Carbohydrates = carbohydrates;
-        Proteins = proteins;
+        Macronutrient = macronutrient;
         Weight = weight;
+    }
+    [SetsRequiredMembers]
+    public Food()
+    {
+        Name = "";
+        Macronutrient = new Macronutrient();
+        Weight = 0;
     }
 
     public required string Name { get; set; }
-    public required int Fats { get; set; }
-    public required int Carbohydrates { get; set; }
-    public required int Proteins { get; set; }
     
-    public required int Calories { get; set; }
+    public required Macronutrient Macronutrient { get; set; }
     public required int Weight { get; set; }
 
-    public void EditFats(int fats)
-    {
-        EnsureMacronutrientValue(fats);
-        Fats = fats;
-    }
-    
-    public void EditCarbohydrates(int carbohydrates)
-    {
-        EnsureMacronutrientValue(carbohydrates);
-        Carbohydrates = carbohydrates;
-    }
-    
-    public void EditProteins(int proteins)
-    {
-        EnsureMacronutrientValue(proteins);
-        Proteins = proteins;
-    }
+    public void EditFats(int fats) => Macronutrient.EditFats(fats);
 
-    private static void EnsureMacronutrientValue(int value)
-    {
-        if (value < 0)
-        {
-            throw new ArgumentException("Значение макроэлемента должно быть больше или равно нулю.");
-        }
-    }
+    public void EditCarbohydrates(int carbohydrates) => Macronutrient.EditCarbohydrates(carbohydrates);
+
+    public void EditProteins(int proteins) => Macronutrient.EditProteins(proteins);
+
 }

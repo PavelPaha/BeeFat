@@ -1,5 +1,6 @@
 using BeeFat.Components;
 using BeeFat.Components.Account;
+using BeeFat.Components.Pages;
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -17,6 +18,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<HomeHelper>();
 
 builder.Services.AddAuthentication(options =>
 {

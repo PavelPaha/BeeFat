@@ -91,7 +91,8 @@ public class ApplicationDbContextTests
     [Test]
     public void Food_ShouldAddFoodToDatabaseAndRemove()
     {
-        var food = new Food("Apple", 10, 20, 1, 150, 60);
+        var foodMacronutrient = new Macronutrient(10, 20, 1, 150);
+        var food = new Food("Apple", foodMacronutrient, 60);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.Foods.Add(food);
@@ -104,11 +105,12 @@ public class ApplicationDbContextTests
             createdFood.Should().NotBeNull();
             createdFood.Should().Match<Food>(f =>
                 f.Name == "Apple" &&
-                f.Proteins == 10 &&
-                f.Fats == 20 &&
-                f.Carbohydrates == 1 &&
-                f.Weight == 150
+                f.Macronutrient.Proteins == foodMacronutrient.Proteins &&
+                f.Macronutrient.Fats == foodMacronutrient.Fats &&
+                f.Macronutrient.Carbohydrates == foodMacronutrient.Carbohydrates &&
+                f.Macronutrient.Calories == foodMacronutrient.Calories
             );
+
         }
 
         using (var context = new ApplicationDbContext(_options, _configuration))
@@ -139,7 +141,8 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductPiece_ShouldAddFoodProductPieceToDatabaseAndRemove()
     {
-        var food = new Food("Chicken egg", 7, 1, 7, 60, 60);
+        var foodMacronutrient = new Macronutrient(7, 1, 7, 60);
+        var food = new Food("Chicken egg",  foodMacronutrient,60);
         var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
@@ -158,9 +161,10 @@ public class ApplicationDbContextTests
                 p.DayOfWeek == DayOfWeek.Monday &&
                 p.Pieces == 5 &&
                 p.Food.Name == "Chicken egg" &&
-                p.Food.Proteins == 7 &&
-                p.Food.Fats == 1 &&
-                p.Food.Carbohydrates == 7 &&
+                p.Food.Macronutrient.Proteins == foodMacronutrient.Proteins &&
+                p.Food.Macronutrient.Fats == foodMacronutrient.Fats &&
+                p.Food.Macronutrient.Carbohydrates == foodMacronutrient.Carbohydrates &&
+                p.Food.Macronutrient.Calories == foodMacronutrient.Calories &&
                 p.Food.Weight == 60
             );
 
@@ -178,7 +182,8 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductGram_ShouldAddFoodProductGramToDatabaseAndRemove()
     {
-        var food = new Food("Water", 0, 0, 0, 1, 100);
+        var foodMacronutrient = new Macronutrient(0, 0, 0, 1);
+        var food = new Food("Water", foodMacronutrient,100);
         var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
@@ -197,10 +202,11 @@ public class ApplicationDbContextTests
                 p.DayOfWeek == DayOfWeek.Monday &&
                 p.Grams == 2000 &&
                 p.Food.Name == "Water" &&
-                p.Food.Carbohydrates == 0 &&
-                p.Food.Fats == 0 &&
-                p.Food.Proteins == 0 &&
-                p.Food.Weight == 1
+                p.Food.Macronutrient.Proteins == foodMacronutrient.Proteins &&
+                p.Food.Macronutrient.Fats == foodMacronutrient.Fats &&
+                p.Food.Macronutrient.Carbohydrates == foodMacronutrient.Carbohydrates &&
+                p.Food.Macronutrient.Calories == foodMacronutrient.Calories &&
+                p.Food.Weight == 100
             );
 
             context.FoodProductsGrams.Remove(createdFoodProduct);

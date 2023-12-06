@@ -11,30 +11,7 @@
 
 @inject NavigationManager NavigationManager
 
-
-@{
-    var days = new Dictionary<int, string>()
-    {
-        { 1, "Понедельник" },
-        { 2, "Вторник" },
-        { 3, "Среда" },
-        { 4, "Четверг" },
-        { 5, "Пятница" },
-        { 6, "Суббота" },
-        { 0, "Воскресенье" }
-    };
-
-    
-    var configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .Build();
-    
-    var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-        .Options;
-
-    var edit = "/edit";
-}
+@inject HomeHelper HomeHelper
 
 <PageTitle>Home</PageTitle>
 
@@ -64,82 +41,59 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    var totalProteins = 0;
-                    var totalFats = 0;
-                    var totalCarbohydrates = 0;
-                    var totalCalories = 0;
-                    
-                    var today = DayOfWeek.Tuesday;
-                    using (var context = new FakeApplicationDbContext())
+                    foreach (var product in HomeHelper.GetProductsByDay(DayOfWeek.Monday))
                     {
-                        var todayDailyPlan = context.FoodProducts.Where(p => p.DayOfWeek.Equals(today));
-                        foreach (var product in todayDailyPlan)
-                        {
-                            var foodFats = product.Food.Fats;
-                            var foodProteins = product.Food.Proteins;
-                            var foodCarbohydrates = product.Food.Carbohydrates;
-                            var foodCalories = product.Food.Calories;
-                            
-                            totalFats += product.Food.Fats;
-                            totalProteins += foodProteins;
-                            totalCarbohydrates += foodCarbohydrates;
-                            totalCalories += foodCalories;
-                            
-                            <li>
-                                <div>@product.Name</div>
-                                <div><span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span></div>
-                                <div><span class="portion-size">@foodProteins г</span></div>
-                                <div><span class="portion-size">@foodFats г</span></div>
-                                <div><span class="portion-size">@foodCarbohydrates г</span></div>
-                                <div><span class="portion-size">@foodCalories ккал</span></div>
-                                <div><button type="button" class="checkbox-button">&#10003;</button></div>
-                            </li>
-                        }
+                        var foodInfo = product.Food.Macronutrient;
+                        <li>
+                            <div>@product.Name</div>
+                            <div><span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span></div>
+                            <div><span class="portion-size">@foodInfo.Proteins г</span></div>
+                            <div><span class="portion-size">@foodInfo.Fats г</span></div>
+                            <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
+                            <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
+                            <div><button type="button" class="checkbox-button">&#10003;</button></div>
+                        </li>
                     }
+                    
                 }
             </ul>
+            @{
+                var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(DayOfWeek.Monday);
+            }
             <div class="total">
-                Итого: <span class="parameter">@totalProteins г</span> белков, <span class="parameter">@totalFats г</span> жиров, <span class="parameter">@totalCarbohydrates г</span> углеводов, <span class="parameter">@totalCalories</span> калорий.
+                Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
             </div>
         </div>
         <div class="next-days-plan product-list">
             <h3>План питания на следующие дни</h3>
             <ul class="product-list">
                 @{
-                    using (var context = new FakeApplicationDbContext())
+                    foreach (var products in HomeHelper.GetNextDaysProducts(DayOfWeek.Monday))
                     {
-                        var todayNumber = (int)today;
-                        for (int dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
-                        {
-                            var products = context.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber);
-                            if (!products.Any()) break;
-                            <li>
-                                <div class="product">
+                        <li>
+                            <div class="product">
+                                <span class="product-name">
                                     @{
-                                        <span class="product-name">
-                                            @{
-                                                <span>@days[dayNumber]: </span>
-                                                var takenProducts = products.Take(4).ToList();
-                                                for (var i = 0; i < takenProducts.Count; i++)
-                                                {
-                                                    var product = takenProducts[i];
-                                                    @product.Name;
-                                                    if (i != takenProducts.Count - 1)
-                                                    {
-                                                        <span>, </span>
-                                                    }
-                                                }
-
-                                                if (products.Count() > 4)
-                                                {
-                                                    <span>...</span>
-                                                }
+                                        @* <span>@HomeHelper.Days[dayNumber]: </span> *@
+                                        var takenProducts = products.Take(4).ToList();
+                                        for (var i = 0; i < takenProducts.Count; i++)
+                                        {
+                                            var product = takenProducts[i];
+                                            @product.Name;
+                                            if (i != takenProducts.Count - 1)
+                                            {
+                                                <span>, </span>
                                             }
-                                        </span>
+                                        }
+
+                                        if (products.Count() > 4)
+                                        {
+                                            <span>...</span>
+                                        }
                                     }
-                                </div>
-                            </li>
-                        }
+                                </span>
+                            </div>
+                        </li>
                     }
                 }
             </ul>
@@ -149,13 +103,15 @@
     <div class="home-sidebar">
         <div class="user-info">
             <img src="avatar.jpg">
-            <span class="username">@{
-                                       using (var context = new ApplicationDbContext(options, configuration))
-                                       {
-                                           var user = context.BeeFatUsers.FirstOrDefault();
-                                           @user.UserName.ToString()
-                                       }
-                                   }</span>
+            <span class="username">
+                @* @{ *@
+                @*     using (var context = new ApplicationDbContext(options, configuration)) *@
+                @*     { *@
+                @*         var user = context.BeeFatUsers.FirstOrDefault(); *@
+                @*         @user.UserName.ToString() *@
+                @*     } *@
+                @* } *@
+            </span>
         </div>
         <div class="parameters">
             <h3>Параметры</h3>

@@ -10,11 +10,19 @@ namespace BeeFat.Data
         public List<FoodProduct> FoodProducts { get; set; }
         public FakeApplicationDbContext()
         {
-            var egg = new Food("Яйцо куриное", 15, 5, 10, 55, 100);
-            var water = new Food("Вода питьевая", 0, 0, 0, 100, 100);
-            var porridge = new Food("Каша овсяная", 10, 29, 3, 199, 101);
-            var watermelon = new Food("Арбуз", 0, 0, 30, 1000, 99);
-            var buckwheat = new Food("Греча", 3, 1, 10, 200, 98);
+            var eggMacronutrients = new Macronutrient(5, 10, 55, 100);
+            var egg = new Food("Яйцо куриное", eggMacronutrients,  100);
+            
+            var water = new Food("Вода питьевая", new Macronutrient(), 100);
+
+            var porridgeMacronutrient = new Macronutrient(10, 29, 3, 199);
+            var porridge = new Food("Каша овсяная",  porridgeMacronutrient, 101);
+
+            var watermelonMacronutrient = new Macronutrient(0, 0, 30, 1000);
+            var watermelon = new Food("Арбуз", watermelonMacronutrient, 99);
+
+            var buckwheatMacronutrient = new Macronutrient(3, 1, 10, 200);
+            var buckwheat = new Food("Греча",  buckwheatMacronutrient, 300);
             
             FoodProducts = new List<FoodProduct>()
             {

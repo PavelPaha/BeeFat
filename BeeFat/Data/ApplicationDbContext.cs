@@ -8,13 +8,10 @@ namespace BeeFat.Data
         public DbSet<ApplicationUser> BeeFatUsers { get; set; }
 
         public DbSet<Food> Foods { get; set; }
-        // public DbSet<FoodProduct> FoodProducts { get; set; }
 
         public DbSet<FoodProductGram> FoodProductsGrams { get; set; }
 
         public DbSet<FoodProductPiece> FoodProductsPieces { get; set; }
-
-        // public DbSet<Day> Days { get; set; }
 
         private IConfiguration _configuration;
 
@@ -35,6 +32,14 @@ namespace BeeFat.Data
             {
                 entity.HasKey(f => f.Id);
                 entity.Property(f => f.Name).IsRequired().HasMaxLength(255);
+    
+                entity.OwnsOne(f => f.Macronutrient, macronutrient =>
+                {
+                    macronutrient.Property(m => m.Proteins);
+                    macronutrient.Property(m => m.Fats);
+                    macronutrient.Property(m => m.Carbohydrates);
+                    macronutrient.Property(m => m.Calories);
+                });
             });
 
             modelBuilder.Entity<FoodProduct>()
@@ -42,18 +47,6 @@ namespace BeeFat.Data
                 .WithOne()
                 .HasForeignKey<FoodProduct>(fp => fp.FoodId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // modelBuilder.Entity<Blog>()
-            //     .HasMany(e => e.Posts)
-            //     .WithOne(e => e.Blog)
-            //     .HasForeignKey(e => e.BlogId)
-            //     .IsRequired();
-
-            // modelBuilder.Entity<Day>()
-            //     .HasMany(d => d.FoodProducts)
-            //     .WithOne(e => e.Day)
-            //     .HasForeignKey(e => e.DayId)
-            //     .IsRequired();
 
             base.OnModelCreating(modelBuilder);
         }

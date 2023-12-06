@@ -244,7 +244,6 @@ ul input[type="checkbox"]:checked + label {
 
 .product-list li{
     display: table-row;
-    padding: 20px 40px;
     background-color: #EFEFEFEF;
 }
 
@@ -315,4 +314,9 @@ input{
     font-size: 20px;
     color: white;
     cursor: pointer;
+}
+
+.edit-and-delete-food{
+    display: flex;
+    flex-direction: row;
 }
