@@ -32,7 +32,7 @@ namespace BeeFat.Data
             {
                 entity.HasKey(f => f.Id);
                 entity.Property(f => f.Name).IsRequired().HasMaxLength(255);
-    
+
                 entity.OwnsOne(f => f.Macronutrient, macronutrient =>
                 {
                     macronutrient.Property(m => m.Proteins);
@@ -47,6 +47,12 @@ namespace BeeFat.Data
                 .WithOne()
                 .HasForeignKey<FoodProduct>(fp => fp.FoodId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Track>()
+                .HasMany<FoodProduct>(t => t.FoodProducts)
+                .WithOne(fp => fp.Track)
+                .HasForeignKey(fp => fp.TrackId)
+                .IsRequired();
 
             base.OnModelCreating(modelBuilder);
         }

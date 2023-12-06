@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
-[method: SetsRequiredMembers]
 public class Macronutrient : ValueType<Macronutrient>
 {
     public int Proteins { get; set; }
