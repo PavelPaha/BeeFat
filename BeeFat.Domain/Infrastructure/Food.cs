@@ -5,7 +5,7 @@ namespace BeeFat.Domain.Infrastructure;
 public class Food : Entity
 {
     [SetsRequiredMembers]
-    public Food(string name, int proteins, int fats, int carbohydrates,  int weight)
+    public Food(string name, int proteins, int fats, int carbohydrates, int calories, int weight)
     {
         Name = name;
         Fats = fats;
@@ -18,6 +18,8 @@ public class Food : Entity
     public required int Fats { get; set; }
     public required int Carbohydrates { get; set; }
     public required int Proteins { get; set; }
+    
+    public required int Calories { get; set; }
     public required int Weight { get; set; }
 
     public void EditFats(int fats)

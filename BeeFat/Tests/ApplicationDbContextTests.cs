@@ -75,23 +75,23 @@ public class ApplicationDbContextTests
     }
 
 
-    [Explicit]
-    [Test]
-    public void DeleteAllEntriesFromUsers()
-    {
-        using (var context = new ApplicationDbContext(_options, _configuration))
-        {
-            var users = context.Users.ToList();
-            context.Users.RemoveRange(users);
-            context.SaveChanges();
-        }
-    }
+    // [Explicit]
+    // [Test]
+    // public void DeleteAllEntriesFromUsers()
+    // {
+    //     using (var context = new ApplicationDbContext(_options, _configuration))
+    //     {
+    //         var users = context.BeeFatUsers.ToList();
+    //         context.BeeFatUsers.RemoveRange(users);
+    //         context.SaveChanges();
+    //     }
+    // }
 
 
     [Test]
     public void Food_ShouldAddFoodToDatabaseAndRemove()
     {
-        var food = new Food("Apple", 10, 20, 1, 150);
+        var food = new Food("Apple", 10, 20, 1, 150, 60);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.Foods.Add(food);
@@ -139,7 +139,7 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductPiece_ShouldAddFoodProductPieceToDatabaseAndRemove()
     {
-        var food = new Food("Chicken egg", 7, 1, 7, 60);
+        var food = new Food("Chicken egg", 7, 1, 7, 60, 60);
         var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
@@ -178,7 +178,7 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductGram_ShouldAddFoodProductGramToDatabaseAndRemove()
     {
-        var food = new Food("Water", 0, 0, 0, 1);
+        var food = new Food("Water", 0, 0, 0, 1, 100);
         var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {

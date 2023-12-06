@@ -9,6 +9,8 @@
 @using BeeFat.Domain.Infrastructure
 @using System.Globalization
 
+@inject NavigationManager NavigationManager
+
 
 @{
     var days = new Dictionary<int, string>()
@@ -30,50 +32,79 @@
     var options = new DbContextOptionsBuilder<ApplicationDbContext>()
         .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
         .Options;
+
+    var edit = "/edit";
 }
 
 <PageTitle>Home</PageTitle>
 
 <div class="container">
-    <!-- Левая колонка -->
     <div class="home-sidebar">
         <h2>Имя трека</h2>
+        <button @onclick="RedirectToTrackEditing">Редактировать трек</button>
         <ul>
-            <li><button>Редактировать трек</button></li>
+            @* <li><MudButton ButtonType="ButtonType.Button" OnClick="RedirectToTrackEditing" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Cancel</MudButton></li> *@
+            <li></li>
             <li><button>Изменить параметры тела</button></li>
             <li><button>Калибровка</button></li>
         </ul>
     </div>
-
-    <!-- Средняя колонка -->
+    
     <div class="main-content">
         <div class="daily-plan">
-             <ul class="daily-food-list product-list">
-                <h2>План питания на сегодня</h2>
-                 @{
-                    var today = DayOfWeek.Monday;
+            <h2>План питания на сегодня</h2>
+            <ul class="daily-food-list product-list">
+                <li>
+                    <div>Название продукта</div>
+                    <div>Масса</div>
+                    <div>Белки</div>
+                    <div>Жиры</div>
+                    <div>Углеводы</div>
+                    <div>Калории</div>
+                    <div>Выполнено</div>
+                </li>
+                @{
+                    var totalProteins = 0;
+                    var totalFats = 0;
+                    var totalCarbohydrates = 0;
+                    var totalCalories = 0;
+                    
+                    var today = DayOfWeek.Tuesday;
                     using (var context = new FakeApplicationDbContext())
                     {
                         var todayDailyPlan = context.FoodProducts.Where(p => p.DayOfWeek.Equals(today));
                         foreach (var product in todayDailyPlan)
                         {
+                            var foodFats = product.Food.Fats;
+                            var foodProteins = product.Food.Proteins;
+                            var foodCarbohydrates = product.Food.Carbohydrates;
+                            var foodCalories = product.Food.Calories;
+                            
+                            totalFats += product.Food.Fats;
+                            totalProteins += foodProteins;
+                            totalCarbohydrates += foodCarbohydrates;
+                            totalCalories += foodCalories;
+                            
                             <li>
-                                <input type="checkbox">
-                                <div class="product">
-                                    <span class="product-name">@product.Name</span>
-                                    <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "грамм" : "шт")</span>
-                                    @* @if (product is FoodProductGram) "грамм"; *@
-                                    @* else "шт";: *@
-                                </div>
+                                <div>@product.Name</div>
+                                <div><span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span></div>
+                                <div><span class="portion-size">@foodProteins г</span></div>
+                                <div><span class="portion-size">@foodFats г</span></div>
+                                <div><span class="portion-size">@foodCarbohydrates г</span></div>
+                                <div><span class="portion-size">@foodCalories ккал</span></div>
+                                <div><button type="button" class="checkbox-button">&#10003;</button></div>
                             </li>
                         }
                     }
                 }
             </ul>
+            <div class="total">
+                Итого: <span class="parameter">@totalProteins г</span> белков, <span class="parameter">@totalFats г</span> жиров, <span class="parameter">@totalCarbohydrates г</span> углеводов, <span class="parameter">@totalCalories</span> калорий.
+            </div>
         </div>
         <div class="next-days-plan product-list">
             <h3>План питания на следующие дни</h3>
-            <ul>
+            <ul class="product-list">
                 @{
                     using (var context = new FakeApplicationDbContext())
                     {
@@ -114,24 +145,31 @@
             </ul>
         </div>
     </div>
-
-    <!-- Правая колонка -->
+    
     <div class="home-sidebar">
         <div class="user-info">
             <img src="avatar.jpg">
             <span class="username">@{
-                using (var context = new ApplicationDbContext(options, configuration))
-                {
-                    var user = context.BeeFatUsers.FirstOrDefault();
-                    @user.UserName.ToString()
-                }
-            }</span>
+                                       using (var context = new ApplicationDbContext(options, configuration))
+                                       {
+                                           var user = context.BeeFatUsers.FirstOrDefault();
+                                           @user.UserName.ToString()
+                                       }
+                                   }</span>
         </div>
         <div class="parameters">
             <h3>Параметры</h3>
-            <p>Масса: <span>xxx кг</span></p>
-            <p>Рост: <span>xxx см</span></p>
-            <p>Желаемые калории: <span>xxx ккал</span></p>
+            <p>Масса: <span class="parameter">xxx кг</span></p>
+            <p>Рост: <span class="parameter">xxx см</span></p>
+            <p>Желаемые калории: <span class="parameter">xxx ккал</span></p>
         </div>
     </div>
 </div>
+
+@code {
+    public void RedirectToTrackEditing()
+    {
+        NavigationManager.NavigateTo("/edit", forceLoad: true);
+        throw new Exception();
+    }
+}

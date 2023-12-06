@@ -1,22 +1,21 @@
+using System.Data.Entity;
 using BeeFat.Domain.Infrastructure;
 
 namespace BeeFat.Data
 {
     public class FakeApplicationDbContext: IDisposable
     {
-        public List<ApplicationUser> BeeFatUsers { get; set; }
+        public IEnumerable<ApplicationUser> BeeFatUsers { get; set; }
 
         public List<FoodProduct> FoodProducts { get; set; }
         public FakeApplicationDbContext()
         {
-            var egg = new Food("Яйцо куриное", 15, 5, 10, 55);
-            var water = new Food("Вода питьевая", 0, 0, 0, 100);
-            var porridge = new Food("Каша овсяная", 10, 29, 3, 199);
-            var watermelon = new Food("Арбуз", 0, 0, 30, 1000);
-            var buckwheat = new Food("Греча", 3, 1, 10, 200);
+            var egg = new Food("Яйцо куриное", 15, 5, 10, 55, 100);
+            var water = new Food("Вода питьевая", 0, 0, 0, 100, 100);
+            var porridge = new Food("Каша овсяная", 10, 29, 3, 199, 101);
+            var watermelon = new Food("Арбуз", 0, 0, 30, 1000, 99);
+            var buckwheat = new Food("Греча", 3, 1, 10, 200, 98);
             
-            BeeFatUsers = new List<ApplicationUser>() { new ("Павел") };
-
             FoodProducts = new List<FoodProduct>()
             {
                 new FoodProductPiece(egg, 8, DayOfWeek.Monday, false),

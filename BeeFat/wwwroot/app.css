@@ -67,7 +67,7 @@ h1:focus {
 }
 
 .main-content {
-    flex: 2;
+    flex: 3;
     padding: 30px;
     background-color: #fff;
     border-radius: 5px;
@@ -212,7 +212,7 @@ ul input[type="checkbox"]:checked + label {
 
 /*Информация о пользователе*/
 
-.portion-size, .parameters p span {
+.portion-size, .parameter{
     color: #616f96;
     border-radius: 3px;
     background-color: #eee2dc;
@@ -234,24 +234,23 @@ ul input[type="checkbox"]:checked + label {
 
 .product-list {
     list-style: none;
-    padding: 0;
-    margin: 0;
-    align-items: center;
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 20px;
+    background-color: #F9F9F9FF;
+    border-radius: 10px;
 }
 
 .product-list li{
-    display: flex;
-    flex-grow: 2;
-    align-items: center;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    padding: 20px;
+    display: table-row;
+    padding: 20px 40px;
     background-color: #EFEFEFEF;
-    justify-content: space-between;
 }
 
 .product-list li div{
-    display: flex;
+    display: table-cell;
+    padding: 5px;
 }
 
 .action-button{
@@ -287,13 +286,33 @@ ul input[type="checkbox"]:checked + label {
 }
 
 .product{
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    margin-right: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    margin-right: 10px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    /*margin-right: 20px;*/
 }
 
 h2{
     font-size: 30px;
     margin: 10px;
+}
+
+input{
+    margin: 10px;
+    font-size: 20px;
+}
+
+.checkbox-button {
+    width: 30px;
+    height: 30px;
+    border-width: 0;
+    border-radius: 5px;
+    background-color: #a3b2be;
+    /*зеленый типа выполнено #8cb080*/
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
 }

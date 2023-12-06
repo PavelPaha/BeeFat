@@ -1,28 +1,29 @@
 using BeeFat.Domain.Infrastructure;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeeFat.Data
 {
-    public class ApplicationDbContext: IdentityDbContext
+    public class ApplicationDbContext : DbContext
     {
         public DbSet<ApplicationUser> BeeFatUsers { get; set; }
+
         public DbSet<Food> Foods { get; set; }
         // public DbSet<FoodProduct> FoodProducts { get; set; }
-        
+
         public DbSet<FoodProductGram> FoodProductsGrams { get; set; }
-        
+
         public DbSet<FoodProductPiece> FoodProductsPieces { get; set; }
-        
+
         // public DbSet<Day> Days { get; set; }
-        
+
         private IConfiguration _configuration;
-        
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) :
+            base(options)
         {
             _configuration = configuration;
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -41,7 +42,7 @@ namespace BeeFat.Data
                 .WithOne()
                 .HasForeignKey<FoodProduct>(fp => fp.FoodId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             // modelBuilder.Entity<Blog>()
             //     .HasMany(e => e.Posts)
             //     .WithOne(e => e.Blog)
