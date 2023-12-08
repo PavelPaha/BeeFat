@@ -12,13 +12,17 @@ public class FoodProductPiece : FoodProduct
     }
 
     [SetsRequiredMembers]
-    public FoodProductPiece(Food food, int piece, DayOfWeek dayOfWeek, bool isEaten) : base(food, dayOfWeek, isEaten)
+    public FoodProductPiece(Food food, int piece, DayOfWeek dayOfWeek, Track track, bool isEaten) : base(food, dayOfWeek, track, isEaten)
     {
         Pieces = piece;
         Name = Food.Name;
     }
 
-    public override int PortionSize => Pieces;
+    public override int PortionSize
+    {
+        get => Pieces;
+        set => Pieces = value;
+    }
 
     public override void ChangePortionSize(int newPortionSize)
     {

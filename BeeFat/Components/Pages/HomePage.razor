@@ -1,0 +1,177 @@
+﻿@page "/"
+
+@inherits LayoutComponentBase
+@using BeeFat.Domain.Infrastructure
+@using BeeFat.Helpers
+
+@inject NavigationManager NavigationManager
+@inject HomeHelper HomeHelper
+@rendermode InteractiveServer
+
+@using Blazorise
+
+<Modal @ref="modal" Title="Modal title" Class="popup_window">
+    <div>
+        @if (!(selectedFoodProduct is null))
+        {
+            <h2>@selectedFoodProduct.Name</h2>
+            @switch (selectedFoodProduct)
+            {
+                case FoodProductGram:
+                    <div>
+                        Запланированная масса - @selectedFoodProduct.PortionSize г
+                <InputNumber min="0" class="form-control" max="10" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="portionSize"/>
+                </div>
+                    break;
+                case FoodProductPiece:
+                    <div>
+                        Запланированное количество - @selectedFoodProduct.PortionSize штук
+                <InputNumber min="0" class="form-control" max="10" placeholder="Напишите количество съеденной еды" @bind-Value="portionSize"/>
+                </div>
+                    break;
+            }
+        }
+        
+        <Button Style="background-color: #c2cb88;" @onclick="Save">Сохранить</Button>
+    </div>
+</Modal>
+
+@{
+    var today = DayOfWeek.Monday;
+    var user = HomeHelper.Repo.GetUser();
+    var track = HomeHelper.Repo.GetTrackByUser(user);
+}
+
+@code {
+    private Modal modal = default!;
+    private FoodProduct selectedFoodProduct;
+    private int portionSize;
+    private Macronutrient totalMacronutrient;
+    
+    
+    private void ShowModalWindow(FoodProduct foodProduct)
+    {
+        selectedFoodProduct = foodProduct;
+        modal.Show();
+    }
+
+    private void Save()
+    {
+        modal.Close(CloseReason.UserClosing);
+        selectedFoodProduct.PortionSize = portionSize;
+        selectedFoodProduct.IsEaten = true;
+        HomeHelper.Repo.UpdatePortionSize(selectedFoodProduct);
+        HomeHelper.GetTotalMacronutrientsByDay(HomeHelper.Today);
+    }
+}
+
+@code{
+    public void RedirectToTrackEditing()
+    {
+        NavigationManager.NavigateTo("edit", forceLoad: true);
+    }
+}
+
+<PageTitle>Home</PageTitle>
+
+<div class="container">
+    <div class="home-sidebar">
+        <h2>@track.Name</h2>
+        <ul>
+            <li><button @onclick="RedirectToTrackEditing">Редактировать трек</button></li>
+            <li><button>Изменить параметры тела</button></li>
+            <li><button>Калибровка</button></li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <div class="daily-plan">
+            <h2>План питания на сегодня</h2>
+            <ul class="daily-food-list product-list">
+                <li>
+                    <div>Название продукта</div>
+                    <div>Масса</div>
+                    <div>Белки</div>
+                    <div>Жиры</div>
+                    <div>Углеводы</div>
+                    <div>Калории</div>
+                    <div>Выполнено</div>
+                </li>
+                @{
+                    foreach (var product in HomeHelper.GetProductsByDay(today))
+                    {
+                        var foodInfo = product.Food.Macronutrient*product.PortionCoeff;
+
+                        if (product.IsEaten)
+                        {
+                            
+                        }
+                        <li>
+                            <div>@product.Name</div>
+                            <div><span class="portion-size">@($"{product.PortionSize} {(product is FoodProductGram ? "г" : "шт")}")</span></div>
+                            <div><span class="portion-size">@foodInfo.Proteins г</span></div>
+                            <div><span class="portion-size">@foodInfo.Fats г</span></div>
+                            <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
+                            <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
+                            <button type="button" class="checkbox-button" @onclick="() => ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
+                        </li>
+                    }
+                }
+            </ul>
+            <div class="total">
+                @{ totalMacronutrient = HomeHelper.TodayMacronutrient; }
+                Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
+            </div>
+        </div>
+        <div class="next-days-plan product-list">
+            <h3>План питания на следующие дни</h3>
+            <ul class="product-list">
+                @{
+                    foreach (var products in HomeHelper.GetNextDaysProducts(today))
+                    {
+                        <li>
+                            <div class="product">
+                                <span class="product-name">
+                                    @{
+                                        @* <span>@HomeHelper.Days[dayNumber]: </span> *@
+                                        var takenProducts = products.Take(4).ToList();
+                                        for (var i = 0; i < takenProducts.Count; i++)
+                                        {
+                                            var product = takenProducts[i];
+                                            @product.Name;
+                                            if (i != takenProducts.Count - 1)
+                                            {
+                                                <span>, </span>
+                                            }
+                                        }
+
+                                        if (products.Count() > 4)
+                                        {
+                                            <span>...</span>
+                                        }
+                                    }
+                                </span>
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    
+   <div class="home-sidebar">
+           <div class="user">
+               <div class="user-info">
+                   <img src="avatar.jpg">
+                   <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+               </div>
+               <button class="action-button">Выйти</button>
+           </div>
+           <div class="parameters">
+               <h3>Параметры</h3>
+               <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+               <p>Рост: <span class="parameter">@user.Height см</span></p>
+               <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
+           </div>
+           </div>
+</div>

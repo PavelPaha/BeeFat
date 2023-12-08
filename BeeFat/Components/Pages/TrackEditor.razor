@@ -1,13 +1,23 @@
 @page "/edit"
 
 @using BeeFat.Domain.Infrastructure
+@using BeeFat.Helpers
 @inherits LayoutComponentBase
 
 @inject HomeHelper HomeHelper
 
+@inject NavigationManager NavigationManager
+
 <PageTitle>TrackEditor</PageTitle>
 
 <!DOCTYPE html>
+
+@{
+    var today = DayOfWeek.Monday;
+    var user = HomeHelper.Repo.GetUser();
+    var track = HomeHelper.Repo.GetTrackByUser(user);
+    // var today = DateTime.Today.DayOfWeek;
+}
 
 <div class="container">
     <div class="home-sidebar">
@@ -25,7 +35,7 @@
 
     <div class="main-content">
         <h2 class="track-header">
-            Заголовок трека
+            @track.Name
         </h2>
        <div class="daily-plan">
            <ul class="daily-food-list product-list">
@@ -36,9 +46,10 @@
                       <div>Жиры</div>
                       <div>Углеводы</div>
                       <div>Калории</div>
+                      <div>Действие</div>
                   </li>
                @{
-                   foreach (var product in HomeHelper.GetProductsByDay(DayOfWeek.Tuesday))
+                   foreach (var product in HomeHelper.GetProductsByDay(today))
                    {
                        var foodInfo = product.Food.Macronutrient;
                        <li>
@@ -63,7 +74,7 @@
         <div class="user">
             <div class="user-info">
                 <img src="avatar.jpg">
-                <span class="username">Пользователь</span>
+                <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
             </div>
             <button class="action-button">Выйти</button>
         </div>

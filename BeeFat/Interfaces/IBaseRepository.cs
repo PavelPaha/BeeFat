@@ -1,14 +1,19 @@
+using BeeFat.Data;
+using BeeFat.Domain.Infrastructure;
+
 namespace BeeFat.Interfaces;
 
-public interface IBaseRepository<T>
+public interface IBaseRepository
 {
-    bool Create(T entity);
+    ICollection<ApplicationUser> BeeFatUsers { get; }
+    
+    ICollection<Food> Foods { get; }
+    
+    ICollection<FoodProduct> FoodProducts { get; }
+    
+    ApplicationUser GetUser(Guid id=new());
 
-    T Get(Guid id);
+    void UpdatePortionSize(FoodProduct fp);
 
-    IEnumerable<T> Where(Func<T, bool> selector);
-
-    bool Delete(T entity);
-
-    void Save();
+    public Track GetTrackByUser(ApplicationUser user);
 }

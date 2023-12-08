@@ -320,3 +320,23 @@ input{
     display: flex;
     flex-direction: row;
 }
+
+.popup_window{
+    position: fixed; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background-color: white; 
+    border-radius: 10px; 
+    padding: 20px;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    max-height: 300px;
+}
+
+.checkbox-button[disabled] {
+    background-color: green;
+}

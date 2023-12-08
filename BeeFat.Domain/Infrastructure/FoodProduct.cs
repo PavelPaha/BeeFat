@@ -17,17 +17,21 @@ public abstract class FoodProduct : Entity
 
     public bool IsEaten { get; set; }
 
-    public abstract int PortionSize { get; }
+    public abstract int PortionSize { get; set; }
+
+    public double PortionCoeff => (double)PortionSize / 100;
 
     [SetsRequiredMembers]
     protected FoodProduct() { }
 
     [SetsRequiredMembers]
-    protected FoodProduct(Food food, DayOfWeek dayOfWeek, bool isEaten)
+    protected FoodProduct(Food food, DayOfWeek dayOfWeek, Track track, bool isEaten)
     {
         Food = food;
-        FoodId = Food.Id;
+        FoodId = food.Id;
         DayOfWeek = dayOfWeek;
+        Track = track;
+        TrackId = track.Id;
         IsEaten = isEaten;
     }
 

@@ -1,9 +1,10 @@
 using BeeFat.Data;
+using BeeFat.Domain;
 using BeeFat.Domain.Infrastructure;
-using BeeFat.Domain.Models.User;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using PersonName = BeeFat.Domain.Models.User.PersonName;
 
 namespace BeeFat.Tests;
 
@@ -44,7 +45,11 @@ public class ApplicationDbContextTests
             {
                 FirstName = "Кирилл",
                 LastName = "Сарычев"
-            }
+            },
+            Age = 33,
+            Height = 195,
+            Weight = 140,
+            RightCalories = 3000
         };
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
@@ -59,7 +64,10 @@ public class ApplicationDbContextTests
             createdUser.Should().Match<ApplicationUser>(user =>
                 user.UserName == "testuser" &&
                 user.PersonName.FirstName == "Кирилл" &&
-                user.PersonName.LastName == "Сарычев"
+                user.PersonName.LastName == "Сарычев" &&
+                user.Age == 33 &&
+                user.Height == 195 &&
+                user.Weight == 140
             );
         }
 
@@ -131,8 +139,11 @@ public class ApplicationDbContextTests
     {
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            var foods = context.Foods.ToList();
-            context.Foods.RemoveRange(foods);
+            var foods = context.Foods;
+            foreach (var food in foods)
+            {
+                context.Foods.Remove(food);
+            }
             context.SaveChanges();
         }
     }
@@ -141,9 +152,14 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductPiece_ShouldAddFoodProductPieceToDatabaseAndRemove()
     {
+        Track track;
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            track = context.Tracks.FirstOrDefault();
+        }
         var foodMacronutrient = new Macronutrient(7, 1, 7, 60);
         var food = new Food("Chicken egg",  foodMacronutrient,60);
-        var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, false);
+        var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, track, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.FoodProductsPieces.Add(foodProduct);
@@ -182,9 +198,15 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductGram_ShouldAddFoodProductGramToDatabaseAndRemove()
     {
+        Track track;
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            track = context.Tracks.FirstOrDefault();
+        }
         var foodMacronutrient = new Macronutrient(0, 0, 0, 1);
         var food = new Food("Water", foodMacronutrient,100);
-        var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, false);
+        track.Should().NotBeNull();
+        var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, track, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.FoodProductsGrams.Add(foodProduct);
@@ -232,6 +254,47 @@ public class ApplicationDbContextTests
             
             var foodProductsGrams = context.FoodProductsGrams.ToList();
             context.FoodProductsGrams.RemoveRange(foodProductsGrams);
+            context.SaveChanges();
+        }
+    }
+
+    [Explicit]
+    [Test]
+    public void AddDataToFoodProductTable()
+    {
+        var track = new Track("DefaultTrack", "Some description");
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.Tracks.Add(track);
+            context.SaveChanges();
+        }
+
+        var chickenBreastMacronutrients = new Macronutrient(2, 0, 26, 165);
+        var chickenBreast = new Food("Куриная грудка", chickenBreastMacronutrients, 100);
+
+        var riceMacronutrients = new Macronutrient(2, 29, 0, 130);
+        var rice = new Food("Рис", riceMacronutrients, 100);
+
+        var saladMacronutrients = new Macronutrient(1, 3, 0, 15);
+        var salad = new Food("Салат", saladMacronutrients, 100);
+
+        var salmonMacronutrients = new Macronutrient(13, 0, 20, 206);
+        var salmon = new Food("Лосось", salmonMacronutrients, 100);
+
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.Foods.AddRange(new List<Food>() { chickenBreast, rice, salad, salmon });
+            context.SaveChanges();
+        }
+        
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.FoodProductsGrams.Add(new FoodProductGram(chickenBreast, 200, DayOfWeek.Wednesday, track,false));
+            context.FoodProductsGrams.Add(new FoodProductGram(rice, 150, DayOfWeek.Wednesday, track, false));
+            context.FoodProductsPieces.Add(new FoodProductPiece(salad, 1, DayOfWeek.Thursday, track, false));
+            context.FoodProductsGrams.Add(new FoodProductGram(chickenBreast, 150, DayOfWeek.Thursday, track, false));
+            context.FoodProductsGrams.Add(new FoodProductGram(rice, 100, DayOfWeek.Thursday, track, false));
+            context.FoodProductsGrams.Add(new FoodProductGram(salmon, 170, DayOfWeek.Sunday, track, false));
             context.SaveChanges();
         }
     }

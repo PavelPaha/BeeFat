@@ -9,7 +9,12 @@ public class Macronutrient : ValueType<Macronutrient>
     public int Carbohydrates { get; set; }
     public int Calories { get; set; }
 
-    public Macronutrient() { }
+    public Macronutrient() { 
+        Proteins = 0;
+        Fats = 0;
+        Carbohydrates = 0;
+        Calories = 0;
+    }
 
     public Macronutrient(int proteins, int fats, int carbohydrates, int calories)
     {
@@ -27,6 +32,24 @@ public class Macronutrient : ValueType<Macronutrient>
         var summedCalories = macronutrients1.Calories + macronutrients2.Calories;
 
         return new Macronutrient(summedProteins, summedFats, summedCarbohydrates, summedCalories);
+    }
+    
+    public static Macronutrient operator *(Macronutrient macronutrient, double multiplier)
+    {
+        var multipliedProteins = (int)(macronutrient.Proteins * multiplier);
+        var multipliedFats = (int)(macronutrient.Fats * multiplier);
+        var multipliedCarbohydrates = (int)(macronutrient.Carbohydrates * multiplier);
+        var multipliedCalories = (int)(macronutrient.Calories * multiplier);
+
+        return new Macronutrient(multipliedProteins, multipliedFats, multipliedCarbohydrates, multipliedCalories);
+    }
+    
+    public void CopyMacronutrients(Macronutrient other)
+    {
+        Proteins = other.Proteins;
+        Fats = other.Fats;
+        Carbohydrates = other.Carbohydrates;
+        Calories = other.Calories;
     }
     
     public void EditFats(int fats)

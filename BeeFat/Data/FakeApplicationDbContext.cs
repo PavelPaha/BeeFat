@@ -10,6 +10,7 @@ namespace BeeFat.Data
         public List<FoodProduct> FoodProducts { get; set; }
         public FakeApplicationDbContext()
         {
+            var track = new Track("FakeTrack", "Some fake description");
             var eggMacronutrients = new Macronutrient(5, 10, 55, 100);
             var egg = new Food("Яйцо куриное", eggMacronutrients,  100);
             
@@ -26,16 +27,16 @@ namespace BeeFat.Data
             
             FoodProducts = new List<FoodProduct>()
             {
-                new FoodProductPiece(egg, 8, DayOfWeek.Monday, false),
-                new FoodProductGram(water, 3000, DayOfWeek.Monday, false),
-                new FoodProductGram(porridge, 400, DayOfWeek.Monday, false),
+                new FoodProductPiece(egg, 8, DayOfWeek.Monday, track, false),
+                new FoodProductGram(water, 3000, DayOfWeek.Monday, track, false),
+                new FoodProductGram(porridge, 400, DayOfWeek.Monday, track, false),
                 
                 
-                new FoodProductGram(water, 300, DayOfWeek.Tuesday, false),
-                new FoodProductGram(watermelon, 200, DayOfWeek.Tuesday, false),
-                new FoodProductGram(buckwheat, 500, DayOfWeek.Tuesday, false),
+                new FoodProductGram(water, 300, DayOfWeek.Tuesday, track, false),
+                new FoodProductGram(watermelon, 200, DayOfWeek.Tuesday, track, false),
+                new FoodProductGram(buckwheat, 500, DayOfWeek.Tuesday, track, false),
                 
-                new FoodProductGram(buckwheat, 400, DayOfWeek.Wednesday, false)
+                new FoodProductGram(buckwheat, 400, DayOfWeek.Wednesday, track, false)
             };
         }
 

@@ -3,6 +3,7 @@ using System;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BeeFat.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231207105928_EntityFoodProducts")]
+    partial class EntityFoodProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,9 +33,6 @@ namespace BeeFat.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Age")
-                        .HasColumnType("integer");
-
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
 
@@ -41,9 +41,6 @@ namespace BeeFat.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -66,14 +63,8 @@ namespace BeeFat.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("RightCalories")
-                        .HasColumnType("integer");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
-
-                    b.Property<Guid>("TrackId")
-                        .HasColumnType("uuid");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -81,12 +72,7 @@ namespace BeeFat.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("text");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TrackId");
 
                     b.ToTable("BeeFatUsers");
                 });
@@ -133,9 +119,6 @@ namespace BeeFat.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("PortionSize")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("TrackId")
                         .HasColumnType("uuid");
@@ -195,12 +178,6 @@ namespace BeeFat.Migrations
 
             modelBuilder.Entity("BeeFat.Data.ApplicationUser", b =>
                 {
-                    b.HasOne("BeeFat.Domain.Infrastructure.Track", "Track")
-                        .WithMany()
-                        .HasForeignKey("TrackId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("BeeFat.Domain.Models.User.PersonName", "PersonName", b1 =>
                         {
                             b1.Property<string>("ApplicationUserId")
@@ -224,8 +201,6 @@ namespace BeeFat.Migrations
 
                     b.Navigation("PersonName")
                         .IsRequired();
-
-                    b.Navigation("Track");
                 });
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.Food", b =>

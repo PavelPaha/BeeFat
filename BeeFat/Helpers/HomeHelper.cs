@@ -1,8 +1,8 @@
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using BeeFat.Interfaces;
 
-namespace BeeFat.Components.Pages;
+namespace BeeFat.Helpers;
 
 public class HomeHelper
 {
@@ -17,23 +17,23 @@ public class HomeHelper
         { 0, "Воскресенье" }
     };
 
-
-    public IConfiguration Configuration { get; }
-
-    public DbContextOptions<ApplicationDbContext> Options { get; }
-
-    public HomeHelper(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
+    public HomeHelper(IBaseRepository repo)
     {
-        Configuration = configuration;
-        Options = options;
+        Repo = repo;
+        GetTotalMacronutrientsByDay(Today);
     }
+
+    public IBaseRepository Repo { get; set; }
+
+    public DayOfWeek Today = DayOfWeek.Monday;
+
+    public Macronutrient TodayMacronutrient = new Macronutrient();
 
     public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
     {
         var totalMacronutrients = new Macronutrient();
-        using var context = new FakeApplicationDbContext();
-        
-        var todayDailyPlan = context.FoodProducts.Where(p => p.DayOfWeek.Equals(dayOfWeek));
+        var todayDailyPlan = Repo.FoodProducts
+            .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
         foreach (var product in todayDailyPlan)
         {
             totalMacronutrients += product.Food.Macronutrient;
@@ -43,13 +43,18 @@ public class HomeHelper
 
     public Macronutrient GetTotalMacronutrientsByDay(DayOfWeek dayOfWeek)
     {
-        using var context = new FakeApplicationDbContext();
-        var productMacronutrients = context.FoodProducts
-            .Where(p => p.DayOfWeek.Equals(dayOfWeek))
-            .Select(p => p.Food.Macronutrient);
-
+        var products = Repo.FoodProducts
+            .Where(p => p.DayOfWeek.Equals(dayOfWeek)).ToList();
+        
+        var products1 = products
+            .Select(p => new { Macronutrient = p.Food.Macronutrient, PortionSize = p.PortionCoeff});
         var totalMacronutrients = new Macronutrient();
-        return productMacronutrients.Aggregate(totalMacronutrients, (current, macronutrient) => current + macronutrient);
+        foreach (var product in products1)
+        {
+            totalMacronutrients += product.Macronutrient * product.PortionSize; 
+        }
+        TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
+        return TodayMacronutrient;
     }
 
     public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysProducts(DayOfWeek start)
