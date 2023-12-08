@@ -1,6 +1,7 @@
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Interfaces;
+using Blazorise;
 
 namespace BeeFat.Helpers;
 
@@ -17,17 +18,34 @@ public class HomeHelper
         { 0, "Воскресенье" }
     };
 
+    public Modal Modal = default!;
+    public FoodProduct SelectedFoodProduct;
+    public int PortionSize;
+    public DayOfWeek Today = DayOfWeek.Monday;
+    public Macronutrient TodayMacronutrient;
+    public IBaseRepository Repo { get; set; }
+    
+    public void ShowModalWindow(FoodProduct foodProduct)
+    {
+        SelectedFoodProduct = foodProduct;
+        Modal.Show();
+    }
+    
+    public void SaveFoodProductWithChangedPortionSize()
+    {
+        Modal.Close(CloseReason.UserClosing);
+        SelectedFoodProduct.PortionSize = PortionSize;
+        SelectedFoodProduct.IsEaten = true;
+        Repo.UpdatePortionSize(SelectedFoodProduct);
+        GetTotalMacronutrientsByDay(Today);
+    }
+    
     public HomeHelper(IBaseRepository repo)
     {
         Repo = repo;
+        TodayMacronutrient = new Macronutrient();
         GetTotalMacronutrientsByDay(Today);
     }
-
-    public IBaseRepository Repo { get; set; }
-
-    public DayOfWeek Today = DayOfWeek.Monday;
-
-    public Macronutrient TodayMacronutrient = new Macronutrient();
 
     public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
     {

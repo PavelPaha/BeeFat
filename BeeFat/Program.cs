@@ -1,5 +1,4 @@
 using BeeFat.Components;
-using BeeFat.Components.Pages;
 using BeeFat.Data;
 using BeeFat.Helpers;
 using BeeFat.Interfaces;
@@ -7,9 +6,7 @@ using BeeFat.Repositories;
 using Blazorise;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Blazorise;
 using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +22,9 @@ builder.Services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3
 
 
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddSingleton<IBaseRepository, FakeBeeFatRepository>();
 builder.Services.AddScoped<HomeHelper>();
-builder.Services.AddScoped<IBaseRepository, FakeBeeFatRepository>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -5,34 +5,36 @@
 @using BeeFat.Helpers
 
 @inject NavigationManager NavigationManager
-@inject HomeHelper HomeHelper
+@inject HomeHelper HomeHelper;
 @rendermode InteractiveServer
 
 @using Blazorise
+@using Modal = Blazorise.Bootstrap.Modal
 
-<Modal @ref="modal" Title="Modal title" Class="popup_window">
+<Modal @ref="HomeHelper.Modal" Title="Modal title" Class="popup_window">
     <div>
-        @if (!(selectedFoodProduct is null))
+
+        @if (!(HomeHelper.SelectedFoodProduct is null))
         {
-            <h2>@selectedFoodProduct.Name</h2>
-            @switch (selectedFoodProduct)
+            <h2>@HomeHelper.SelectedFoodProduct.Name</h2>
+            @switch (HomeHelper.SelectedFoodProduct)
             {
                 case FoodProductGram:
                     <div>
-                        Запланированная масса - @selectedFoodProduct.PortionSize г
-                <InputNumber min="0" class="form-control" max="10" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="portionSize"/>
-                </div>
+                        Запланированная масса - @HomeHelper.SelectedFoodProduct.PortionSize г
+                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="HomeHelper.PortionSize"/>
+                    </div>
                     break;
                 case FoodProductPiece:
                     <div>
-                        Запланированное количество - @selectedFoodProduct.PortionSize штук
-                <InputNumber min="0" class="form-control" max="10" placeholder="Напишите количество съеденной еды" @bind-Value="portionSize"/>
-                </div>
+                        Запланированное количество - @HomeHelper.SelectedFoodProduct.PortionSize штук
+                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
+                    </div>
                     break;
             }
         }
-        
-        <Button Style="background-color: #c2cb88;" @onclick="Save">Сохранить</Button>
+
+        <Button Style="background-color: #c2cb88;" @onclick="HomeHelper.SaveFoodProductWithChangedPortionSize">Сохранить</Button>
     </div>
 </Modal>
 
@@ -42,28 +44,6 @@
     var track = HomeHelper.Repo.GetTrackByUser(user);
 }
 
-@code {
-    private Modal modal = default!;
-    private FoodProduct selectedFoodProduct;
-    private int portionSize;
-    private Macronutrient totalMacronutrient;
-    
-    
-    private void ShowModalWindow(FoodProduct foodProduct)
-    {
-        selectedFoodProduct = foodProduct;
-        modal.Show();
-    }
-
-    private void Save()
-    {
-        modal.Close(CloseReason.UserClosing);
-        selectedFoodProduct.PortionSize = portionSize;
-        selectedFoodProduct.IsEaten = true;
-        HomeHelper.Repo.UpdatePortionSize(selectedFoodProduct);
-        HomeHelper.GetTotalMacronutrientsByDay(HomeHelper.Today);
-    }
-}
 
 @code{
     public void RedirectToTrackEditing()
@@ -113,13 +93,13 @@
                             <div><span class="portion-size">@foodInfo.Fats г</span></div>
                             <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
                             <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
-                            <button type="button" class="checkbox-button" @onclick="() => ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
+                            <button type="button" class="checkbox-button" @onclick="() => HomeHelper.ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
                         </li>
                     }
                 }
             </ul>
             <div class="total">
-                @{ totalMacronutrient = HomeHelper.TodayMacronutrient; }
+                @{ var totalMacronutrient = HomeHelper.TodayMacronutrient; }
                 Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
             </div>
         </div>

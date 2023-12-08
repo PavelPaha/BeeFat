@@ -1,8 +1,6 @@
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
-using BeeFat.Domain.Models.User;
 using BeeFat.Interfaces;
-using BeeFat.Migrations;
 
 namespace BeeFat.Repositories;
 

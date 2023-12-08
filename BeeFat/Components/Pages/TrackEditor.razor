@@ -2,9 +2,10 @@
 
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Helpers
+@using BeeFat.Interfaces
 @inherits LayoutComponentBase
 
-@inject HomeHelper HomeHelper
+@inject IBaseRepository Repository;
 
 @inject NavigationManager NavigationManager
 
@@ -13,6 +14,7 @@
 <!DOCTYPE html>
 
 @{
+    var HomeHelper = new HomeHelper(Repository);
     var today = DayOfWeek.Monday;
     var user = HomeHelper.Repo.GetUser();
     var track = HomeHelper.Repo.GetTrackByUser(user);
