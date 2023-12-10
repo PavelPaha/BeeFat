@@ -18,7 +18,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddBlazorise();
 builder.Services.AddBootstrapProviders();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 
 builder.Services.AddCascadingAuthenticationState();

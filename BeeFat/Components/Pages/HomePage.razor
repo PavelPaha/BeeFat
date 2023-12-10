@@ -46,10 +46,12 @@
 
 
 @code{
+
     public void RedirectToTrackEditing()
     {
         NavigationManager.NavigateTo("edit", forceLoad: true);
     }
+
 }
 
 <PageTitle>Home</PageTitle>
@@ -58,12 +60,18 @@
     <div class="home-sidebar">
         <h2>@track.Name</h2>
         <ul>
-            <li><button @onclick="RedirectToTrackEditing">Редактировать трек</button></li>
-            <li><button>Изменить параметры тела</button></li>
-            <li><button>Калибровка</button></li>
+            <li>
+                <button @onclick="RedirectToTrackEditing">Редактировать трек</button>
+            </li>
+            <li>
+                <button>Изменить параметры тела</button>
+            </li>
+            <li>
+                <button>Калибровка</button>
+            </li>
         </ul>
     </div>
-    
+
     <div class="main-content">
         <div class="daily-plan">
             <h2>План питания на сегодня</h2>
@@ -80,19 +88,27 @@
                 @{
                     foreach (var product in HomeHelper.GetProductsByDay(today))
                     {
-                        var foodInfo = product.Food.Macronutrient*product.PortionCoeff;
+                        var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
 
-                        if (product.IsEaten)
-                        {
-                            
-                        }
+                        if (product.IsEaten) { }
+
                         <li>
                             <div>@product.Name</div>
-                            <div><span class="portion-size">@($"{product.PortionSize} {(product is FoodProductGram ? "г" : "шт")}")</span></div>
-                            <div><span class="portion-size">@foodInfo.Proteins г</span></div>
-                            <div><span class="portion-size">@foodInfo.Fats г</span></div>
-                            <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
-                            <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
+                            <div>
+                                <span class="portion-size">@($"{product.PortionSize} {(product is FoodProductGram ? "г" : "шт")}")</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Proteins г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Fats г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Carbohydrates г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Calories ккал</span>
+                            </div>
                             <button type="button" class="checkbox-button" @onclick="() => HomeHelper.ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
                         </li>
                     }
@@ -118,7 +134,8 @@
                                         for (var i = 0; i < takenProducts.Count; i++)
                                         {
                                             var product = takenProducts[i];
-                                            @product.Name;
+                                            @product.Name
+                                            ;
                                             if (i != takenProducts.Count - 1)
                                             {
                                                 <span>, </span>
@@ -138,20 +155,20 @@
             </ul>
         </div>
     </div>
-    
-   <div class="home-sidebar">
-           <div class="user">
-               <div class="user-info">
-                   <img src="avatar.jpg">
-                   <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
-               </div>
-               <button class="action-button">Выйти</button>
-           </div>
-           <div class="parameters">
-               <h3>Параметры</h3>
-               <p>Масса: <span class="parameter">@user.Weight кг</span></p>
-               <p>Рост: <span class="parameter">@user.Height см</span></p>
-               <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
-           </div>
-           </div>
+
+    <div class="home-sidebar">
+        <div class="user">
+            <div class="user-info">
+                <img src="avatar.jpg">
+                <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+            </div>
+            <button class="action-button">Выйти</button>
+        </div>
+        <div class="parameters">
+            <h3>Параметры</h3>
+            <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+            <p>Рост: <span class="parameter">@user.Height см</span></p>
+            <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
+        </div>
+    </div>
 </div>
