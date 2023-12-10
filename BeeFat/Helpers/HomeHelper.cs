@@ -24,13 +24,13 @@ public class HomeHelper
     public DayOfWeek Today = DayOfWeek.Monday;
     public Macronutrient TodayMacronutrient;
     public IBaseRepository Repo { get; set; }
-    
+
     public void ShowModalWindow(FoodProduct foodProduct)
     {
         SelectedFoodProduct = foodProduct;
         Modal.Show();
     }
-    
+
     public void SaveFoodProductWithChangedPortionSize()
     {
         Modal.Close(CloseReason.UserClosing);
@@ -39,7 +39,7 @@ public class HomeHelper
         Repo.UpdatePortionSize(SelectedFoodProduct);
         GetTotalMacronutrientsByDay(Today);
     }
-    
+
     public HomeHelper(IBaseRepository repo)
     {
         Repo = repo;
@@ -63,14 +63,15 @@ public class HomeHelper
     {
         var products = Repo.FoodProducts
             .Where(p => p.DayOfWeek.Equals(dayOfWeek)).ToList();
-        
+
         var products1 = products
-            .Select(p => new { Macronutrient = p.Food.Macronutrient, PortionSize = p.PortionCoeff});
+            .Select(p => new { Macronutrient = p.Food.Macronutrient, PortionSize = p.PortionCoeff });
         var totalMacronutrients = new Macronutrient();
         foreach (var product in products1)
         {
-            totalMacronutrients += product.Macronutrient * product.PortionSize; 
+            totalMacronutrients += product.Macronutrient * product.PortionSize;
         }
+
         TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
         return TodayMacronutrient;
     }

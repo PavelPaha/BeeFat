@@ -1,0 +1,56 @@
+﻿@page "/profile"
+
+<h1>Профиль пользователя</h1>
+
+<div>
+   <label for="firstName">Имя:</label>
+   <input type="text" id="firstName" @bind="Model.FirstName" />
+</div>
+
+<div>
+   <label for="lastName">Фамилия:</label>
+   <input type="text" id="lastName" @bind="Model.LastName" />
+</div>
+
+<div>
+   <label for="weight">Масса (в кг):</label>
+   <input type="number" id="weight" @bind="Model.Weight" />
+</div>
+
+<div>
+   <label for="height">Рост (в см):</label>
+   <input type="number" id="height" @bind="Model.Height" />
+</div>
+
+<div>
+   <label for="desiredCalories">Желаемое количество калорий:</label>
+   <input type="number" id="desiredCalories" @bind="Model.DesiredCalories" />
+</div>
+
+<button @onclick="SaveProfile">Сохранить</button>
+
+@code {
+   public class ProfileModel
+   {
+      public string FirstName { get; set; }
+      public string LastName { get; set; }
+      public int Weight { get; set; }
+      public int Height { get; set; }
+      public int DesiredCalories { get; set; }
+   }
+
+   public ProfileModel Model { get; set; } = new ProfileModel()
+   {
+      FirstName = "John",
+      LastName = "Doe",
+      Weight = 70,
+      Height = 180,
+      DesiredCalories = 2000
+   };
+
+   public void SaveProfile()
+   {
+      // Ваш код для сохранения профиля
+      // ...
+   }
+}

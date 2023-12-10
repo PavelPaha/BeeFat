@@ -42,14 +42,16 @@
     var today = DayOfWeek.Monday;
     var user = HomeHelper.Repo.GetUser();
     var track = HomeHelper.Repo.GetTrackByUser(user);
+    var redirectToTrackEditing = () => RedirectTo("edit");
+    var redirectToUserProfile = () => RedirectTo("profile");
 }
 
 
 @code{
 
-    public void RedirectToTrackEditing()
+    public void RedirectTo(string url)
     {
-        NavigationManager.NavigateTo("edit", forceLoad: true);
+        NavigationManager.NavigateTo(url, forceLoad: true);
     }
 
 }
@@ -61,13 +63,10 @@
         <h2>@track.Name</h2>
         <ul>
             <li>
-                <button @onclick="RedirectToTrackEditing">Редактировать трек</button>
+                <button @onclick="redirectToTrackEditing">Редактировать трек</button>
             </li>
             <li>
-                <button>Изменить параметры тела</button>
-            </li>
-            <li>
-                <button>Калибровка</button>
+                <button @onclick="redirectToUserProfile">Изменить параметры тела</button>
             </li>
         </ul>
     </div>
