@@ -1,5 +1,4 @@
 using BeeFat.Data;
-using BeeFat.Domain;
 using BeeFat.Domain.Infrastructure;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +13,7 @@ public class ApplicationDbContextTests
 {
     private IConfiguration _configuration;
     private DbContextOptions<ApplicationDbContext> _options;
+    private Track _testTrack;
 
     private DbContextOptions<ApplicationDbContext> GetOptions()
     {
@@ -32,20 +32,26 @@ public class ApplicationDbContextTests
 
         _configuration = configuration;
         _options = GetOptions();
+
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            _testTrack = new Track("DefaultTrack", "Some description");
+            context.Tracks.Add(_testTrack);
+            context.SaveChanges();
+        }
     }
 
 
     [Test]
     public void User_ShouldAddUserToDatabaseAndRemove()
     {
-        var user = new ApplicationUser()
+        var user = new ApplicationUser(new PersonName
         {
-            UserName = "testuser",
-            PersonName = new PersonName
-            {
-                FirstName = "Кирилл",
-                LastName = "Сарычев"
-            },
+            FirstName = "Кирилл",
+            LastName = "Сарычев"
+        },
+            _testTrack.Id)
+        {
             Age = 33,
             Height = 195,
             Weight = 140,
@@ -62,7 +68,6 @@ public class ApplicationDbContextTests
             var createdUser = context.BeeFatUsers.FirstOrDefault(u => u.Id == user.Id);
             createdUser.Should().NotBeNull();
             createdUser.Should().Match<ApplicationUser>(user =>
-                user.UserName == "testuser" &&
                 user.PersonName.FirstName == "Кирилл" &&
                 user.PersonName.LastName == "Сарычев" &&
                 user.Age == 33 &&
@@ -152,14 +157,9 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductPiece_ShouldAddFoodProductPieceToDatabaseAndRemove()
     {
-        Track track;
-        using (var context = new ApplicationDbContext(_options, _configuration))
-        {
-            track = context.Tracks.FirstOrDefault();
-        }
         var foodMacronutrient = new Macronutrient(7, 1, 7, 60);
         var food = new Food("Chicken egg",  foodMacronutrient,60);
-        var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, track, false);
+        var foodProduct = new FoodProductPiece(food, 5, DayOfWeek.Monday, _testTrack.Id, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.FoodProductsPieces.Add(foodProduct);
@@ -198,15 +198,9 @@ public class ApplicationDbContextTests
     [Test]
     public void FoodProductGram_ShouldAddFoodProductGramToDatabaseAndRemove()
     {
-        Track track;
-        using (var context = new ApplicationDbContext(_options, _configuration))
-        {
-            track = context.Tracks.FirstOrDefault();
-        }
         var foodMacronutrient = new Macronutrient(0, 0, 0, 1);
         var food = new Food("Water", foodMacronutrient,100);
-        track.Should().NotBeNull();
-        var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, track, false);
+        var foodProduct = new FoodProductGram(food, 2000, DayOfWeek.Monday, _testTrack.Id, false);
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
             context.FoodProductsGrams.Add(foodProduct);

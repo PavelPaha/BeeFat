@@ -26,15 +26,20 @@ public abstract class FoodProduct : Entity
 
     [SetsRequiredMembers]
     protected FoodProduct(Food food, DayOfWeek dayOfWeek, Track track, bool isEaten)
+        : this(food, dayOfWeek, track.Id, isEaten)
+    {
+        Track = track;
+    }
+
+    [SetsRequiredMembers]
+    protected FoodProduct(Food food, DayOfWeek dayOfWeek, Guid trackId, bool isEaten)
     {
         Food = food;
         FoodId = food.Id;
         DayOfWeek = dayOfWeek;
-        Track = track;
-        TrackId = track.Id;
+        TrackId = trackId;
         IsEaten = isEaten;
     }
-
     public abstract void ChangePortionSize(int newPortionSize);
 
     protected virtual void EnsurePortionSize(int portionSize)

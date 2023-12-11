@@ -12,12 +12,14 @@ public class FakeBeeFatRepository: IBaseRepository
     
     private Track FakeTrack;
     private ApplicationUser FakeUser;
+    private IEnumerable<Track> FakeTracks;
 
     public FakeBeeFatRepository()
     {
-        FakeTrack = FakeData.FakeTrack;
         FakeUser = FakeData.OlegRasin;
+        FakeTrack = FakeUser.Track;
         FoodProducts = FakeData.FoodProducts;
+        FakeTracks = FakeData.FakeTracks;
     }
 
     public ApplicationUser GetUser(Guid id=new())
@@ -28,6 +30,16 @@ public class FakeBeeFatRepository: IBaseRepository
     public Track GetTrackByUser(ApplicationUser user)
     {
         return FakeTrack;
+    }
+
+    public IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition)
+    {
+        return FakeTracks.Where(condition);
+    }
+
+    public void UpdateUserInfo(ApplicationUser user)
+    {
+        FakeUser.CloneFrom(user);
     }
 
     public void UpdatePortionSize(FoodProduct updatedFp)

@@ -9,7 +9,6 @@
 @rendermode InteractiveServer
 
 @using Blazorise
-@using Modal = Blazorise.Bootstrap.Modal
 
 <Modal @ref="HomeHelper.Modal" Title="Modal title" Class="popup_window">
     <div>
@@ -41,7 +40,7 @@
 @{
     var today = DayOfWeek.Monday;
     var user = HomeHelper.Repo.GetUser();
-    var track = HomeHelper.Repo.GetTrackByUser(user);
+    var track = user.Track;
     var redirectToTrackEditing = () => RedirectTo("edit");
     var redirectToUserProfile = () => RedirectTo("profile");
 }
@@ -89,8 +88,10 @@
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
 
-                        if (product.IsEaten) { }
-
+                        if (product.IsEaten)
+                        {
+                            
+                        }
                         <li>
                             <div>@product.Name</div>
                             <div>
@@ -109,6 +110,10 @@
                                 <span class="portion-size">@foodInfo.Calories ккал</span>
                             </div>
                             <button type="button" class="checkbox-button" @onclick="() => HomeHelper.ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
+                            @if (product.IsEaten)
+                            {
+                                <button type="button" class="checkbox-button" @onclick="() => product.IsEaten = false">&times;</button>
+                            }
                         </li>
                     }
                 }
@@ -133,8 +138,7 @@
                                         for (var i = 0; i < takenProducts.Count; i++)
                                         {
                                             var product = takenProducts[i];
-                                            @product.Name
-                                            ;
+                                            @product.Name;
                                             if (i != takenProducts.Count - 1)
                                             {
                                                 <span>, </span>

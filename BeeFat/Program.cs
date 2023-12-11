@@ -23,6 +23,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<IBaseRepository, FakeBeeFatRepository>();
 builder.Services.AddScoped<HomeHelper>();
+builder.Services.AddScoped<TrackPickHelper>();
+builder.Services.AddScoped<UserProfileHelper>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

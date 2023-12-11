@@ -38,11 +38,21 @@ public class BeeFatRepository: IBaseRepository
         throw new NotImplementedException();
     }
 
+    public IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateUserInfo(ApplicationUser user)
+    {
+        throw new NotImplementedException();
+    }
+
     public Track GetTrackByUser(Guid userId)
     {
         return _db.BeeFatUsers
             .Include(applicationUser => applicationUser.Track)
-            .First(user => user.Id == userId.ToString())
+            .First(user => user.Id == userId)
             .Track;
     }
 }

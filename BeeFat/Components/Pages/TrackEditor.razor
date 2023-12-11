@@ -17,7 +17,7 @@
     var HomeHelper = new HomeHelper(Repository);
     var today = DayOfWeek.Monday;
     var user = HomeHelper.Repo.GetUser();
-    var track = HomeHelper.Repo.GetTrackByUser(user);
+    var track = user.Track;
     // var today = DateTime.Today.DayOfWeek;
 }
 

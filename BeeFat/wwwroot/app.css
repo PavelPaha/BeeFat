@@ -340,3 +340,7 @@ input{
 .checkbox-button[disabled] {
     background-color: green;
 }
+
+.disable-item{
+    background-color: #dcffd1 !important;
+}

@@ -2,10 +2,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Domain.Models.User;
 using Microsoft.AspNetCore.Identity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Data
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : Entity
     {
         public required PersonName PersonName { get; set; }
         
@@ -21,17 +22,51 @@ namespace BeeFat.Data
         public required int Age { get; set; }
         
         public required int RightCalories { get; set; }
+        
+        public required Journal Journal { get; set; }
 
-        public ApplicationUser(PersonName personName)
+        [SetsRequiredMembers]
+        public ApplicationUser(PersonName personName, Track track)
+            : this(personName, track.Id)
+        {
+            Track = track;
+        }
+
+        [SetsRequiredMembers]
+        public ApplicationUser(PersonName personName, Guid trackId)
         {
             PersonName = personName;
+            TrackId = trackId;
         }
 
-        public ApplicationUser()
+        [SetsRequiredMembers]
+        public ApplicationUser(ApplicationUser otherUser)
         {
+            CloneFrom(otherUser);
         }
 
-        public ApplicationUser(string userName) : base(userName)
+        public void CloneFrom(ApplicationUser otherUser)
+        {
+            if (PersonName is null)
+            {
+                PersonName = new PersonName(otherUser.PersonName);
+            }
+            else
+            {
+                PersonName.FirstName = otherUser.PersonName.FirstName;
+                PersonName.LastName = otherUser.PersonName.LastName;
+            }
+            TrackId = otherUser.TrackId;
+            Track = otherUser.Track;
+            Weight = otherUser.Weight;
+            Height = otherUser.Height;
+            Age = otherUser.Age;
+            RightCalories = otherUser.RightCalories;
+            Journal = otherUser.Journal;
+        }
+
+        [SetsRequiredMembers]
+        public ApplicationUser()
         {
         }
     }

@@ -16,6 +16,8 @@ namespace BeeFat.Data
         public DbSet<FoodProduct> FoodProducts { get; set; }
         
         public DbSet<Track> Tracks { get; set; }
+        
+        public DbSet<Journal> Journals { get; set; }
 
         private IConfiguration _configuration;
 

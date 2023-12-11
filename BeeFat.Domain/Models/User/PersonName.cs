@@ -12,6 +12,13 @@ public class PersonName : ValueType<PersonName>
         LastName = lastName;
     }
 
+    [SetsRequiredMembers]
+    public PersonName(PersonName otherPersonName)
+    {
+        FirstName = otherPersonName.FirstName;
+        LastName = otherPersonName.LastName;
+    }
+    
     public PersonName() { }
 
     public required string FirstName { get; set; }

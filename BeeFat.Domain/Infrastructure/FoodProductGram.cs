@@ -13,11 +13,19 @@ public class FoodProductGram : FoodProduct
 
     [SetsRequiredMembers]
     public FoodProductGram(Food food, int grams, DayOfWeek dayOfWeek, Track track, bool isEaten)
-        : base(food, dayOfWeek, track, isEaten)
+        : this(food, grams, dayOfWeek, track.Id, isEaten)
+    {
+        Track = track;
+    }
+
+    [SetsRequiredMembers]
+    public FoodProductGram(Food food, int grams, DayOfWeek dayOfWeek, Guid trackId, bool isEaten)
+        : base(food, dayOfWeek, trackId, isEaten)
     {
         Grams = grams;
         Name = Food.Name;
     }
+
 
     public override int PortionSize
     {

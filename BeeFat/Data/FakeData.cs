@@ -5,25 +5,15 @@ namespace BeeFat.Data;
 
 public static class FakeData
 {
-    public static readonly Track FakeTrack = new Track("FakeTrack", "Some fake description");
+    public static readonly List<FoodProduct> FoodProducts;
+
+    public static readonly Track FakeTrack;
+
+    public static readonly ApplicationUser OlegRasin;
+
+    public static readonly IEnumerable<Track> FakeTracks;
     
-    public static readonly ApplicationUser OlegRasin = new()
-    {
-        PersonName = new PersonName()
-        {
-            FirstName = "Олег",
-            LastName = "Расин"
-        },
-        Track = FakeTrack,
-        Age = 46,
-        Height = 178,
-        Weight = 80,
-        RightCalories = 2000
-    };
-
-    public static readonly List<FoodProduct> FoodProducts = GetFoodProducts();
-
-    private static List<FoodProduct> GetFoodProducts()
+    static FakeData()
     {
         var eggMacronutrients = new Macronutrient(5, 10, 55, 100);
         var egg = new Food("Яйцо куриное", eggMacronutrients, 100);
@@ -38,19 +28,44 @@ public static class FakeData
 
         var buckwheatMacronutrient = new Macronutrient(3, 1, 10, 200);
         var buckwheat = new Food("Греча", buckwheatMacronutrient, 300);
-
-        return new List<FoodProduct>()
+        FakeTrack = new Track("FakeTrack", "Some fake description");
+        FoodProducts = new List<FoodProduct>()
         {
-        new FoodProductPiece(egg, 8, DayOfWeek.Monday, FakeTrack, false),
-        new FoodProductGram(water, 3000, DayOfWeek.Monday, FakeTrack, false),
-        new FoodProductGram(porridge, 400, DayOfWeek.Monday, FakeTrack, false),
+            new FoodProductPiece(egg, 8, DayOfWeek.Monday, FakeTrack, false),
+            new FoodProductGram(water, 3000, DayOfWeek.Monday, FakeTrack, false),
+            new FoodProductGram(porridge, 400, DayOfWeek.Monday, FakeTrack, false),
 
-        new FoodProductGram(water, 300, DayOfWeek.Tuesday, FakeTrack, false),
-        new FoodProductGram(watermelon, 200, DayOfWeek.Tuesday, FakeTrack, false),
-        new FoodProductGram(buckwheat, 500, DayOfWeek.Tuesday, FakeTrack, false),
+            new FoodProductGram(water, 300, DayOfWeek.Tuesday, FakeTrack, false),
+            new FoodProductGram(watermelon, 200, DayOfWeek.Tuesday, FakeTrack, false),
+            new FoodProductGram(buckwheat, 500, DayOfWeek.Tuesday, FakeTrack, false),
 
-        new FoodProductGram(buckwheat, 400, DayOfWeek.Wednesday, FakeTrack, false)
+            new FoodProductGram(buckwheat, 400, DayOfWeek.Wednesday, FakeTrack, false)
+        };
+        FakeTrack.FoodProducts = FoodProducts;
+        
+        OlegRasin  = new ApplicationUser(new PersonName()
+        {
+            FirstName = "Олег",
+            LastName = "Расин"
+        }, FakeTrack)
+        {
+            Age = 46,
+            Height = 178,
+            Weight = 80,
+            RightCalories = 2000,
+            Id = default,
+        };
+        
+        var track1 = new Track("Track 1", "Description for Track 1");
+        var track2 = new Track("Кирилл Сарычев", "Description for Track 2");
+        var track3 = new Track("Трэк Миши Иудинова", "Description for Track 3");
+        var track4 = new Track("Трек Паши Васильева", "Description for Track 4");
+        var track5 = new Track("Трек Димы Евтушенко", "Description for Track 5");
+        var track6 = new Track("Какой-то ноунейм трек", "Description for Track 6");
+
+        FakeTracks = new List<Track>()
+        {
+            FakeTrack, track1, track2, track3, track4, track5, track6
         };
     }
-
 }

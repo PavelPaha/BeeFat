@@ -23,7 +23,9 @@ public class HomeHelper
     public int PortionSize;
     public DayOfWeek Today = DayOfWeek.Monday;
     public Macronutrient TodayMacronutrient;
-    public IBaseRepository Repo { get; set; }
+    public ApplicationUser User;
+    public Track Track;
+    public IBaseRepository Repo { get; }
 
     public void ShowModalWindow(FoodProduct foodProduct)
     {
@@ -45,12 +47,14 @@ public class HomeHelper
         Repo = repo;
         TodayMacronutrient = new Macronutrient();
         GetTotalMacronutrientsByDay(Today);
+        User = Repo.GetUser();
+        Track = User.Track;
     }
 
     public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
     {
         var totalMacronutrients = new Macronutrient();
-        var todayDailyPlan = Repo.FoodProducts
+        var todayDailyPlan = Track.FoodProducts
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
         foreach (var product in todayDailyPlan)
         {
@@ -78,11 +82,10 @@ public class HomeHelper
 
     public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysProducts(DayOfWeek start)
     {
-        using var context = new FakeApplicationDbContext();
         var todayNumber = (int)start;
         for (var dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
         {
-            var products = context.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber);
+            var products = Repo.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber);
             if (!products.Any()) break;
             yield return products;
         }

@@ -16,4 +16,8 @@ public interface IBaseRepository
     void UpdatePortionSize(FoodProduct fp);
 
     public Track GetTrackByUser(ApplicationUser user);
+
+    public IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition);
+
+    public void UpdateUserInfo(ApplicationUser user); //обновляет в базе данных данные о пользователе
 }
