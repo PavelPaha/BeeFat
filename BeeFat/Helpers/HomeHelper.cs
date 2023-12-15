@@ -22,9 +22,9 @@ public class HomeHelper
     public FoodProduct SelectedFoodProduct;
     public int PortionSize;
     public DayOfWeek Today = DayOfWeek.Monday;
+    public ApplicationUser User => Repo.User;
+    public Track Track => User.Track;
     public Macronutrient TodayMacronutrient;
-    public ApplicationUser User;
-    public Track Track;
     public IBaseRepository Repo { get; }
 
     public void ShowModalWindow(FoodProduct foodProduct)
@@ -46,46 +46,26 @@ public class HomeHelper
     {
         Repo = repo;
         TodayMacronutrient = new Macronutrient();
-        GetTotalMacronutrientsByDay(Today);
-        User = Repo.GetUser();
-        Track = User.Track;
-    }
-
-    public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
-    {
-        var totalMacronutrients = new Macronutrient();
-        var todayDailyPlan = Track.FoodProducts
-            .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
-        foreach (var product in todayDailyPlan)
-        {
-            totalMacronutrients += product.Food.Macronutrient;
-            yield return product;
-        }
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(DayOfWeek dayOfWeek)
     {
-        var products = Repo.FoodProducts
-            .Where(p => p.DayOfWeek.Equals(dayOfWeek)).ToList();
-
-        var products1 = products
-            .Select(p => new { Macronutrient = p.Food.Macronutrient, PortionSize = p.PortionCoeff });
         var totalMacronutrients = new Macronutrient();
-        foreach (var product in products1)
+        foreach (var product in Repo.GetProductsByDay(dayOfWeek))
         {
-            totalMacronutrients += product.Macronutrient * product.PortionSize;
+            totalMacronutrients += product.Food.Macronutrient * product.PortionCoeff;
         }
-
         TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
         return TodayMacronutrient;
     }
 
-    public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysProducts(DayOfWeek start)
+    public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysFoodProducts(DayOfWeek start)
     {
+        Repo.FetchUserInfo(); 
         var todayNumber = (int)start;
         for (var dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
         {
-            var products = Repo.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber);
+            var products = User.Track.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
             if (!products.Any()) break;
             yield return products;
         }

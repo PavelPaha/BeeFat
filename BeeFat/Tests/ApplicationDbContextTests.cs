@@ -99,6 +99,65 @@ public class ApplicationDbContextTests
     //         context.SaveChanges();
     //     }
     // }
+    
+    [Explicit]
+    [Test]
+    public void AddSomeFoodsToDatabase()
+    {
+        var eggMacronutrients = new Macronutrient(5, 10, 55, 100);
+        var egg = new Food("Яйцо куриное", eggMacronutrients, 100);
+
+        var water = new Food("Вода питьевая", new Macronutrient(), 100);
+
+        var porridgeMacronutrient = new Macronutrient(10, 29, 3, 199);
+        var porridge = new Food("Каша овсяная", porridgeMacronutrient, 101);
+
+        var watermelonMacronutrient = new Macronutrient(0, 0, 30, 1000);
+        var watermelon = new Food("Арбуз", watermelonMacronutrient, 99);
+
+        var buckwheatMacronutrient = new Macronutrient(3, 1, 10, 200);
+        var buckwheat = new Food("Греча", buckwheatMacronutrient, 300);
+        var track = new Track("FakeTrack", "Some fake description");
+        var foodProducts = new List<FoodProduct>()
+        {
+            new FoodProductPiece(egg, 8, DayOfWeek.Monday, track, false),
+            new FoodProductGram(water, 3000, DayOfWeek.Monday, track, false),
+            new FoodProductGram(porridge, 400, DayOfWeek.Monday, track, false),
+
+            new FoodProductGram(water, 300, DayOfWeek.Tuesday, track, false),
+            new FoodProductGram(watermelon, 200, DayOfWeek.Tuesday, track, false),
+            new FoodProductGram(buckwheat, 500, DayOfWeek.Tuesday, track, false),
+
+            new FoodProductGram(buckwheat, 400, DayOfWeek.Wednesday, track, false)
+        };
+        track.FoodProducts = foodProducts;
+        
+        var track1 = new Track("Track 1", "Description for Track 1")
+        {
+            FoodProducts = foodProducts
+        };
+        var track2 = new Track("Кирилл Сарычев", "Description for Track 2");
+        var track3 = new Track("Трэк Миши Иудинова", "Description for Track 3");
+        var track4 = new Track("Трек Паши Васильева", "Description for Track 4");
+        var track5 = new Track("Трек Димы Евтушенко", "Description for Track 5");
+        var track6 = new Track("Какой-то ноунейм трек", "Description for Track 6");
+
+        var fakeTracks = new List<Track>()
+        {
+            track, track1, track2, track3, track4, track5, track6
+        };
+        
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            foreach (var t in fakeTracks)
+            {
+                context.Tracks.Add(t);
+            }
+
+            context.SaveChanges();
+        }
+    }
+
 
 
     [Test]
@@ -290,6 +349,43 @@ public class ApplicationDbContextTests
             context.FoodProductsGrams.Add(new FoodProductGram(rice, 100, DayOfWeek.Thursday, track, false));
             context.FoodProductsGrams.Add(new FoodProductGram(salmon, 170, DayOfWeek.Sunday, track, false));
             context.SaveChanges();
+        }
+    }
+
+    [Test]
+    public void ShuldCorrectlyUserInformationUpdating()
+    {
+        var user = new ApplicationUser(new PersonName
+            {
+                FirstName = "Кирилл",
+                LastName = "Сарычев"
+            },
+            _testTrack.Id)
+        {
+            Age = 33,
+            Height = 195,
+            Weight = 140,
+            RightCalories = 3000
+        };
+
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            context.BeeFatUsers.Add(user);
+            context.SaveChanges();
+        }
+        
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var foundUser = context.BeeFatUsers.First(u => u.Id == user.Id);
+            foundUser.PersonName = new PersonName("Павел", "Васильев");
+            context.SaveChanges();
+        }
+        
+        using (var context = new ApplicationDbContext(_options, _configuration))
+        {
+            var foundUser = context.BeeFatUsers.First(u => u.Id == user.Id);
+            foundUser.PersonName.FirstName.Should().Be("Павел");
+            foundUser.PersonName.LastName.Should().Be("Васильев");
         }
     }
 }

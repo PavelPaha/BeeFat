@@ -1,37 +1,92 @@
 @page "/edit"
-
-@using BeeFat.Domain.Infrastructure
-@using BeeFat.Helpers
 @using BeeFat.Interfaces
+@using Blazorise
+@using BeeFat.Domain.Infrastructure
 @inherits LayoutComponentBase
 
-@inject IBaseRepository Repository;
-
-@inject NavigationManager NavigationManager
+@inject IBaseRepository Repo;
+@rendermode InteractiveServer
 
 <PageTitle>TrackEditor</PageTitle>
 
 <!DOCTYPE html>
 
 @{
-    var HomeHelper = new HomeHelper(Repository);
     var today = DayOfWeek.Monday;
-    var user = HomeHelper.Repo.GetUser();
+    var user = Repo.User;
     var track = user.Track;
-    // var today = DateTime.Today.DayOfWeek;
 }
+
+@code{
+    private int portionSize = 0;
+    private Modal ConfirmModal = default!;
+    private Modal AddProductModal = default!;
+    private FoodProduct selectedFoodProduct = null;
+    private IEnumerable<FoodProduct> AvailableFoodProducts;
+    private string searchValue;
+
+    private void ChangePortionSize()
+    {
+        selectedFoodProduct.PortionSize = portionSize;
+        Repo.UpdatePortionSize(selectedFoodProduct);
+        ConfirmModal.Close(CloseReason.UserClosing);
+        StateHasChanged();
+    }
+
+    private void OnSearchValueChanged(ChangeEventArgs e)
+    {
+        searchValue = e.Value.ToString();
+        AvailableFoodProducts = Repo.GetFoodProductsByCondition(fp => fp.Name.ToLower().Contains(searchValue.ToLower()));
+        StateHasChanged();
+    }
+}
+
+<Blazorise.Modal @ref="ConfirmModal" Title="Modal title" Class="popup_window">
+    <div>
+        @if (!(selectedFoodProduct is null))
+        {
+            <div>Введите новый размер порции (в @(selectedFoodProduct is FoodProductGram ? "гр" : "шт"))</div>
+            // portionSize = selectedFoodProduct.PortionSize;
+            <input @bind="portionSize"/>
+            <div>
+                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="ChangePortionSize">Сохранить</Blazorise.Button>
+            </div>
+        }
+    </div>
+</Blazorise.Modal>
+
+@* <Blazorise.Modal @ref="AddProductModal" Title="Modal title" Class="popup_window"> *@
+@*     <div> *@
+@*         <input type="text" value="@searchValue" @oninput="OnSearchValueChanged"/> *@
+@*     </div> *@
+@* </Blazorise.Modal> *@
+
 
 <div class="container">
     <div class="home-sidebar">
         <h2>Дни недели</h2>
         <ul>
-            <li> <button class="day-of-week"> Понедельник </button></li>
-            <li> <button class="day-of-week"> Вторник </button></li>
-            <li> <button class="day-of-week"> Среда </button></li>
-            <li> <button class="day-of-week"> Четверг </button></li>
-            <li> <button class="day-of-week"> Пятница </button></li>
-            <li> <button class="day-of-week"> Суббота </button></li>
-            <li> <button class="day-of-week"> Воскресенье </button></li>
+            <li>
+                <button class="day-of-week"> Понедельник </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Вторник </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Среда </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Четверг </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Пятница </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Суббота </button>
+            </li>
+            <li>
+                <button class="day-of-week"> Воскресенье </button>
+            </li>
         </ul>
     </div>
 
@@ -39,39 +94,51 @@
         <h2 class="track-header">
             @track.Name
         </h2>
-       <div class="daily-plan">
-           <ul class="daily-food-list product-list">
-              <li>
-                      <div>Название продукта</div>
-                      <div>Масса</div>
-                      <div>Белки</div>
-                      <div>Жиры</div>
-                      <div>Углеводы</div>
-                      <div>Калории</div>
-                      <div>Действие</div>
-                  </li>
-               @{
-                   foreach (var product in HomeHelper.GetProductsByDay(today))
-                   {
-                       var foodInfo = product.Food.Macronutrient;
-                       <li>
-                           <div>@product.Name</div>
-                           <div><span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span></div>
-                           <div><span class="portion-size">@foodInfo.Proteins г</span></div>
-                           <div><span class="portion-size">@foodInfo.Fats г</span></div>
-                           <div><span class="portion-size">@foodInfo.Carbohydrates г</span></div>
-                           <div><span class="portion-size">@foodInfo.Calories ккал</span></div>
-                           <button class="action-button edit-button">Изменить</button>
-                           <button class="action-button delete-button">Удалить</button>
-                       </li>
-                   }
-               }
-           </ul>
+        <div class="daily-plan">
+            <ul class="daily-food-list product-list">
+                <li>
+                    <div>Название продукта</div>
+                    <div>Масса</div>
+                    <div>Белки</div>
+                    <div>Жиры</div>
+                    <div>Углеводы</div>
+                    <div>Калории</div>
+                    <div>Действие</div>
+                </li>
+                @{
+                    foreach (var product in Repo.GetProductsByDay(today))
+                    {
+                        var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                        <li>
+                            <div>@product.Name</div>
+                            <div>
+                                <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Proteins г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Fats г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Carbohydrates г</span>
+                            </div>
+                            <div>
+                                <span class="portion-size">@foodInfo.Calories ккал</span>
+                            </div>
+                            <Button class="action-button edit-button" @onclick="() => { selectedFoodProduct = product; ConfirmModal.Show(); }">Изменить</Button>
+                            <Button class="action-button delete-button" @onclick="() => { Repo.DeleteFoodProductFromTrack(track, product); }">Удалить</Button>
+                        </li>
+                    }
+                }
+            </ul>
 
-           <button class="action-button add-product"><span>+</span></button>
-       </div>
+            <button class="action-button add-product" @onclick="() => { AddProductModal.Show(); }">
+                <span>+</span>
+            </button>
+        </div>
     </div>
-      
+
     <div class="home-sidebar">
         <div class="user">
             <div class="user-info">
@@ -86,5 +153,5 @@
             <p>Рост: <span class="parameter">xxx см</span></p>
             <p>Желаемые калории: <span class="parameter">xxx ккал</span></p>
         </div>
-        </div>
+    </div>
 </div>

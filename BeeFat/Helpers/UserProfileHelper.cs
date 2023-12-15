@@ -15,13 +15,12 @@ public class UserProfileHelper
     {
         Repo = repo;
         Modal = default!;
-        User = Repo.GetUser();
-        UserModel = new ApplicationUser(User);
+        User = Repo.User;
+        UserModel = User;
     }
 
     public void SaveProfile()
     {
-        User.CloneFrom(UserModel);
         Repo.UpdateUserInfo(User);
     }
 }

@@ -13,6 +13,6 @@ public class Track : Entity
     {
         Name = name;
         Description = description;
-        FoodProducts = new SortedSet<FoodProduct>();
+        FoodProducts = new List<FoodProduct>();
     }
 }

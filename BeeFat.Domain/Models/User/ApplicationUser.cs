@@ -56,7 +56,8 @@ namespace BeeFat.Data
                 PersonName.FirstName = otherUser.PersonName.FirstName;
                 PersonName.LastName = otherUser.PersonName.LastName;
             }
-            TrackId = otherUser.TrackId;
+
+            //TrackId = otherUser.TrackId;
             Track = otherUser.Track;
             Weight = otherUser.Weight;
             Height = otherUser.Height;

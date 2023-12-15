@@ -18,7 +18,7 @@
         @if (!(TrackPickHelper.SelectedTrack is null))
         {
             <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackPickHelper.SelectedTrack.Name ?</div>
-            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => TrackPickHelper.Save(user)">Да</Blazorise.Button>
+            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => TrackPickHelper.Save()">Да</Blazorise.Button>
         }
     </div>
 </Blazorise.Modal>

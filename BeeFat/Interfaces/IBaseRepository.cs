@@ -5,19 +5,23 @@ namespace BeeFat.Interfaces;
 
 public interface IBaseRepository
 {
-    ICollection<ApplicationUser> BeeFatUsers { get; }
+    ApplicationUser User { get; }
     
     ICollection<Food> Foods { get; }
     
     ICollection<FoodProduct> FoodProducts { get; }
-    
-    ApplicationUser GetUser(Guid id=new());
 
     void UpdatePortionSize(FoodProduct fp);
+    
+    IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek);
 
-    public Track GetTrackByUser(ApplicationUser user);
+    IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition);
+    
+    IEnumerable<FoodProduct> GetFoodProductsByCondition(Func<FoodProduct, bool> condition);
 
-    public IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition);
+    void UpdateUserInfo(ApplicationUser user); //обновляет в базе данных данные о пользователе
+    
+    void FetchUserInfo();
 
-    public void UpdateUserInfo(ApplicationUser user); //обновляет в базе данных данные о пользователе
+    void DeleteFoodProductFromTrack(Track track, FoodProduct fp);
 }

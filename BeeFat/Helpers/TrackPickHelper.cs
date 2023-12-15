@@ -15,17 +15,19 @@ public class TrackPickHelper
     public TrackPickHelper(IBaseRepository repo)
     {
         Repo = repo;
-        User = Repo.GetUser();
+        User = Repo.User;
     }
 
-    public void Save(ApplicationUser user)
+    public void Save()
     {
-        user.Track = SelectedTrack;
+        User.Track = SelectedTrack;
+        Repo.UpdateUserInfo(User);
         MyModal.Close(CloseReason.UserClosing);
     }
 
     public void ChangeSelectedTrack(Track track)
     {
         SelectedTrack = track;
+        
     }
 }

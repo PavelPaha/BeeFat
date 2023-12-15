@@ -21,7 +21,7 @@ builder.Services.AddServerSideBlazor();
 
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddSingleton<IBaseRepository, FakeBeeFatRepository>();
+builder.Services.AddScoped<IBaseRepository, BeeFatRepository>();
 builder.Services.AddScoped<HomeHelper>();
 builder.Services.AddScoped<TrackPickHelper>();
 builder.Services.AddScoped<UserProfileHelper>();
@@ -30,6 +30,7 @@ builder.Services.AddScoped<UserProfileHelper>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();

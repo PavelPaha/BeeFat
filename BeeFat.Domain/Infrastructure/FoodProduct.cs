@@ -8,10 +8,12 @@ public abstract class FoodProduct : Entity
     public required string Name { get; set; }
 
     public Guid TrackId { get; set; }
-    [ForeignKey("TrackId")] public required Track Track { get; set; }
+    [ForeignKey("TrackId")] 
+    public required Track Track { get; set; }
 
     public Guid FoodId { get; set; }
-    [ForeignKey("FoodId")] public required Food Food { get; set; }
+    [ForeignKey("FoodId")] 
+    public required Food Food { get; set; }
 
     public DayOfWeek DayOfWeek { get; set; }
 

@@ -4,7 +4,7 @@ using BeeFat.Interfaces;
 
 namespace BeeFat.Repositories;
 
-public class FakeBeeFatRepository: IBaseRepository
+public class FakeBeeFatRepository
 {
     public ICollection<ApplicationUser> BeeFatUsers { get; }
     public ICollection<Food> Foods { get; }
@@ -34,12 +34,23 @@ public class FakeBeeFatRepository: IBaseRepository
 
     public IEnumerable<Track> GetTracksByCondition(Func<Track, bool> condition)
     {
-        return FakeTracks.Where(condition);
+        return FakeTracks.Where(condition).ToList();
+    }
+
+    public IEnumerable<FoodProduct> GetFoodProductsByCondition(Func<FoodProduct, bool> condition)
+    {
+        throw new NotImplementedException();
     }
 
     public void UpdateUserInfo(ApplicationUser user)
     {
         FakeUser.CloneFrom(user);
+    }
+
+    public void DeleteFoodProductFromTrack(Track track, FoodProduct foodProduct)
+    {
+        var foundFoodProduct = FakeTrack.FoodProducts.First(fp => fp.Id == foodProduct.Id);
+        FakeTrack.FoodProducts.Remove(foundFoodProduct);
     }
 
     public void UpdatePortionSize(FoodProduct updatedFp)
@@ -49,5 +60,17 @@ public class FakeBeeFatRepository: IBaseRepository
 
         var indexOldFp = fpList.IndexOf(foodProduct);
         fpList[indexOldFp] = updatedFp;
+    }
+    
+    public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
+    {
+        var totalMacronutrients = new Macronutrient();
+        var todayDailyPlan = FakeTrack.FoodProducts
+            .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
+        foreach (var product in todayDailyPlan)
+        {
+            totalMacronutrients += product.Food.Macronutrient;
+            yield return product;
+        }
     }
 }

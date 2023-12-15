@@ -1,5 +1,4 @@
 ﻿@page "/"
-
 @inherits LayoutComponentBase
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Helpers
@@ -39,20 +38,24 @@
 
 @{
     var today = DayOfWeek.Monday;
-    var user = HomeHelper.Repo.GetUser();
+    var user = HomeHelper.Repo.User;
     var track = user.Track;
     var redirectToTrackEditing = () => RedirectTo("edit");
     var redirectToUserProfile = () => RedirectTo("profile");
+    HomeHelper.Repo.FetchUserInfo();
 }
 
 
 @code{
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
 
-    public void RedirectTo(string url)
+    private void RedirectTo(string url)
     {
         NavigationManager.NavigateTo(url, forceLoad: true);
     }
-
 }
 
 <PageTitle>Home</PageTitle>
@@ -84,14 +87,9 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.GetProductsByDay(today))
+                    foreach (var product in HomeHelper.Repo.GetProductsByDay(today))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
-
-                        if (product.IsEaten)
-                        {
-                            
-                        }
                         <li>
                             <div>@product.Name</div>
                             <div>
@@ -119,7 +117,7 @@
                 }
             </ul>
             <div class="total">
-                @{ var totalMacronutrient = HomeHelper.TodayMacronutrient; }
+                @{ var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(today); }
                 Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
             </div>
         </div>
@@ -127,7 +125,7 @@
             <h3>План питания на следующие дни</h3>
             <ul class="product-list">
                 @{
-                    foreach (var products in HomeHelper.GetNextDaysProducts(today))
+                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(today))
                     {
                         <li>
                             <div class="product">
