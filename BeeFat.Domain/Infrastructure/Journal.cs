@@ -6,24 +6,19 @@ namespace BeeFat.Domain.Infrastructure;
 
 public class Journal: Entity
 {
+    public ICollection<FoodProduct> FoodProducts { get; set; }
+    
     [SetsRequiredMembers]
     protected Journal(Guid userId, ApplicationUser user)
     {
         UserId = userId;
         User = user;
+        FoodProducts = User.Track.FoodProducts;
     }
 
     [SetsRequiredMembers]
     protected Journal()
     {
-    }
-
-    public IEnumerable<FoodProduct> FoodProducts
-    {
-        get
-        {
-            return User.Track.FoodProducts.Where(fp => fp.IsEaten);
-        }
     }
 
     public Guid UserId { get; set; }

@@ -38,11 +38,10 @@
 
 @{
     var today = DayOfWeek.Monday;
-    var user = HomeHelper.Repo.User;
+    var user = HomeHelper.FetchUserInfo();
     var track = user.Track;
     var redirectToTrackEditing = () => RedirectTo("edit");
     var redirectToUserProfile = () => RedirectTo("profile");
-    HomeHelper.Repo.FetchUserInfo();
 }
 
 
@@ -87,7 +86,7 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.Repo.GetProductsByDay(today))
+                    foreach (var product in HomeHelper.GetProductsByDay(today))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
                         <li>

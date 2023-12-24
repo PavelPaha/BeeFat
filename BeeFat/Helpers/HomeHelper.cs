@@ -1,6 +1,6 @@
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
-using BeeFat.Interfaces;
+using BeeFat.Repositories;
 using Blazorise;
 
 namespace BeeFat.Helpers;
@@ -18,14 +18,22 @@ public class HomeHelper
         { 0, "Воскресенье" }
     };
 
+    private Guid _id = FakeData.HardId;
+
     public Modal Modal = default!;
     public FoodProduct SelectedFoodProduct;
     public int PortionSize;
     public DayOfWeek Today = DayOfWeek.Monday;
-    public ApplicationUser User => Repo.User;
-    public Track Track => User.Track;
+    public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
-    public IBaseRepository Repo { get; }
+    public UserRepository UserRepository;
+    
+    public HomeHelper(UserRepository userRepository)
+    {
+        UserRepository = userRepository;
+        User = UserRepository.FetchUserInfo(_id);
+        TodayMacronutrient = new Macronutrient();
+    }
 
     public void ShowModalWindow(FoodProduct foodProduct)
     {
@@ -38,20 +46,14 @@ public class HomeHelper
         Modal.Close(CloseReason.UserClosing);
         SelectedFoodProduct.PortionSize = PortionSize;
         SelectedFoodProduct.IsEaten = true;
-        Repo.UpdatePortionSize(SelectedFoodProduct);
+        // Repo.UpdatePortionSize(SelectedFoodProduct);
         GetTotalMacronutrientsByDay(Today);
-    }
-
-    public HomeHelper(IBaseRepository repo)
-    {
-        Repo = repo;
-        TodayMacronutrient = new Macronutrient();
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(DayOfWeek dayOfWeek)
     {
         var totalMacronutrients = new Macronutrient();
-        foreach (var product in Repo.GetProductsByDay(dayOfWeek))
+        foreach (var product in GetProductsByDay(dayOfWeek))
         {
             totalMacronutrients += product.Food.Macronutrient * product.PortionCoeff;
         }
@@ -61,13 +63,31 @@ public class HomeHelper
 
     public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysFoodProducts(DayOfWeek start)
     {
-        Repo.FetchUserInfo(); 
+        var user = UserRepository.FetchUserInfo(_id);
         var todayNumber = (int)start;
         for (var dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
         {
-            var products = User.Track.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
+            var products = user.Track.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
             if (!products.Any()) break;
             yield return products;
         }
+    }
+    
+    public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
+    {
+        var user = UserRepository.FetchUserInfo(_id);
+        var totalMacronutrients = new Macronutrient();
+        var todayDailyPlan = user.Track.FoodProducts
+            .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
+        foreach (var product in todayDailyPlan)
+        {
+            totalMacronutrients += product.Food.Macronutrient;
+            yield return product;
+        }
+    }
+
+    public ApplicationUser FetchUserInfo()
+    {
+        return UserRepository.FetchUserInfo(_id);
     }
 }

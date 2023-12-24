@@ -13,6 +13,8 @@ public static class FakeData
 
     public static readonly IEnumerable<Track> FakeTracks;
     
+    public static Guid HardId = Guid.Parse("a60197b1-90f9-4fb3-9c4b-1fff4ffe2b76");
+    
     static FakeData()
     {
         var eggMacronutrients = new Macronutrient(5, 10, 55, 100);

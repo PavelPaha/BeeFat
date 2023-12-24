@@ -1,10 +1,12 @@
 @page "/edit"
-@using BeeFat.Interfaces
-@using Blazorise
+
 @using BeeFat.Domain.Infrastructure
+@using BeeFat.Helpers
 @inherits LayoutComponentBase
 
-@inject IBaseRepository Repo;
+@inject HomeHelper HomeHelper;
+@inject TrackEditorHelper TrackEditorHelper;
+
 @rendermode InteractiveServer
 
 <PageTitle>TrackEditor</PageTitle>
@@ -13,43 +15,19 @@
 
 @{
     var today = DayOfWeek.Monday;
-    var user = Repo.User;
+    var user = HomeHelper.User;
     var track = user.Track;
 }
 
-@code{
-    private int portionSize = 0;
-    private Modal ConfirmModal = default!;
-    private Modal AddProductModal = default!;
-    private FoodProduct selectedFoodProduct = null;
-    private IEnumerable<FoodProduct> AvailableFoodProducts;
-    private string searchValue;
-
-    private void ChangePortionSize()
-    {
-        selectedFoodProduct.PortionSize = portionSize;
-        Repo.UpdatePortionSize(selectedFoodProduct);
-        ConfirmModal.Close(CloseReason.UserClosing);
-        StateHasChanged();
-    }
-
-    private void OnSearchValueChanged(ChangeEventArgs e)
-    {
-        searchValue = e.Value.ToString();
-        AvailableFoodProducts = Repo.GetFoodProductsByCondition(fp => fp.Name.ToLower().Contains(searchValue.ToLower()));
-        StateHasChanged();
-    }
-}
-
-<Blazorise.Modal @ref="ConfirmModal" Title="Modal title" Class="popup_window">
+<Blazorise.Modal @ref="TrackEditorHelper.ConfirmModal" Title="Modal title" Class="popup_window">
     <div>
-        @if (!(selectedFoodProduct is null))
+        @if (!(TrackEditorHelper.SelectedFoodProduct is null))
         {
-            <div>Введите новый размер порции (в @(selectedFoodProduct is FoodProductGram ? "гр" : "шт"))</div>
+            <div>Введите новый размер порции (в @(TrackEditorHelper.SelectedFoodProduct is FoodProductGram ? "гр" : "шт"))</div>
             // portionSize = selectedFoodProduct.PortionSize;
-            <input @bind="portionSize"/>
+            <input @bind="TrackEditorHelper.PortionSize"/>
             <div>
-                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="ChangePortionSize">Сохранить</Blazorise.Button>
+                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackEditorHelper.ChangePortionSize(); StateHasChanged(); }" >Сохранить</Blazorise.Button>
             </div>
         }
     </div>
@@ -106,7 +84,7 @@
                     <div>Действие</div>
                 </li>
                 @{
-                    foreach (var product in Repo.GetProductsByDay(today))
+                    foreach (var product in HomeHelper.GetProductsByDay(today))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
                         <li>
@@ -126,14 +104,14 @@
                             <div>
                                 <span class="portion-size">@foodInfo.Calories ккал</span>
                             </div>
-                            <Button class="action-button edit-button" @onclick="() => { selectedFoodProduct = product; ConfirmModal.Show(); }">Изменить</Button>
-                            <Button class="action-button delete-button" @onclick="() => { Repo.DeleteFoodProductFromTrack(track, product); }">Удалить</Button>
+                            <Button class="action-button edit-button" @onclick="() => { TrackEditorHelper.SelectedFoodProduct = product; TrackEditorHelper.ConfirmModal.Show(); }">Изменить</Button>
+                            <Button class="action-button delete-button" @onclick="() => { TrackEditorHelper.TrackRepository.DeleteFoodProductFromTrack(track, product); }">Удалить</Button>
                         </li>
                     }
                 }
             </ul>
 
-            <button class="action-button add-product" @onclick="() => { AddProductModal.Show(); }">
+            <button class="action-button add-product" @onclick="() => { TrackEditorHelper.AddProductModal.Show(); }">
                 <span>+</span>
             </button>
         </div>

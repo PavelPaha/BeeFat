@@ -1,10 +1,10 @@
 using BeeFat.Components;
 using BeeFat.Data;
+using BeeFat.Domain.Infrastructure;
 using BeeFat.Helpers;
 using BeeFat.Interfaces;
 using BeeFat.Repositories;
 using Blazorise;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Blazorise.Bootstrap;
 
@@ -21,10 +21,14 @@ builder.Services.AddServerSideBlazor();
 
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IBaseRepository, BeeFatRepository>();
 builder.Services.AddScoped<HomeHelper>();
 builder.Services.AddScoped<TrackPickHelper>();
 builder.Services.AddScoped<UserProfileHelper>();
+builder.Services.AddScoped<TrackEditorHelper>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<TrackRepository>();
+builder.Services.AddScoped<Repository<ApplicationUser>, UserRepository>();
+builder.Services.AddScoped<Repository<Track>, TrackRepository>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

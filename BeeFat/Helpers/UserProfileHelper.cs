@@ -1,26 +1,28 @@
 using BeeFat.Data;
-using BeeFat.Interfaces;
+using BeeFat.Repositories;
 using Blazorise;
 
 namespace BeeFat.Helpers;
 
 public class UserProfileHelper
 {
-    public IBaseRepository Repo { get; }
     public Modal Modal { get; set; }
     public ApplicationUser User;
     public ApplicationUser UserModel;
 
-    public UserProfileHelper(IBaseRepository repo)
+    public UserRepository UserRepository;
+    public Guid _id = FakeData.HardId;
+
+    public UserProfileHelper(UserRepository userRepository)
     {
-        Repo = repo;
+        UserRepository = userRepository;
         Modal = default!;
-        User = Repo.User;
+        User = userRepository.FetchUserInfo(_id);
         UserModel = User;
     }
 
     public void SaveProfile()
     {
-        Repo.UpdateUserInfo(User);
+        UserRepository.Update(UserModel);
     }
 }
