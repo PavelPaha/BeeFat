@@ -84,7 +84,7 @@
                     <div>Действие</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.GetProductsByDay(today))
+                    foreach (var product in HomeHelper.GetProductsByDay(user.Track.FoodProducts, today))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
                         <li>

@@ -17,6 +17,7 @@ public class UnitTests
     public UserRepository UserRepository;
     public TrackRepository TrackRepository;
     public JournalRepository JournalRepository;
+    public FoodProductRepository FoodProductRepository;
     
     private DbContextOptions<ApplicationDbContext> GetOptions()
     {
@@ -35,12 +36,13 @@ public class UnitTests
         UserRepository = new UserRepository(configuration, options);
         TrackRepository = new TrackRepository(configuration, options);
         JournalRepository = new JournalRepository(configuration, options);
+        FoodProductRepository = new FoodProductRepository(configuration, options);
     }
 
     [Test]
     public void TestUserInfoSaving()
     {
-        var hh = new HomeHelper(UserRepository);
+        var hh = new HomeHelper(UserRepository, JournalRepository, FoodProductRepository);
         var trackPicker = new TrackPickHelper(UserRepository, TrackRepository, JournalRepository);
         
         var newTrack = TrackRepository.GetCollection(t => t.Id != hh.User.TrackId).First();
@@ -52,7 +54,7 @@ public class UnitTests
         userProfileHelper.UserModel.PersonName.LastName = newLastName;
         userProfileHelper.SaveProfile();
         
-        var hh1 = new HomeHelper(UserRepository);
+        var hh1 = new HomeHelper(UserRepository, JournalRepository, FoodProductRepository);
         hh1.User.TrackId.Should().Be(newTrack.Id);
         hh1.User.PersonName.LastName.Should().Be(newLastName);
     }
@@ -60,7 +62,7 @@ public class UnitTests
     [Test]
     public void TestTransferFoodProductsFromTrackToJournal()
     {
-        var hh = new HomeHelper(UserRepository);
+        var hh = new HomeHelper(UserRepository, JournalRepository, FoodProductRepository);
         var track = hh.User.Track;
 
         Track otherTrack;
@@ -78,6 +80,23 @@ public class UnitTests
         var ids2 = track.FoodProducts.Select(fp => fp.Id).OrderBy(id => id).ToList();
 
         ids1.SequenceEqual(ids2).Should().BeTrue();
+    }
+    
+    [Test]
+    public void TestSetEatenFoodProducts()
+    {
+        var hh = new HomeHelper(UserRepository, JournalRepository, FoodProductRepository);
+        var journal = hh.User.Journal;
+        var eatenProduct = journal.FoodProducts.First(fp => !fp.IsEaten);
+        hh.SelectedFoodProduct = eatenProduct;
+        eatenProduct.PortionSize += 10;
+        hh.PortionSize = eatenProduct.PortionSize;
+        
+        hh.ChangeFoodProductInfoAndSave(true);
+        journal = hh.JournalRepository.GetById(journal.Id);
+        var foundEatenProduct = journal.FoodProducts.First(fp => fp.Id == eatenProduct.Id);
+        foundEatenProduct.IsEaten.Should().BeTrue();
+        foundEatenProduct.PortionSize.Should().Be(hh.PortionSize);
     }
 
 

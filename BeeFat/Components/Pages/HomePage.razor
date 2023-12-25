@@ -32,7 +32,12 @@
             }
         }
 
-        <Button Style="background-color: #c2cb88;" @onclick="HomeHelper.SaveFoodProductWithChangedPortionSize">Сохранить</Button>
+        <Button Style="background-color: #c2cb88;" @onclick="() => { 
+                                                       HomeHelper.Modal.Close(CloseReason.UserClosing); 
+                                                       HomeHelper.ChangeFoodProductInfoAndSave(true);  
+                                                       var fpSource = HomeHelper.User.Journal.FoodProducts;
+                                                       HomeHelper.GetTotalMacronutrientsByDay(fpSource, HomeHelper.Today);}"
+                >Сохранить</Button>
     </div>
 </Modal>
 
@@ -86,7 +91,7 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.GetProductsByDay(today))
+                    foreach (var product in HomeHelper.GetProductsByDay(user.Journal.FoodProducts, today))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
                         <li>
@@ -109,14 +114,14 @@
                             <button type="button" class="checkbox-button" @onclick="() => HomeHelper.ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
                             @if (product.IsEaten)
                             {
-                                <button type="button" class="checkbox-button" @onclick="() => product.IsEaten = false">&times;</button>
+                                <button type="button" class="checkbox-button" @onclick="() => { product.IsEaten = false; HomeHelper.SelectedFoodProduct = product; HomeHelper.ChangeFoodProductInfoAndSave(false); }">&times;</button>
                             }
                         </li>
                     }
                 }
             </ul>
             <div class="total">
-                @{ var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(today); }
+                @{ var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, today); }
                 Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
             </div>
         </div>
@@ -124,7 +129,7 @@
             <h3>План питания на следующие дни</h3>
             <ul class="product-list">
                 @{
-                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(today))
+                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, today))
                     {
                         <li>
                             <div class="product">

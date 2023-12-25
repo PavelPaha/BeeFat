@@ -27,9 +27,13 @@ public class HomeHelper
     public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
     public UserRepository UserRepository;
+    public JournalRepository JournalRepository;
+    public FoodProductRepository FoodProductRepository;
     
-    public HomeHelper(UserRepository userRepository)
+    public HomeHelper(UserRepository userRepository, JournalRepository journalRepository, FoodProductRepository foodProductRepository)
     {
+        FoodProductRepository = foodProductRepository;
+        JournalRepository = journalRepository;
         UserRepository = userRepository;
         User = UserRepository.FetchUserInfo(_id);
         TodayMacronutrient = new Macronutrient();
@@ -41,19 +45,17 @@ public class HomeHelper
         Modal.Show();
     }
 
-    public void SaveFoodProductWithChangedPortionSize()
+    public void ChangeFoodProductInfoAndSave(bool isEaten)
     {
-        Modal.Close(CloseReason.UserClosing);
         SelectedFoodProduct.PortionSize = PortionSize;
-        SelectedFoodProduct.IsEaten = true;
-        // Repo.UpdatePortionSize(SelectedFoodProduct);
-        GetTotalMacronutrientsByDay(Today);
+        SelectedFoodProduct.IsEaten = isEaten;
+        FoodProductRepository.Update(SelectedFoodProduct);
     }
 
-    public Macronutrient GetTotalMacronutrientsByDay(DayOfWeek dayOfWeek)
+    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fPsource, DayOfWeek dayOfWeek)
     {
         var totalMacronutrients = new Macronutrient();
-        foreach (var product in GetProductsByDay(dayOfWeek))
+        foreach (var product in GetProductsByDay(fPsource, dayOfWeek))
         {
             totalMacronutrients += product.Food.Macronutrient * product.PortionCoeff;
         }
@@ -61,23 +63,22 @@ public class HomeHelper
         return TodayMacronutrient;
     }
 
-    public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysFoodProducts(DayOfWeek start)
+    public IEnumerable<IEnumerable<FoodProduct>> GetNextDaysFoodProducts(IEnumerable<FoodProduct> fPsource, DayOfWeek start)
     {
         var user = UserRepository.FetchUserInfo(_id);
         var todayNumber = (int)start;
         for (var dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
         {
-            var products = user.Journal.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
+            var products = fPsource.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
             if (!products.Any()) break;
             yield return products;
         }
     }
     
-    public IEnumerable<FoodProduct> GetProductsByDay(DayOfWeek dayOfWeek)
+    public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fPsource, DayOfWeek dayOfWeek)
     {
-        var user = UserRepository.FetchUserInfo(_id);
         var totalMacronutrients = new Macronutrient();
-        var todayDailyPlan = user.Journal.FoodProducts
+        var todayDailyPlan = fPsource
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
         foreach (var product in todayDailyPlan)
         {

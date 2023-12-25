@@ -44,12 +44,14 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 var userRepository = new UserRepository(configuration, dbContextOptions);
 var trackRepository = new TrackRepository(configuration, dbContextOptions);
 var journalRepository = new JournalRepository(configuration, dbContextOptions);
+var foodProductRepository = new FoodProductRepository(configuration, dbContextOptions);
 
 builder.Services.AddSingleton(userRepository);
 builder.Services.AddSingleton(trackRepository);
 builder.Services.AddSingleton(journalRepository);
+builder.Services.AddSingleton(foodProductRepository);
 
-builder.Services.AddSingleton(new HomeHelper(userRepository));
+builder.Services.AddSingleton(new HomeHelper(userRepository, journalRepository, foodProductRepository));
 builder.Services.AddSingleton(new TrackPickHelper(userRepository, trackRepository, journalRepository));
 builder.Services.AddSingleton(new UserProfileHelper(userRepository));
 builder.Services.AddSingleton(new TrackEditorHelper(trackRepository));
