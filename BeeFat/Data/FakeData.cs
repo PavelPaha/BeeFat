@@ -13,7 +13,9 @@ public static class FakeData
 
     public static readonly IEnumerable<Track> FakeTracks;
     
-    public static Guid HardId = Guid.Parse("a60197b1-90f9-4fb3-9c4b-1fff4ffe2b76");
+    public static Guid HardId = Guid.Parse("cfb11027-8477-49eb-bc3d-83aa08ae5bbc");
+
+    public static Guid HardJournalId = Guid.Parse("2d998d88-536f-4106-bb21-09f86431f58d");
     
     static FakeData()
     {

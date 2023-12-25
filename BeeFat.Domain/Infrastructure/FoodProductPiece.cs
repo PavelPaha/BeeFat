@@ -23,7 +23,7 @@ public class FoodProductPiece : FoodProduct
         : base(food, dayOfWeek, trackId, isEaten)
     {
         Pieces = pieces;
-        Name = Food.Name;
+        Name = food.Name;
     }
 
 

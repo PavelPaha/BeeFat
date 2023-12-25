@@ -1,4 +1,5 @@
 using BeeFat.Data;
+using BeeFat.Domain.Infrastructure;
 using BeeFat.Helpers;
 using BeeFat.Repositories;
 using FluentAssertions;
@@ -15,6 +16,7 @@ public class UnitTests
 
     public UserRepository UserRepository;
     public TrackRepository TrackRepository;
+    public JournalRepository JournalRepository;
     
     private DbContextOptions<ApplicationDbContext> GetOptions()
     {
@@ -32,13 +34,14 @@ public class UnitTests
         options = GetOptions();
         UserRepository = new UserRepository(configuration, options);
         TrackRepository = new TrackRepository(configuration, options);
+        JournalRepository = new JournalRepository(configuration, options);
     }
 
     [Test]
     public void TestUserInfoSaving()
     {
         var hh = new HomeHelper(UserRepository);
-        var trackPicker = new TrackPickHelper(UserRepository, TrackRepository);
+        var trackPicker = new TrackPickHelper(UserRepository, TrackRepository, JournalRepository);
         
         var newTrack = TrackRepository.GetCollection(t => t.Id != hh.User.TrackId).First();
         trackPicker.ChangeSelectedTrack(newTrack);
@@ -53,6 +56,31 @@ public class UnitTests
         hh1.User.TrackId.Should().Be(newTrack.Id);
         hh1.User.PersonName.LastName.Should().Be(newLastName);
     }
+
+    [Test]
+    public void TestTransferFoodProductsFromTrackToJournal()
+    {
+        var hh = new HomeHelper(UserRepository);
+        var track = hh.User.Track;
+
+        Track otherTrack;
+        using (var context = new ApplicationDbContext(options, configuration))
+        {
+            otherTrack = context.Tracks.First(t => t.Id != track.Id);
+        }
+        
+        var tp = new TrackPickHelper(UserRepository, TrackRepository, JournalRepository);
+        tp.ChangeSelectedTrack(otherTrack);
+        tp.Save();
+        
+        var journal = hh.User.Journal;
+        var ids1 = journal.FoodProducts.Select(fp => fp.Id).OrderBy(id => id).ToList();
+        var ids2 = track.FoodProducts.Select(fp => fp.Id).OrderBy(id => id).ToList();
+
+        ids1.SequenceEqual(ids2).Should().BeTrue();
+    }
+
+
 
     private string GenerateRandomString(int length)
     {

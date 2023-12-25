@@ -46,14 +46,22 @@ namespace BeeFat.Data
                     macronutrient.Property(m => m.Carbohydrates);
                     macronutrient.Property(m => m.Calories);
                 });
+                
+                entity
+                    .HasMany(f => f.FoodProducts) // Устанавливаем отношение один ко многим
+                    .WithOne(fp => fp.Food) // Обратная навигационное свойство в сущности FoodProduct
+                    .HasForeignKey(fp => fp.FoodId) // Внешний ключ
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade); // Удаляем FoodProduct при удалении Food
             });
 
             modelBuilder.Entity<FoodProduct>()
                 .HasOne(fp => fp.Food)
-                .WithOne()
-                .HasForeignKey<FoodProduct>(fp => fp.FoodId)
+                .WithMany(f => f.FoodProducts)
+                .HasForeignKey(fp => fp.FoodId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Track>()
                 .HasMany(t => t.FoodProducts)
@@ -63,5 +71,11 @@ namespace BeeFat.Data
 
             base.OnModelCreating(modelBuilder);
         }
+        
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
+
     }
 }

@@ -57,6 +57,9 @@ public class UserRepository: Repository<ApplicationUser>
         
     readonly Func<ApplicationDbContext, Guid, ApplicationUser> _getUserWithFoodProducts = (db, id) => 
         db.BeeFatUsers
+            .Include(u => u.Journal)
+            .ThenInclude(j => j.FoodProducts)
+            .ThenInclude(fp => fp.Food)
             .Include(u => u.Track)
             .ThenInclude(t => t.FoodProducts)
             .ThenInclude(fp => fp.Food)

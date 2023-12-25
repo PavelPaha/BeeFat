@@ -10,6 +10,10 @@ public abstract class FoodProduct : Entity
     public Guid TrackId { get; set; }
     [ForeignKey("TrackId")] 
     public required Track Track { get; set; }
+    
+    public Guid? JournalId { get; set; }
+    [ForeignKey("JournalId")] 
+    public Journal Journal { get; set; }
 
     public Guid FoodId { get; set; }
     [ForeignKey("FoodId")] 

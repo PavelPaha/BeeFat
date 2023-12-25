@@ -7,22 +7,15 @@ namespace BeeFat.Domain.Infrastructure;
 public class Journal: Entity
 {
     public ICollection<FoodProduct> FoodProducts { get; set; }
-    
+
     [SetsRequiredMembers]
-    protected Journal(Guid userId, ApplicationUser user)
+    public Journal(ICollection<FoodProduct> foodProducts)
     {
-        UserId = userId;
-        User = user;
-        FoodProducts = User.Track.FoodProducts;
+        FoodProducts = foodProducts;
     }
 
     [SetsRequiredMembers]
     protected Journal()
     {
     }
-
-    public Guid UserId { get; set; }
-    
-    [ForeignKey("UserId")]
-    public required ApplicationUser User { get; set; }
 }

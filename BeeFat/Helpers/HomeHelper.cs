@@ -67,7 +67,7 @@ public class HomeHelper
         var todayNumber = (int)start;
         for (var dayNumber = todayNumber + 1; dayNumber <= 6 && dayNumber < todayNumber + 3; dayNumber++)
         {
-            var products = user.Track.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
+            var products = user.Journal.FoodProducts.Where(p => (int)p.DayOfWeek == dayNumber).ToList();
             if (!products.Any()) break;
             yield return products;
         }
@@ -77,7 +77,7 @@ public class HomeHelper
     {
         var user = UserRepository.FetchUserInfo(_id);
         var totalMacronutrients = new Macronutrient();
-        var todayDailyPlan = user.Track.FoodProducts
+        var todayDailyPlan = user.Journal.FoodProducts
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
         foreach (var product in todayDailyPlan)
         {

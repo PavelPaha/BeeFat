@@ -34,6 +34,9 @@ namespace BeeFat.Migrations
                     b.Property<int>("Height")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("JournalId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("RightCalories")
                         .HasColumnType("integer");
 
@@ -44,6 +47,8 @@ namespace BeeFat.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("JournalId");
 
                     b.HasIndex("TrackId");
 
@@ -104,8 +109,7 @@ namespace BeeFat.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodId")
-                        .IsUnique();
+                    b.HasIndex("FoodId");
 
                     b.HasIndex("JournalId");
 
@@ -124,13 +128,7 @@ namespace BeeFat.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Journals");
                 });
@@ -176,6 +174,12 @@ namespace BeeFat.Migrations
 
             modelBuilder.Entity("BeeFat.Data.ApplicationUser", b =>
                 {
+                    b.HasOne("BeeFat.Domain.Infrastructure.Journal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BeeFat.Domain.Infrastructure.Track", "Track")
                         .WithMany()
                         .HasForeignKey("TrackId")
@@ -202,6 +206,8 @@ namespace BeeFat.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationUserId");
                         });
+
+                    b.Navigation("Journal");
 
                     b.Navigation("PersonName")
                         .IsRequired();
@@ -243,12 +249,12 @@ namespace BeeFat.Migrations
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.FoodProduct", b =>
                 {
                     b.HasOne("BeeFat.Domain.Infrastructure.Food", "Food")
-                        .WithOne()
-                        .HasForeignKey("BeeFat.Domain.Infrastructure.FoodProduct", "FoodId")
+                        .WithMany("FoodProducts")
+                        .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeeFat.Domain.Infrastructure.Journal", null)
+                    b.HasOne("BeeFat.Domain.Infrastructure.Journal", "Journal")
                         .WithMany("FoodProducts")
                         .HasForeignKey("JournalId");
 
@@ -260,24 +266,14 @@ namespace BeeFat.Migrations
 
                     b.Navigation("Food");
 
+                    b.Navigation("Journal");
+
                     b.Navigation("Track");
                 });
 
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Journal", b =>
+            modelBuilder.Entity("BeeFat.Domain.Infrastructure.Food", b =>
                 {
-                    b.HasOne("BeeFat.Data.ApplicationUser", "User")
-                        .WithOne("Journal")
-                        .HasForeignKey("BeeFat.Domain.Infrastructure.Journal", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BeeFat.Data.ApplicationUser", b =>
-                {
-                    b.Navigation("Journal")
-                        .IsRequired();
+                    b.Navigation("FoodProducts");
                 });
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.Journal", b =>

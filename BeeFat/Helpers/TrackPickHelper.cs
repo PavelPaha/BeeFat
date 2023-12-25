@@ -13,11 +13,13 @@ public class TrackPickHelper
     public Track SelectedTrack;
     public UserRepository UserRepository;
     public TrackRepository TrackRepository;
+    public JournalRepository JournalRepository;
 
     public Guid _id = FakeData.HardId;
 
-    public TrackPickHelper(UserRepository userRepository, TrackRepository trackRepository)
+    public TrackPickHelper(UserRepository userRepository, TrackRepository trackRepository, JournalRepository journalRepository)
     {
+        JournalRepository = journalRepository;
         TrackRepository = trackRepository;
         UserRepository = userRepository;
         User = userRepository.FetchUserInfo(_id);
@@ -26,8 +28,9 @@ public class TrackPickHelper
     public void Save()
     {
         User.TrackId = SelectedTrack.Id;
-        User.Track = SelectedTrack;
+        User.Track = TrackRepository.GetById(SelectedTrack.Id);
         UserRepository.Update(User);
+        JournalRepository.UpdateByChangingUserTrack(User);
     }
 
     public void ChangeSelectedTrack(Track track)

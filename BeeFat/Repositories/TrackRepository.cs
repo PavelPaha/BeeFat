@@ -12,7 +12,14 @@ public class TrackRepository: Repository<Track>
 
     public override Track GetById(Guid id)
     {
-        throw new NotImplementedException();
+        using (var context = _context)
+        {
+            return context
+                .Tracks
+                .Include(t => t.FoodProducts)
+                .ThenInclude(fp => fp.Food)
+                .First(u => u.Id == id);
+        }
     }
     
 

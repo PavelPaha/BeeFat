@@ -18,6 +18,8 @@ public class Food : Entity
         Macronutrient = new Macronutrient();
         Weight = 0;
     }
+    
+    public ICollection<FoodProduct> FoodProducts { get; set; }
 
     public required string Name { get; set; }
     

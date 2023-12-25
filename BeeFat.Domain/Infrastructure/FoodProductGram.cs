@@ -23,7 +23,7 @@ public class FoodProductGram : FoodProduct
         : base(food, dayOfWeek, trackId, isEaten)
     {
         Grams = grams;
-        Name = Food.Name;
+        Name = food.Name;
     }
 
 

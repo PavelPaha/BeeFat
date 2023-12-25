@@ -15,6 +15,12 @@ namespace BeeFat.Data
         [ForeignKey("TrackId")]
         public Track Track { get; set; }
         
+        
+        public Guid JournalId { get; set; }
+        
+        [ForeignKey("JournalId")]
+        public required Journal Journal { get; set; }
+        
         public required int Weight { get; set; }
         
         public required int Height { get; set; }
@@ -22,8 +28,6 @@ namespace BeeFat.Data
         public required int Age { get; set; }
         
         public required int RightCalories { get; set; }
-        
-        public required Journal Journal { get; set; }
 
         [SetsRequiredMembers]
         public ApplicationUser(PersonName personName, Track track)
@@ -63,7 +67,7 @@ namespace BeeFat.Data
             Height = otherUser.Height;
             Age = otherUser.Age;
             RightCalories = otherUser.RightCalories;
-            Journal = otherUser.Journal;
+            // Journal = otherUser.Journal;
         }
 
         [SetsRequiredMembers]
