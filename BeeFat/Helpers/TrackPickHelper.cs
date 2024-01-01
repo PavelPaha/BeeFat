@@ -22,7 +22,7 @@ public class TrackPickHelper
         JournalRepository = journalRepository;
         TrackRepository = trackRepository;
         UserRepository = userRepository;
-        User = userRepository.FetchUserInfo(_id);
+        User = userRepository.GetById(_id);
     }
 
     public void Save()

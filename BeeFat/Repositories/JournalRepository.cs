@@ -16,7 +16,7 @@ public class JournalRepository : Repository<Journal>
         using var context = _context;
         return context.Journals
             .Include(j => j.FoodProducts)
-            .ThenInclude(fp => fp.Food)
+            // .ThenInclude(fp => fp.)
             .First(j => j.Id == id);
     }
 
@@ -37,34 +37,44 @@ public class JournalRepository : Repository<Journal>
 
     public void UpdateByChangingUserTrack(ApplicationUser user)
     {
-        Journal journal;
         Track track;
-        using var context = _context;
-
-        var foundUser = context.BeeFatUsers
-            .Include(u => u.Journal)
-            .ThenInclude(j => j.FoodProducts)
-            .ThenInclude(fp => fp.Food)
-            .First(u => u.Id == user.Id);
-        journal = foundUser.Journal;
-
-        var foundUser1 = context.BeeFatUsers
-            .Include(u => u.Track)
-            .ThenInclude(j => j.FoodProducts)
-            .ThenInclude(fp => fp.Food)
-            .First(u => u.Id == user.Id);
-        track = foundUser.Track;
-
-        foreach (var fp in journal.FoodProducts)
+        using (var context = _context)
         {
-            context.FoodProducts.Remove(fp);
+            var foundUser1 = context.BeeFatUsers
+                .Include(u => u.Track)
+                .ThenInclude(j => j.FoodProducts)
+                .ThenInclude(fp => fp.Food)
+                .First(u => u.Id == user.Id);
+            track = foundUser1.Track;
+        }
+        
+        Journal journal;
+        using (var context = _context)
+        {
+            var foundUser = context.BeeFatUsers
+                .Include(u => u.Journal)
+                .ThenInclude(j => j.FoodProducts)
+                // .ThenInclude(fp => fp.Macronutrient)
+                // .Include(u => u.Track)
+                // .ThenInclude(j => j.FoodProducts)
+                // .ThenInclude(fp => fp.Food)
+                .First(u => u.Id == user.Id);
+            journal = foundUser.Journal;
+        }
+        
+        using (var context = _context)
+        {
+            foreach (var jfp in journal.FoodProducts)
+            {
+                context.JournalFoods.Remove(jfp);
+                context.SaveChanges();
+            }
+            
+            RemoveAllFoodProductsFromJournal(journal);
+            context.SaveChanges();
+            AddFoodProductsFromTrackToJournal(context, track, journal);
             context.SaveChanges();
         }
-
-        RemoveAllFoodProductsFromJournal(journal);
-        context.SaveChanges();
-        AddFoodProductsFromTrackToJournal(track, journal);
-        context.SaveChanges();
     }
 
     private void RemoveAllFoodProductsFromJournal(Journal journal)
@@ -72,25 +82,25 @@ public class JournalRepository : Repository<Journal>
         journal.FoodProducts.Clear();
     }
 
-    private void AddFoodProductsFromTrackToJournal(Track track, Journal journal)
+    private void AddFoodProductsFromTrackToJournal(ApplicationDbContext context, Track track, Journal journal)
     {
         foreach (var fp in track.FoodProducts)
         {
-            FoodProduct fpToAdd;
-
+            JournalFood fpToAdd;
+            var macronutrient = new Macronutrient(fp.Food.Macronutrient);
             switch (fp)
             {
                 case FoodProductGram fpg:
-                    fpToAdd = new FoodProductGram(fpg.Food, fpg.Grams, fpg.DayOfWeek, fpg.Track, fpg.IsEaten);
+                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.Grams, fpg.DayOfWeek, journal, fp.PortionSize, fpg.IsEaten);
                     break;
                 case FoodProductPiece fpp:
-                    fpToAdd = new FoodProductPiece(fpp.Food, fpp.Pieces, fpp.DayOfWeek, fpp.Track, fpp.IsEaten);
+                    fpToAdd = new JournalFoodPiece(fpp.Name, macronutrient, fpp.Pieces, fpp.DayOfWeek, journal, fp.PortionSize, fpp.IsEaten);
                     break;
                 default:
                     throw new Exception($"Неизвестный тип продукта {fp.Name}");
             }
-
-            journal.FoodProducts.Add(fpToAdd);
+            
+            context.JournalFoods.Add(fpToAdd);
         }
     }
 

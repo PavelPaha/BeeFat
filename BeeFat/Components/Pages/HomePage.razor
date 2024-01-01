@@ -17,13 +17,19 @@
             <h2>@HomeHelper.SelectedFoodProduct.Name</h2>
             @switch (HomeHelper.SelectedFoodProduct)
             {
-                case FoodProductGram:
+                case JournalFoodGram:
                     <div>
                         Запланированная масса - @HomeHelper.SelectedFoodProduct.PortionSize г
                         <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="HomeHelper.PortionSize"/>
                     </div>
                     break;
-                case FoodProductPiece:
+                case JournalFoodPiece:
+                    <div>
+                        Запланированное количество - @HomeHelper.SelectedFoodProduct.PortionSize штук
+                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
+                    </div>
+                    break;
+                default:
                     <div>
                         Запланированное количество - @HomeHelper.SelectedFoodProduct.PortionSize штук
                         <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
@@ -32,17 +38,16 @@
             }
         }
 
-        <Button Style="background-color: #c2cb88;" @onclick="() => { 
-                                                       HomeHelper.Modal.Close(CloseReason.UserClosing); 
-                                                       HomeHelper.ChangeFoodProductInfoAndSave(true);  
-                                                       var fpSource = HomeHelper.User.Journal.FoodProducts;
-                                                       HomeHelper.GetTotalMacronutrientsByDay(fpSource, HomeHelper.Today);}"
-                >Сохранить</Button>
+        <Button Style="background-color: #c2cb88;" @onclick="() => {
+       HomeHelper.Modal.Close(CloseReason.UserClosing); 
+       HomeHelper.Save();        
+        var fpSource = HomeHelper.User.Journal.FoodProducts;
+        HomeHelper.GetTotalMacronutrientsByDay(fpSource); 
+            }">Сохранить</Button>
     </div>
 </Modal>
 
 @{
-    var today = DayOfWeek.Monday;
     var user = HomeHelper.FetchUserInfo();
     var track = user.Track;
     var redirectToTrackEditing = () => RedirectTo("edit");
@@ -53,7 +58,7 @@
 @code{
     protected override void OnInitialized()
     {
-        StateHasChanged();
+        // StateHasChanged();
     }
 
     private void RedirectTo(string url)
@@ -91,13 +96,13 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.GetProductsByDay(user.Journal.FoodProducts, today))
+                    foreach (var product in HomeHelper.GetProductsByDay(user.Journal.FoodProducts))
                     {
-                        var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                        var foodInfo = product.Macronutrient * product.PortionCoeff;
                         <li>
                             <div>@product.Name</div>
                             <div>
-                                <span class="portion-size">@($"{product.PortionSize} {(product is FoodProductGram ? "г" : "шт")}")</span>
+                                <span class="portion-size">@($"{product.PortionSize} {(product is JournalFoodGram ? "г" : "шт")}")</span>
                             </div>
                             <div>
                                 <span class="portion-size">@foodInfo.Proteins г</span>
@@ -111,7 +116,7 @@
                             <div>
                                 <span class="portion-size">@foodInfo.Calories ккал</span>
                             </div>
-                            <button type="button" class="checkbox-button" @onclick="() => HomeHelper.ShowModalWindow(product)" disabled=@product.IsEaten>&#10003;</button>
+                            <button type="button" class="checkbox-button" @onclick="() => { HomeHelper.SelectedFoodProduct = product; HomeHelper.ShowModalWindow(product); }" disabled=@product.IsEaten>&#10003;</button>
                             @if (product.IsEaten)
                             {
                                 <button type="button" class="checkbox-button" @onclick="() => { product.IsEaten = false; HomeHelper.SelectedFoodProduct = product; HomeHelper.ChangeFoodProductInfoAndSave(false); }">&times;</button>
@@ -121,7 +126,7 @@
                 }
             </ul>
             <div class="total">
-                @{ var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, today); }
+                @{ var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, HomeHelper.Today); }
                 Итого: <span class="parameter">@totalMacronutrient.Proteins г</span> белков, <span class="parameter">@totalMacronutrient.Fats г</span> жиров, <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов, <span class="parameter">@totalMacronutrient.Calories</span> калорий.
             </div>
         </div>
@@ -129,7 +134,7 @@
             <h3>План питания на следующие дни</h3>
             <ul class="product-list">
                 @{
-                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, today))
+                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, HomeHelper.Today))
                     {
                         <li>
                             <div class="product">

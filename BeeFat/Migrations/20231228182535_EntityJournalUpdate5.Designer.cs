@@ -3,6 +3,7 @@ using System;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BeeFat.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231228182535_EntityJournalUpdate5")]
+    partial class EntityJournalUpdate5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,11 +140,6 @@ namespace BeeFat.Migrations
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
-
                     b.Property<bool>("IsEaten")
                         .HasColumnType("boolean");
 
@@ -160,11 +158,7 @@ namespace BeeFat.Migrations
 
                     b.HasIndex("JournalId");
 
-                    b.ToTable("JournalFoods");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("JournalFood");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("JournalFoodProducts");
                 });
 
             modelBuilder.Entity("BeeFat.Domain.Infrastructure.Track", b =>
@@ -204,26 +198,6 @@ namespace BeeFat.Migrations
                         .HasColumnType("integer");
 
                     b.HasDiscriminator().HasValue("FoodProductPiece");
-                });
-
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.JournalFoodGram", b =>
-                {
-                    b.HasBaseType("BeeFat.Domain.Infrastructure.JournalFood");
-
-                    b.Property<int>("Grams")
-                        .HasColumnType("integer");
-
-                    b.HasDiscriminator().HasValue("JournalFoodGram");
-                });
-
-            modelBuilder.Entity("BeeFat.Domain.Infrastructure.JournalFoodPiece", b =>
-                {
-                    b.HasBaseType("BeeFat.Domain.Infrastructure.JournalFood");
-
-                    b.Property<int>("Pieces")
-                        .HasColumnType("integer");
-
-                    b.HasDiscriminator().HasValue("JournalFoodPiece");
                 });
 
             modelBuilder.Entity("BeeFat.Data.ApplicationUser", b =>
@@ -344,7 +318,7 @@ namespace BeeFat.Migrations
 
                             b1.HasKey("JournalFoodId");
 
-                            b1.ToTable("JournalFoods");
+                            b1.ToTable("JournalFoodProducts");
 
                             b1.WithOwner()
                                 .HasForeignKey("JournalFoodId");

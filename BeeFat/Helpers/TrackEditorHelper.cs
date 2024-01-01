@@ -11,8 +11,10 @@ public class TrackEditorHelper
     public int PortionSize = 0;
     public Modal ConfirmModal = default!;
     public Modal AddProductModal = default!;
-    public FoodProduct SelectedFoodProduct = null;
-    private IEnumerable<FoodProduct> AvailableFoodProducts;
+    public JournalFood SelectedFoodProduct = null;
+    public Macronutrient TodayMacronutrient;
+    public DayOfWeek Today = DayOfWeek.Monday;
+    // private IEnumerable<FoodProduct> AvailableFoodProducts;
     private string searchValue;
     
     public TrackEditorHelper(TrackRepository trackRepository)
@@ -31,5 +33,26 @@ public class TrackEditorHelper
     {
         searchValue = e.Value.ToString();
         // AvailableFoodProducts = HomeHelper.GetFoodProductsByCondition(fp => fp.Name.ToLower().Contains(searchValue.ToLower()));
+    }
+    
+    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fpsource, DayOfWeek dayOfWeek)
+    {
+        var totalMacronutrients = new Macronutrient();
+        foreach (var product in GetProductsByDay(fpsource, dayOfWeek))
+        {
+            totalMacronutrients += product.Food.Macronutrient * product.PortionCoeff;
+        }
+        TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
+        return TodayMacronutrient;
+    }
+
+    public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource)
+    {
+        return GetProductsByDay(fpSource, Today);
+    }
+
+    public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource, DayOfWeek dayOfWeek)
+    {
+        return fpSource.Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
     }
 }

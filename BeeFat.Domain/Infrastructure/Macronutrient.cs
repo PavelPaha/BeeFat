@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class Macronutrient : ValueType<Macronutrient>
+public class Macronutrient : ValueType<Macronutrient>, IComparable
 {
     public int Proteins { get; set; }
     public int Fats { get; set; }
@@ -14,6 +14,10 @@ public class Macronutrient : ValueType<Macronutrient>
         Fats = 0;
         Carbohydrates = 0;
         Calories = 0;
+    }
+    
+    public Macronutrient(Macronutrient macronutrient) { 
+        CopyMacronutrients(macronutrient);
     }
 
     public Macronutrient(int proteins, int fats, int carbohydrates, int calories)
@@ -76,5 +80,30 @@ public class Macronutrient : ValueType<Macronutrient>
         {
             throw new ArgumentException("Значение макроэлемента должно быть больше или равно нулю.");
         }
+    }
+
+    public int CompareTo(object? obj)
+    {
+        if (obj is Macronutrient other)
+        {
+            if (ReferenceEquals(this, other))
+                return 0;
+
+            var proteinsComparison = Proteins.CompareTo(other.Proteins);
+            if (proteinsComparison != 0)
+                return proteinsComparison;
+
+            var fatsComparison = Fats.CompareTo(other.Fats);
+            if (fatsComparison != 0)
+                return fatsComparison;
+
+            var carbohydratesComparison = Carbohydrates.CompareTo(other.Carbohydrates);
+            if (carbohydratesComparison != 0)
+                return carbohydratesComparison;
+
+            return Calories.CompareTo(other.Calories);
+        }
+
+        throw new ArgumentException("Object is not macronutrients");
     }
 }

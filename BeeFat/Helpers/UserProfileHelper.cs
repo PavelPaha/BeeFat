@@ -17,7 +17,7 @@ public class UserProfileHelper
     {
         UserRepository = userRepository;
         Modal = default!;
-        User = userRepository.FetchUserInfo(_id);
+        User = userRepository.GetById(_id);
         UserModel = User;
     }
 

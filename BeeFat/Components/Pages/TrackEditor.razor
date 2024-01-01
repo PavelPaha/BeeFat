@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 
 @{
-    var today = DayOfWeek.Monday;
+    HomeHelper.FetchUserInfo();
     var user = HomeHelper.User;
     var track = user.Track;
 }
@@ -84,7 +84,7 @@
                     <div>Действие</div>
                 </li>
                 @{
-                    foreach (var product in HomeHelper.GetProductsByDay(user.Track.FoodProducts, today))
+                    foreach (var product in TrackEditorHelper.GetProductsByDay(user.Track.FoodProducts))
                     {
                         var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
                         <li>
@@ -104,8 +104,12 @@
                             <div>
                                 <span class="portion-size">@foodInfo.Calories ккал</span>
                             </div>
-                            <Button class="action-button edit-button" @onclick="() => { TrackEditorHelper.SelectedFoodProduct = product; TrackEditorHelper.ConfirmModal.Show(); }">Изменить</Button>
-                            <Button class="action-button delete-button" @onclick="() => { TrackEditorHelper.TrackRepository.DeleteFoodProductFromTrack(track, product); }">Удалить</Button>
+                            <Button class="action-button edit-button" @onclick="() => {
+                                                                          // TrackEditorHelper.SelectedFoodProduct = product; TrackEditorHelper.ConfirmModal.Show();
+                                                                           }">Изменить</Button>
+                            <Button class="action-button delete-button" @onclick="() => {
+                                                                            // TrackEditorHelper.TrackRepository.DeleteFoodProductFromTrack(track, product);
+                                                                             }">Удалить</Button>
                         </li>
                     }
                 }

@@ -15,6 +15,12 @@ namespace BeeFat.Data
         
         public DbSet<FoodProduct> FoodProducts { get; set; }
         
+        public DbSet<JournalFood> JournalFoods { get; set; }
+        
+        public DbSet<JournalFoodGram> JournalFoodsGram { get; set; }
+        
+        public DbSet<JournalFoodPiece> JournalFoodsPiece { get; set; }
+        
         public DbSet<Track> Tracks { get; set; }
         
         public DbSet<Journal> Journals { get; set; }
@@ -62,12 +68,31 @@ namespace BeeFat.Data
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-
             modelBuilder.Entity<Track>()
                 .HasMany(t => t.FoodProducts)
                 .WithOne(fp => fp.Track)
                 .HasForeignKey(fp => fp.TrackId)
                 .IsRequired();
+
+            modelBuilder.Entity<Journal>(entity =>
+            {
+                entity.HasMany(f => f.FoodProducts) // Устанавливаем отношение один ко многим
+                    .WithOne(fp => fp.Journal);
+            });
+
+            modelBuilder.Entity<JournalFood>(entity =>
+            {
+                entity.HasKey(f => f.Id);
+                entity.Property(f => f.Name).IsRequired().HasMaxLength(255);
+
+                entity.OwnsOne(f => f.Macronutrient, macronutrient =>
+                {
+                    macronutrient.Property(m => m.Proteins).IsRequired();
+                    macronutrient.Property(m => m.Fats).IsRequired();
+                    macronutrient.Property(m => m.Carbohydrates).IsRequired();
+                    macronutrient.Property(m => m.Calories).IsRequired();
+                });
+            });
 
             base.OnModelCreating(modelBuilder);
         }

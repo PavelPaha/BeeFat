@@ -1,4 +1,3 @@
-using BeeFat.Components;
 using BeeFat.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,16 +12,8 @@ public class UserRepository: Repository<ApplicationUser>
 
     public override ApplicationUser GetById(Guid id)
     {
-        ApplicationUser user = null;
-        using (var context = _context)
-        {
-            user = context.BeeFatUsers.FirstOrDefault(u => u.Id == id);
-            if (user is null)
-            {
-                throw new Exception($"Пользователя с id = {id} не существует");
-            }
-        }
-        return user;
+        using var context = _context;
+        return _getUserWithFoodProducts(context, id);
     }
 
     public override bool DeleteById(Guid id)
@@ -45,21 +36,12 @@ public class UserRepository: Repository<ApplicationUser>
     {
         throw new NotImplementedException();
     }
-    
-    public ApplicationUser FetchUserInfo(Guid id)
-    {
-        using (var db = new ApplicationDbContext(_options, _configuration))
-        {
-            return _getUserWithFoodProducts(db, id);
-        }
-    }
-    
         
     readonly Func<ApplicationDbContext, Guid, ApplicationUser> _getUserWithFoodProducts = (db, id) => 
         db.BeeFatUsers
             .Include(u => u.Journal)
             .ThenInclude(j => j.FoodProducts)
-            .ThenInclude(fp => fp.Food)
+            // .ThenInclude(fp => fp.Journal)
             .Include(u => u.Track)
             .ThenInclude(t => t.FoodProducts)
             .ThenInclude(fp => fp.Food)

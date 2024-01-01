@@ -10,10 +10,6 @@ public abstract class FoodProduct : Entity
     public Guid TrackId { get; set; }
     [ForeignKey("TrackId")] 
     public required Track Track { get; set; }
-    
-    public Guid? JournalId { get; set; }
-    [ForeignKey("JournalId")] 
-    public Journal Journal { get; set; }
 
     public Guid FoodId { get; set; }
     [ForeignKey("FoodId")] 
@@ -29,28 +25,27 @@ public abstract class FoodProduct : Entity
 
     [SetsRequiredMembers]
     protected FoodProduct() { }
+    
 
     [SetsRequiredMembers]
     protected FoodProduct(Food food, DayOfWeek dayOfWeek, Track track, bool isEaten)
-        : this(food, dayOfWeek, track.Id, isEaten)
     {
-        Track = track;
-    }
-
-    [SetsRequiredMembers]
-    protected FoodProduct(Food food, DayOfWeek dayOfWeek, Guid trackId, bool isEaten)
-    {
+        // Track = track;
         Food = food;
         FoodId = food.Id;
         DayOfWeek = dayOfWeek;
-        TrackId = trackId;
+        TrackId = track.Id;
         IsEaten = isEaten;
     }
-    public abstract void ChangePortionSize(int newPortionSize);
-
-    protected virtual void EnsurePortionSize(int portionSize)
+    
+    [SetsRequiredMembers]
+    protected FoodProduct(Food food, DayOfWeek dayOfWeek, Journal journal, bool isEaten)
     {
-        if (portionSize < 0)
-            throw new ArgumentException("Размер порции должен быть неотрицательным");
+        // Journal = journal;
+        Food = food;
+        FoodId = food.Id;
+        DayOfWeek = dayOfWeek;
+        TrackId = journal.Id;
+        IsEaten = isEaten;
     }
 }
