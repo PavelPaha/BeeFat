@@ -91,15 +91,16 @@ public class JournalRepository : Repository<Journal>
             switch (fp)
             {
                 case FoodProductGram fpg:
-                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.Grams, fpg.DayOfWeek, journal, fp.PortionSize, fpg.IsEaten);
+                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.Grams, fpg.DayOfWeek, journal, 0, fpg.IsEaten);
                     break;
                 case FoodProductPiece fpp:
-                    fpToAdd = new JournalFoodPiece(fpp.Name, macronutrient, fpp.Pieces, fpp.DayOfWeek, journal, fp.PortionSize, fpp.IsEaten);
+                    fpToAdd = new JournalFoodPiece(fpp.Name, macronutrient, fpp.Pieces, fpp.DayOfWeek, journal, 0, fpp.IsEaten);
                     break;
                 default:
                     throw new Exception($"Неизвестный тип продукта {fp.Name}");
             }
-            
+
+            fpToAdd.FoodProductReference = fp.Id;
             context.JournalFoods.Add(fpToAdd);
         }
     }

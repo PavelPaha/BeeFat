@@ -2,6 +2,7 @@ using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Repositories;
 using Blazorise;
+using Syncfusion.Blazor.ProgressBar;
 
 namespace BeeFat.Helpers;
 
@@ -22,6 +23,7 @@ public class HomeHelper
 
     public Modal Modal = default!;
     public JournalFood SelectedFoodProduct;
+    public int RightPortionSize;
     public int PortionSize;
     public DayOfWeek Today = DayOfWeek.Monday;
     public ApplicationUser User;
@@ -54,18 +56,36 @@ public class HomeHelper
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource)
     {
-        return GetTotalMacronutrientsByDay(fpsource, Today);
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
+    }
+    
+    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fpsource)
+    {
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
     }
 
-    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource, DayOfWeek dayOfWeek)
+    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource, Func<JournalFood, bool> selector,  DayOfWeek dayOfWeek)
     {
         var totalMacronutrients = new Macronutrient();
         foreach (var product in GetProductsByDay(fpsource, dayOfWeek))
         {
-            totalMacronutrients += product.Macronutrient * product.PortionCoeff;
+            if (selector.Invoke(product)) 
+                totalMacronutrients += product.Macronutrient * product.PortionCoeff;
+        }
+        // TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
+        return totalMacronutrients;
+    }
+    
+    public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fpsource, Func<FoodProduct, bool> selector,  DayOfWeek dayOfWeek)
+    {
+        var totalMacronutrients = new Macronutrient();
+        foreach (var product in GetProductsByDay(fpsource, dayOfWeek))
+        {
+            if (selector.Invoke(product)) 
+                totalMacronutrients += product.Food.Macronutrient * product.PortionCoeff;
         }
         TodayMacronutrient.CopyMacronutrients(totalMacronutrients);
-        return TodayMacronutrient;
+        return totalMacronutrients;
     }
 
     public IEnumerable<IEnumerable<JournalFood>> GetNextDaysFoodProducts(IEnumerable<JournalFood> fpSource, DayOfWeek start)
@@ -84,8 +104,18 @@ public class HomeHelper
         return GetProductsByDay(fpSource, Today);
     }
     
+    public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource)
+    {
+        return GetProductsByDay(fpSource, Today);
+    }
 
-    public IEnumerable<T> GetProductsByDay<T>(IEnumerable<T> fpSource, DayOfWeek dayOfWeek) where T: JournalFood
+    public IEnumerable<JournalFood> GetProductsByDay(IEnumerable<JournalFood> fpSource, DayOfWeek dayOfWeek)
+    {
+        return fpSource
+            .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
+    }
+    
+    public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource, DayOfWeek dayOfWeek)
     {
         return fpSource
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
@@ -99,5 +129,41 @@ public class HomeHelper
     public void Save()
     {
         ChangeFoodProductInfoAndSave(true);  
+    }
+
+    public void CloseWindow()
+    {
+        Modal.Close(CloseReason.UserClosing); 
+        Save();        
+        var fpSource = User.Journal.FoodProducts;
+        GetTotalMacronutrientsByDay(fpSource); 
+    }
+
+    public void CancelEatenProduct(JournalFood product)
+    {
+        product.IsEaten = false;
+        product.PortionSize = 0;
+        SelectedFoodProduct = product; 
+        ChangeFoodProductInfoAndSave(false);
+    }
+
+    public void SetEatenProduct(JournalFood product, FoodProduct fp)
+    {
+        RightPortionSize = fp.PortionSize;
+        SelectedFoodProduct = product; 
+        ShowModalWindow(product);
+    }
+
+    public double CalculatePercentage(int firstParam, int secondParam)
+    {
+        var result = (int)(100 * (firstParam / (double)secondParam));
+        if (result < 0) return 0;
+        if (result > 100) return 100;
+        return result;
+    }
+    
+    public void TextHandler(TextRenderEventArgs args, int totalEatenCalories, int totalCalories)
+    {
+        args.Text = $"{totalEatenCalories}/{totalCalories}";
     }
 }

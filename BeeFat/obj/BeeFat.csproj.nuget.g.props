@@ -13,6 +13,9 @@
     <SourceRoot Include="C:\Users\MagicBook\.nuget\packages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)syncfusion.blazor.core\24.1.43\buildTransitive\Syncfusion.Blazor.Core.props" Condition="Exists('$(NuGetPackageRoot)syncfusion.blazor.core\24.1.43\buildTransitive\Syncfusion.Blazor.Core.props')" />
+    <Import Project="$(NuGetPackageRoot)syncfusion.blazor.data\24.1.43\buildTransitive\Syncfusion.Blazor.Data.props" Condition="Exists('$(NuGetPackageRoot)syncfusion.blazor.data\24.1.43\buildTransitive\Syncfusion.Blazor.Data.props')" />
+    <Import Project="$(NuGetPackageRoot)syncfusion.blazor.progressbar\24.1.43\buildTransitive\Syncfusion.Blazor.ProgressBar.props" Condition="Exists('$(NuGetPackageRoot)syncfusion.blazor.progressbar\24.1.43\buildTransitive\Syncfusion.Blazor.ProgressBar.props')" />
     <Import Project="$(NuGetPackageRoot)nunit\4.0.0-beta.1\build\NUnit.props" Condition="Exists('$(NuGetPackageRoot)nunit\4.0.0-beta.1\build\NUnit.props')" />
     <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.0\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.0\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props')" />
     <Import Project="$(NuGetPackageRoot)microsoft.testplatform.testhost\17.9.0-preview-23531-01\build\netcoreapp3.1\Microsoft.TestPlatform.TestHost.props" Condition="Exists('$(NuGetPackageRoot)microsoft.testplatform.testhost\17.9.0-preview-23531-01\build\netcoreapp3.1\Microsoft.TestPlatform.TestHost.props')" />

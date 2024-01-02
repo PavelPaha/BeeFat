@@ -67,7 +67,7 @@ h1:focus {
 }
 
 .main-content {
-    flex: 3;
+    flex: 4;
     padding: 30px;
     background-color: #fff;
     border-radius: 5px;
@@ -75,6 +75,7 @@ h1:focus {
 }
 
 .user{
+    flex: 3;
     width: 100%;
     display: flex;
     align-items: center;
@@ -212,7 +213,7 @@ ul input[type="checkbox"]:checked + label {
 
 /*Информация о пользователе*/
 
-.portion-size, .parameter{
+.portion-size, .eaten-portion-size, .parameter{
     color: #616f96;
     border-radius: 3px;
     background-color: #eee2dc;
@@ -252,6 +253,11 @@ ul input[type="checkbox"]:checked + label {
     padding: 5px;
 }
 
+.product-list li div .indicator{
+    display: flex;
+    flex-direction: column;
+}
+
 .action-button{
     font-family: system-ui, sans-serif;
     box-sizing: border-box;
@@ -282,6 +288,12 @@ ul input[type="checkbox"]:checked + label {
 .portion-size{
     margin: 0px 10px;
     color: red;
+}
+
+.eaten-portion-size{
+    margin: 0px 10px;
+    background-color: #fffad2;
+    color: #9b9b18;
 }
 
 .product{
@@ -316,6 +328,11 @@ input{
     cursor: pointer;
 }
 
+.checkbox-button[disabled] {
+    background-color: green;
+}
+
+
 .edit-and-delete-food{
     display: flex;
     flex-direction: row;
@@ -337,10 +354,12 @@ input{
     max-height: 300px;
 }
 
-.checkbox-button[disabled] {
-    background-color: green;
-}
 
 .disable-item{
     background-color: #dcffd1 !important;
+}
+
+
+.total-progress-bar{
+    width:100%;
 }

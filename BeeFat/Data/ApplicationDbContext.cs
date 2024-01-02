@@ -54,11 +54,11 @@ namespace BeeFat.Data
                 });
                 
                 entity
-                    .HasMany(f => f.FoodProducts) // Устанавливаем отношение один ко многим
-                    .WithOne(fp => fp.Food) // Обратная навигационное свойство в сущности FoodProduct
-                    .HasForeignKey(fp => fp.FoodId) // Внешний ключ
+                    .HasMany(f => f.FoodProducts)
+                    .WithOne(fp => fp.Food)
+                    .HasForeignKey(fp => fp.FoodId)
                     .IsRequired()
-                    .OnDelete(DeleteBehavior.Cascade); // Удаляем FoodProduct при удалении Food
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<FoodProduct>()
@@ -76,7 +76,7 @@ namespace BeeFat.Data
 
             modelBuilder.Entity<Journal>(entity =>
             {
-                entity.HasMany(f => f.FoodProducts) // Устанавливаем отношение один ко многим
+                entity.HasMany(f => f.FoodProducts)
                     .WithOne(fp => fp.Journal);
             });
 
@@ -84,6 +84,7 @@ namespace BeeFat.Data
             {
                 entity.HasKey(f => f.Id);
                 entity.Property(f => f.Name).IsRequired().HasMaxLength(255);
+                entity.Property(f => f.FoodProductReference).IsRequired();
 
                 entity.OwnsOne(f => f.Macronutrient, macronutrient =>
                 {

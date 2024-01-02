@@ -10,6 +10,8 @@ public abstract class JournalFood: Entity
     public Guid? JournalId { get; set; }
     [ForeignKey("JournalId")] public Journal Journal { get; set; }
 
+    public Guid FoodProductReference { get; set; }
+
     public required Macronutrient Macronutrient { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
 

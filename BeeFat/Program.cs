@@ -7,6 +7,7 @@ using BeeFat.Repositories;
 using Blazorise;
 using Microsoft.EntityFrameworkCore;
 using Blazorise.Bootstrap;
+using Syncfusion.Blazor;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddBlazorise();
 builder.Services.AddBootstrapProviders();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSyncfusionBlazor();
 
 
 builder.Services.AddCascadingAuthenticationState();

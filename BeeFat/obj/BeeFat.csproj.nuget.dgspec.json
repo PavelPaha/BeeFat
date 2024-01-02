@@ -269,6 +269,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Syncfusion.Blazor.ProgressBar": {
+              "target": "Package",
+              "version": "[24.1.43, )"
             }
           },
           "imports": [
