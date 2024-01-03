@@ -1,22 +1,23 @@
 ﻿@page "/profile"
 
 @using BeeFat.Helpers
-@using Blazorise
 @inherits LayoutComponentBase
 @inject UserProfileHelper UserProfileHelper;
+@inject NavigationManager NavigationManager;
 
 @rendermode InteractiveServer
 
 <h1>Профиль пользователя</h1>
 
 @{
+   var url = "track/pick";
    var userModel = UserProfileHelper.UserModel;
 }
 
 <Blazorise.Modal @ref="UserProfileHelper.Modal" Title="Modal title" Class="popup_window">
     <div>
         <div>Вы уверены, что хотите сохранить изменения?</div>
-        <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.SaveProfile(); UserProfileHelper.Modal.Close(CloseReason.UserClosing); }">Да</Blazorise.Button>
+        <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Save(); }">Да</Blazorise.Button>
     </div>
 </Blazorise.Modal>
 
@@ -31,6 +32,15 @@
 </div>
 
 <div>
+   <label for="gender">Пол:</label>
+   <select id="gender" @bind=@UserProfileHelper.GenderString>
+       <option value="Male">Мужской</option>
+       <option value="Female">Женский</option>
+   </select>
+</div>
+
+
+<div>
    <label for="weight">Масса (в кг):</label>
    <input type="number" id="weight" @bind="userModel.Weight" />
 </div>
@@ -41,8 +51,21 @@
 </div>
 
 <div>
-   <label for="desiredCalories">Желаемое количество калорий:</label>
-   <input type="number" id="desiredCalories" @bind="userModel.RightCalories" />
+   <label for="gender">Тип активности:</label>
+   <select id="gender" @bind=@UserProfileHelper.ActivityString>
+      @{
+         foreach (var activityName in StaticBeeFat.ActivityToLevel.Keys)
+         {
+            <option value="@(activityName)">@activityName</option>
+         }
+      }
+   </select>
 </div>
 
 <Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Modal.Show();}">Сохранить </Button>
+
+
+<Button Style="background-color: #c2cb88;" @onclick="() => { NavigationManager.RedirectTo(url); }">Подобрать подходящие треки</Button>
+
+
+

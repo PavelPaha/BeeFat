@@ -9,7 +9,7 @@
 @using BeeFat.Helpers
 @using BeeFat.Domain.Infrastructure
 
-<Modal @ref="HomeHelper.Modal" Title="Modal title" Class="popup_window">
+<Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window">
     <div>
 
         @if (!(HomeHelper.SelectedFoodProduct is null))
@@ -46,8 +46,8 @@
 @{
     var user = HomeHelper.FetchUserInfo();
     var track = user.Track;
-    var redirectToTrackEditing = () => RedirectTo("edit");
-    var redirectToUserProfile = () => RedirectTo("profile");
+    var redirectToTrackEditing = () => NavigationManager.RedirectTo("edit");
+    var redirectToUserProfile = () => NavigationManager.RedirectTo("profile");
 }
 
 
@@ -57,12 +57,6 @@
     {
         // StateHasChanged();
     }
-
-    private void RedirectTo(string url)
-    {
-        NavigationManager.NavigateTo(url, forceLoad: true);
-    }
-
 }
 
 <PageTitle>Home</PageTitle>
@@ -70,14 +64,17 @@
 <div class="container">
     <div class="home-sidebar">
         <h2>@track.Name</h2>
-        <ul>
-            <li>
-                <button @onclick="redirectToTrackEditing">Редактировать трек</button>
-            </li>
-            <li>
-                <button @onclick="redirectToUserProfile">Изменить параметры тела</button>
-            </li>
-        </ul>
+        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Saturday)) StaticBeeFat.Today += 1; StateHasChanged(); }">Day++</button>
+        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; StateHasChanged(); }" >Day--</button>
+        <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
+        @* <ul> *@
+        @*     <li> *@
+        @*         <button @onclick="redirectToTrackEditing">Редактировать трек</button> *@
+        @*     </li> *@
+        @*     <li> *@
+        @*         <button @onclick="redirectToUserProfile">Изменить параметры тела</button> *@
+        @*     </li> *@
+        @* </ul> *@
     </div>
 
     <div class="main-content">
@@ -173,7 +170,7 @@
             <div class="total">
                 @{
                     var totalMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Track.FoodProducts);
-                    var totalEatenMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, food => food.IsEaten, HomeHelper.Today);
+                    var totalEatenMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, food => food.IsEaten, StaticBeeFat.Today);
                 }
                 Потреблено:
                 <span class="parameter">@totalEatenMacronutrient.Proteins г</span> белков,
@@ -211,7 +208,7 @@
             <h3>План питания на следующие дни</h3>
             <ul class="product-list">
                 @{
-                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, HomeHelper.Today))
+                    foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, StaticBeeFat.Today))
                     {
                         <li>
                             <div class="product">
@@ -254,8 +251,9 @@
         <div class="parameters">
             <h3>Параметры</h3>
             <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+            <p>Пол: <span class="parameter">@(user.Gender == 0 ? "мужской" : "женский")</span></p>
             <p>Рост: <span class="parameter">@user.Height см</span></p>
-            <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
+            <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
         </div>
     </div>
 </div>

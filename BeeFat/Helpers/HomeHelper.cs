@@ -8,24 +8,12 @@ namespace BeeFat.Helpers;
 
 public class HomeHelper
 {
-    public static Dictionary<int, string> Days = new()
-    {
-        { 1, "Понедельник" },
-        { 2, "Вторник" },
-        { 3, "Среда" },
-        { 4, "Четверг" },
-        { 5, "Пятница" },
-        { 6, "Суббота" },
-        { 0, "Воскресенье" }
-    };
-
     private Guid _id = FakeData.HardId;
 
-    public Modal Modal = default!;
+    public Modal SelectEatenFoodWindow = default!;
     public JournalFood SelectedFoodProduct;
     public int RightPortionSize;
     public int PortionSize;
-    public DayOfWeek Today = DayOfWeek.Monday;
     public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
     public UserRepository UserRepository;
@@ -44,7 +32,7 @@ public class HomeHelper
     public void ShowModalWindow(JournalFood journalFood)
     {
         SelectedFoodProduct = journalFood;
-        Modal.Show();
+        SelectEatenFoodWindow.Show();
     }
 
     public void ChangeFoodProductInfoAndSave(bool isEaten)
@@ -56,12 +44,12 @@ public class HomeHelper
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource)
     {
-        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, StaticBeeFat.Today);
     }
     
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fpsource)
     {
-        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, StaticBeeFat.Today);
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource, Func<JournalFood, bool> selector,  DayOfWeek dayOfWeek)
@@ -101,12 +89,12 @@ public class HomeHelper
 
     public IEnumerable<JournalFood> GetProductsByDay(IEnumerable<JournalFood> fpSource)
     {
-        return GetProductsByDay(fpSource, Today);
+        return GetProductsByDay(fpSource, StaticBeeFat.Today);
     }
     
     public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource)
     {
-        return GetProductsByDay(fpSource, Today);
+        return GetProductsByDay(fpSource, StaticBeeFat.Today);
     }
 
     public IEnumerable<JournalFood> GetProductsByDay(IEnumerable<JournalFood> fpSource, DayOfWeek dayOfWeek)
@@ -133,7 +121,7 @@ public class HomeHelper
 
     public void CloseWindow()
     {
-        Modal.Close(CloseReason.UserClosing); 
+        SelectEatenFoodWindow.Close(CloseReason.UserClosing); 
         Save();        
         var fpSource = User.Journal.FoodProducts;
         GetTotalMacronutrientsByDay(fpSource); 

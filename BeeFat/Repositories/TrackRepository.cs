@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.ComTypes;
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -46,5 +47,15 @@ public class TrackRepository: Repository<Track>
         using (var db = _context){
             db.Tracks.Find(track).FoodProducts.Remove(fp);
         }
+    }
+
+    public Track GetFirstByCondition(Func<Track, bool> selector)
+    {
+        using var db = _context;
+        return db
+            .Tracks
+            .Include(t => t.FoodProducts)
+            .ThenInclude(fp => fp.Food)
+            .FirstOrDefault(selector);
     }
 }

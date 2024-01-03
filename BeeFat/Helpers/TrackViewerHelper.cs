@@ -5,20 +5,21 @@ using Microsoft.AspNetCore.Components;
 
 namespace BeeFat.Helpers;
 
-public class TrackEditorHelper
+public class TrackViewerHelper
 {
+    public TrackPickHelper TrackPickHelper;
     public TrackRepository TrackRepository;
     public int PortionSize = 0;
     public Modal ConfirmModal = default!;
     public Modal AddProductModal = default!;
     public JournalFood SelectedFoodProduct = null;
     public Macronutrient TodayMacronutrient;
-    public DayOfWeek Today = DayOfWeek.Monday;
     // private IEnumerable<FoodProduct> AvailableFoodProducts;
     private string searchValue;
     
-    public TrackEditorHelper(TrackRepository trackRepository)
+    public TrackViewerHelper(TrackPickHelper trackPickHelper, TrackRepository trackRepository)
     {
+        TrackPickHelper = trackPickHelper;
         TrackRepository = trackRepository;
     }
     
@@ -48,11 +49,27 @@ public class TrackEditorHelper
 
     public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource)
     {
-        return GetProductsByDay(fpSource, Today);
+        return GetProductsByDay(fpSource, StaticBeeFat.Today);
     }
 
     public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource, DayOfWeek dayOfWeek)
     {
         return fpSource.Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
+    }
+
+    public IEnumerable<DayOfWeek> GetDays()
+    {
+        var days = Enum.GetValues(typeof(DayOfWeek));
+        for (var i = 1; i <= 7; i++)
+        {
+            yield return (DayOfWeek)days.GetValue(i % 7);
+        }
+    }
+
+    public void ChangeTrack(string trackName)
+    {
+        var track = TrackRepository.GetFirstByCondition(track => track.Name == trackName);
+        TrackPickHelper.ChangeSelectedTrack(track);
+        TrackPickHelper.Save();
     }
 }

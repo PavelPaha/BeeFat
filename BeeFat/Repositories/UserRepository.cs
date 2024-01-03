@@ -13,6 +13,7 @@ public class UserRepository: Repository<ApplicationUser>
     public override ApplicationUser GetById(Guid id)
     {
         using var context = _context;
+        // return null;
         return _getUserWithFoodProducts(context, id);
     }
 

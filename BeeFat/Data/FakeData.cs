@@ -56,7 +56,6 @@ public static class FakeData
             Age = 46,
             Height = 178,
             Weight = 80,
-            RightCalories = 2000,
             Id = default,
         };
         

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Domain.Models.User;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +28,10 @@ namespace BeeFat.Data
         
         public required int Age { get; set; }
         
-        public required int RightCalories { get; set; }
+        
+        public required Gender Gender { get; set; }
+        
+        public required double ActivityLevel { get; set; }
 
         [SetsRequiredMembers]
         public ApplicationUser(PersonName personName, Track track)
@@ -62,11 +66,12 @@ namespace BeeFat.Data
             }
 
             TrackId = otherUser.TrackId;
+            Gender = otherUser.Gender;
+            ActivityLevel = otherUser.ActivityLevel;
             // Track = otherUser.Track;
             Weight = otherUser.Weight;
             Height = otherUser.Height;
             Age = otherUser.Age;
-            RightCalories = otherUser.RightCalories;
             // Journal = otherUser.Journal;
         }
 
@@ -75,4 +80,10 @@ namespace BeeFat.Data
         {
         }
     }
+}
+
+public enum Gender
+{
+    Male,
+    Female
 }

@@ -1,14 +1,11 @@
 using BeeFat.Components;
 using BeeFat.Data;
-using BeeFat.Domain.Infrastructure;
 using BeeFat.Helpers;
-using BeeFat.Interfaces;
 using BeeFat.Repositories;
 using Blazorise;
-using Microsoft.EntityFrameworkCore;
 using Blazorise.Bootstrap;
+using Microsoft.EntityFrameworkCore;
 using Syncfusion.Blazor;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,12 +53,15 @@ builder.Services.AddSingleton(foodProductRepository);
 
 builder.Services.AddSingleton(new HomeHelper(userRepository, journalRepository, journalFoodRepository));
 builder.Services.AddSingleton(new TrackPickHelper(userRepository, trackRepository, journalRepository));
-builder.Services.AddSingleton(new UserProfileHelper(userRepository));
-builder.Services.AddSingleton(new TrackEditorHelper(trackRepository));
+builder.Services.AddSingleton(new UserProfileHelper(userRepository, trackRepository));
+builder.Services.AddSingleton<TrackViewerHelper>(provider =>
+{
+    var trackPickHelper = provider.GetRequiredService<TrackPickHelper>();
+    return new TrackViewerHelper(trackPickHelper, trackRepository);
+});
 
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();

@@ -51,7 +51,7 @@ public class UnitTests
         trackPicker.ChangeSelectedTrack(newTrack);
         trackPicker.Save();
 
-        var userProfileHelper = new UserProfileHelper(UserRepository);
+        var userProfileHelper = new UserProfileHelper(UserRepository, TrackRepository);
         var newLastName = GenerateRandomString(10);
         userProfileHelper.UserModel.PersonName.LastName = newLastName;
         userProfileHelper.SaveProfile();
@@ -88,7 +88,7 @@ public class UnitTests
         for (var i = 0; i <= 6; i++)
         {
             var productsByDay = hh.GetProductsByDay(journal.FoodProducts, (DayOfWeek)i);
-            var teh = new TrackEditorHelper(TrackRepository);
+            var teh = new TrackViewerHelper(new TrackPickHelper(UserRepository, TrackRepository, JournalRepository), TrackRepository);
             var foodProducts = teh.GetProductsByDay(track.FoodProducts, (DayOfWeek)i);
 
             var macronutrientsByDay1 = productsByDay.Select(jp => jp.Macronutrient).OrderBy(m => m).ToList();

@@ -6,6 +6,7 @@
 @using BeeFat.Helpers
 @inject TrackPickHelper TrackPickHelper;
 @rendermode InteractiveServer
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
@@ -38,8 +39,15 @@
                 @{
                     foreach (var currentTrack in tracks)
                     {
+                        var url = $"/tracks/{currentTrack.Name}/view";
                         <div>
-                            <button class="select-track" @onclick="() => { TrackPickHelper.ChangeSelectedTrack(currentTrack); TrackPickHelper.MyModal.Show(); }">@currentTrack.Name</button>
+                        <button class="select-track" @onclick="() => { NavigationManager.RedirectTo(url); }">@currentTrack.Name</button>
+                            @{
+                                if (TrackPickHelper.RecommendentTracks.Contains(currentTrack.Id))
+                                {
+                                    <span>Этот трек рекомендован для Вас.</span>
+                                }
+                            }
                         </div>
                     }
                 }
@@ -59,7 +67,6 @@
             <h3>Параметры</h3>
             <p>Масса: <span class="parameter">@user.Weight кг</span></p>
             <p>Рост: <span class="parameter">@user.Height см</span></p>
-            <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
         </div>
     </div>
 </div>
@@ -70,13 +77,12 @@
 
     protected override void OnInitialized()
     {
-        tracks = TrackPickHelper.TrackRepository.GetCollection(_ => true);
+        tracks = TrackPickHelper.SearchTrack("");
     }
 
     private void OnSearchValueChanged(ChangeEventArgs e)
     {
-        searchValue = e.Value.ToString();
-        tracks = TrackPickHelper.TrackRepository.GetCollection(t => t.Name.ToLower().Contains(searchValue.ToLower()));
+        tracks = TrackPickHelper.SearchTrack(e.Value.ToString());
         StateHasChanged();
     }
 }

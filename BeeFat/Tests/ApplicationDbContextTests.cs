@@ -55,7 +55,6 @@ public class ApplicationDbContextTests
             Age = 33,
             Height = 195,
             Weight = 140,
-            RightCalories = 3000,
             JournalId = FakeData.HardJournalId
         };
         using (var context = new ApplicationDbContext(_options, _configuration))
@@ -380,7 +379,6 @@ public class ApplicationDbContextTests
             Age = 33,
             Height = 195,
             Weight = 140,
-            RightCalories = 3000
         };
 
         using (var context = new ApplicationDbContext(_options, _configuration))
