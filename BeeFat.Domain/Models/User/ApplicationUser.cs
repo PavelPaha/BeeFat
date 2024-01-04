@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Domain.Models.User;
 using Microsoft.AspNetCore.Identity;
@@ -7,30 +6,28 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Data
 {
-    public class ApplicationUser : Entity
+    public class ApplicationUser : IdentityUser
     {
         public required PersonName PersonName { get; set; }
-        
+
         public Guid TrackId { get; set; }
-        
-        [ForeignKey("TrackId")]
-        public Track Track { get; set; }
-        
-        
+
+        [ForeignKey("TrackId")] public Track Track { get; set; }
+
+
         public Guid JournalId { get; set; }
-        
-        [ForeignKey("JournalId")]
-        public required Journal Journal { get; set; }
-        
+
+        [ForeignKey("JournalId")] public required Journal Journal { get; set; }
+
         public required int Weight { get; set; }
-        
+
         public required int Height { get; set; }
-        
+
         public required int Age { get; set; }
-        
-        
+
+
         public required Gender Gender { get; set; }
-        
+
         public required double ActivityLevel { get; set; }
 
         [SetsRequiredMembers]

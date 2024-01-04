@@ -1,9 +1,10 @@
 using BeeFat.Domain.Infrastructure;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeeFat.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityUserContext<ApplicationUser>
     {
         public DbSet<ApplicationUser> BeeFatUsers { get; set; }
 
