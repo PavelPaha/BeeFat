@@ -11,18 +11,18 @@ public class HomeHelper
     private Guid _id = FakeData.HardId;
 
     public Modal SelectEatenFoodWindow = default!;
-    public JournalFood SelectedFoodProduct;
+    public JournalFood SelectedJournalFood;
     public int RightPortionSize;
     public int PortionSize;
     public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
     public UserRepository UserRepository;
     public JournalRepository JournalRepository;
-    public JournalFoodRepository FoodProductRepository;
+    public JournalFoodRepository JournalFoodRepository;
     
-    public HomeHelper(UserRepository userRepository, JournalRepository journalRepository, JournalFoodRepository foodProductRepository)
+    public HomeHelper(UserRepository userRepository, JournalRepository journalRepository, JournalFoodRepository journalFoodRepository)
     {
-        FoodProductRepository = foodProductRepository;
+        JournalFoodRepository = journalFoodRepository;
         JournalRepository = journalRepository;
         UserRepository = userRepository;
         User = UserRepository.GetById(_id);
@@ -31,15 +31,15 @@ public class HomeHelper
 
     public void ShowModalWindow(JournalFood journalFood)
     {
-        SelectedFoodProduct = journalFood;
+        SelectedJournalFood = journalFood;
         SelectEatenFoodWindow.Show();
     }
 
     public void ChangeFoodProductInfoAndSave(bool isEaten)
     {
-        SelectedFoodProduct.PortionSize = PortionSize;
-        SelectedFoodProduct.IsEaten = isEaten;
-        FoodProductRepository.Update(SelectedFoodProduct);
+        SelectedJournalFood.PortionSize = PortionSize;
+        SelectedJournalFood.IsEaten = isEaten;
+        JournalFoodRepository.Update(SelectedJournalFood);
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource)
@@ -131,14 +131,14 @@ public class HomeHelper
     {
         product.IsEaten = false;
         product.PortionSize = 0;
-        SelectedFoodProduct = product; 
+        SelectedJournalFood = product; 
         ChangeFoodProductInfoAndSave(false);
     }
 
     public void SetEatenProduct(JournalFood product, FoodProduct fp)
     {
         RightPortionSize = fp.PortionSize;
-        SelectedFoodProduct = product; 
+        SelectedJournalFood = product; 
         ShowModalWindow(product);
     }
 
@@ -153,5 +153,27 @@ public class HomeHelper
     public void TextHandler(TextRenderEventArgs args, int totalEatenCalories, int totalCalories)
     {
         args.Text = $"{totalEatenCalories}/{totalCalories}";
+    }
+
+    public IEnumerable<DayMacronutrient> GetPrefixWeekMacronutrients(DayOfWeek lastDay = DayOfWeek.Sunday)
+    {
+        User = UserRepository.GetById(User.Id);
+        foreach (var day in StaticBeeFat.GetDays(1, 7))
+        {
+            yield return new DayMacronutrient(GetTotalMacronutrientsByDay(User.Journal.FoodProducts, f => f.IsEaten, day), day);
+        }
+    }
+}
+
+
+public class DayMacronutrient
+{
+    public Macronutrient Macronutrient;
+    public DayOfWeek DayOfWeek;
+
+    public DayMacronutrient(Macronutrient macronutrient, DayOfWeek dayOfWeek)
+    {
+        Macronutrient = macronutrient;
+        DayOfWeek = dayOfWeek;
     }
 }

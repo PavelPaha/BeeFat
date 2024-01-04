@@ -16,7 +16,7 @@ public class JournalRepository : Repository<Journal>
         using var context = _context;
         return context.Journals
             .Include(j => j.FoodProducts)
-            // .ThenInclude(fp => fp.)
+            .ThenInclude(fp => fp.Macronutrient)
             .First(j => j.Id == id);
     }
 

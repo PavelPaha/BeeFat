@@ -22,13 +22,11 @@ public class JournalFoodRepository : Repository<JournalFood>
 
     public override void Update(JournalFood entity)
     {
-        using (var context = _context)
-        {
-            var foundFp = context.JournalFoods.FirstOrDefault(fp => fp.Id == entity.Id);
-            foundFp.PortionSize = entity.PortionSize;
-            foundFp.IsEaten = entity.IsEaten;
-            context.SaveChanges();
-        }
+        using var context = _context;
+        var foundFp = context.JournalFoods.FirstOrDefault(fp => fp.Id == entity.Id);
+        foundFp.PortionSize = entity.PortionSize;
+        foundFp.IsEaten = entity.IsEaten;
+        context.SaveChanges();
     }
 
     public override IEnumerable<JournalFood> GetCollection(Func<JournalFood, bool> selector)

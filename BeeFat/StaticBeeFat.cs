@@ -28,6 +28,15 @@ public static class StaticBeeFat
     {
         navigationManager.NavigateTo(url, forceLoad: true);
     }
+    
+    public static IEnumerable<DayOfWeek> GetDays(int first = 1, int last = 7)
+    {
+        var days = Enum.GetValues(typeof(DayOfWeek));
+        for (var i = first; i <= last; i++)
+        {
+            yield return (DayOfWeek)days.GetValue(i % 7);
+        }
+    }
 
     public static Dictionary<string, double> ActivityToLevel = new()
     {

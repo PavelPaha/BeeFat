@@ -57,15 +57,6 @@ public class TrackViewerHelper
         return fpSource.Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
     }
 
-    public IEnumerable<DayOfWeek> GetDays()
-    {
-        var days = Enum.GetValues(typeof(DayOfWeek));
-        for (var i = 1; i <= 7; i++)
-        {
-            yield return (DayOfWeek)days.GetValue(i % 7);
-        }
-    }
-
     public void ChangeTrack(string trackName)
     {
         var track = TrackRepository.GetFirstByCondition(track => track.Name == trackName);

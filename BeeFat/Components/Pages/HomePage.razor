@@ -1,21 +1,26 @@
 ﻿@page "/"
 @inherits LayoutComponentBase
 @using Syncfusion.Blazor.ProgressBar;
-@inject NavigationManager NavigationManager
-@inject HomeHelper HomeHelper;
-@rendermode InteractiveServer
-
 @using Blazorise
 @using BeeFat.Helpers
 @using BeeFat.Domain.Infrastructure
+@using Blazorise.Charts
+
+@inject NavigationManager NavigationManager
+@inject HomeHelper HomeHelper;
+@inject HomeChartHelper HomeChartHelper;
+
+@rendermode InteractiveServer
+
+
 
 <Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window">
     <div>
 
-        @if (!(HomeHelper.SelectedFoodProduct is null))
+        @if (!(HomeHelper.SelectedJournalFood is null))
         {
-            <h2>@HomeHelper.SelectedFoodProduct.Name</h2>
-            @switch (HomeHelper.SelectedFoodProduct)
+            <h2>@HomeHelper.SelectedJournalFood.Name</h2>
+            @switch (HomeHelper.SelectedJournalFood)
             {
                 case JournalFoodGram:
                     <div>
@@ -32,7 +37,7 @@
                 default:
                     throw new ArgumentException("Неизвестный тип еды");
                     <div>
-                        Запланированное количество - @HomeHelper.SelectedFoodProduct.PortionSize штук
+                        Запланированное количество - @HomeHelper.SelectedJournalFood.PortionSize штук
                         <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
                     </div>
                     break;
@@ -50,17 +55,8 @@
     var redirectToUserProfile = () => NavigationManager.RedirectTo("profile");
 }
 
-
-@code{
-
-    protected override void OnInitialized()
-    {
-        // StateHasChanged();
-    }
-}
-
 <PageTitle>Home</PageTitle>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 <div class="container">
     <div class="home-sidebar">
         <h2>@track.Name</h2>
@@ -201,8 +197,9 @@
                     <ProgressBarEvents TextRender="args => HomeHelper.TextHandler(args, totalEatenMacronutrient.Calories, totalMacronutrient.Calories)"></ProgressBarEvents>
                 </SfProgressBar>
             </div>
-
-
+            <div>
+                <LineChart @ref="HomeChartHelper.LineChart" TItem="HomeChartHelper.WatcherEvent" Options="@HomeChartHelper.LineChartOptions" />
+            </div>
         </div>
         <div class="next-days-plan product-list">
             <h3>План питания на следующие дни</h3>
@@ -257,3 +254,10 @@
         </div>
     </div>
 </div>
+
+@code{
+    protected override async Task OnAfterRenderAsync( bool firstRender )
+    {
+        await HomeChartHelper.OnAfterRenderAsync(firstRender);
+    }
+}

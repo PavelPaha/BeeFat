@@ -43,18 +43,8 @@ public class TrackPickHelper
     public IEnumerable<Track> CollectSuitableTracks()
     {
         User = UserRepository.GetById(User.Id);
-        var metabolism = CalculateMetabolism();
+        var metabolism = MetabolismCalculator.CalculateMetabolism(User);
         return TrackRepository.GetCollection(_ => true).OrderBy(t => Math.Abs(t.CaloriesByDay - metabolism)).Take(4);
-    }
-
-    private int CalculateMetabolism()
-    {
-        if (User.Gender == Gender.Female)
-            return
-                MetabolismCalculator.CalculateBMRForFemaleWithActivity(User.Weight, User.Height, User.Age,
-                    User.ActivityLevel);
-        return MetabolismCalculator.CalculateBMRForMaleWithActivity(User.Weight, User.Height, User.Age,
-            User.ActivityLevel);
     }
 
     public IEnumerable<Track> SearchTrack(string searchValue)

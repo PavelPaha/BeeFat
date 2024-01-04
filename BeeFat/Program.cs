@@ -5,6 +5,7 @@ using BeeFat.Repositories;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +47,8 @@ var journalRepository = new JournalRepository(configuration, dbContextOptions);
 var foodProductRepository = new FoodProductRepository(configuration, dbContextOptions);
 var journalFoodRepository = new JournalFoodRepository(configuration, dbContextOptions);
 
+builder.Services.AddScoped<HomeChartHelper>();
+
 builder.Services.AddSingleton(userRepository);
 builder.Services.AddSingleton(trackRepository);
 builder.Services.AddSingleton(journalRepository);
@@ -58,6 +61,16 @@ builder.Services.AddSingleton<TrackViewerHelper>(provider =>
 {
     var trackPickHelper = provider.GetRequiredService<TrackPickHelper>();
     return new TrackViewerHelper(trackPickHelper, trackRepository);
+});
+builder.Services.AddOpenTelemetry().WithMetrics(x =>
+{
+    x.AddPrometheusExporter();
+    x.AddMeter(
+        "Microsoft.AspNetCore.Hosting",
+        "Microsoft.AspNetCore.Server.Kestrel"
+        );
+    x.AddView("request-duration",
+        new ExplicitBucketHistogramConfiguration());
 });
 
 
@@ -74,6 +87,8 @@ else
     app.UseHsts();
 }
 
+app.MapPrometheusScrapingEndpoint();
+app.UseBlazorFrameworkFiles();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();

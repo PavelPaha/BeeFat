@@ -59,7 +59,7 @@
                             <div>Действие</div>
                         </li>
                         @{
-                            foreach (DayOfWeek day in TrackViewerHelper.GetDays())
+                            foreach (DayOfWeek day in StaticBeeFat.GetDays())
                             {
                                 <h2>@StaticBeeFat.NumberToDay[day]</h2>
                                 foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))

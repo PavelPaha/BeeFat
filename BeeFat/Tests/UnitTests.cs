@@ -108,7 +108,7 @@ public class UnitTests
         var hh = new HomeHelper(UserRepository, JournalRepository, JournalFoodRepository);
         var journal = hh.User.Journal;
         var eatenProduct = journal.FoodProducts.First(fp => !fp.IsEaten);
-        hh.SelectedFoodProduct = eatenProduct;
+        hh.SelectedJournalFood = eatenProduct;
         eatenProduct.PortionSize += 10;
         hh.PortionSize = eatenProduct.PortionSize;
 
