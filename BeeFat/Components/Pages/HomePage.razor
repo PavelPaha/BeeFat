@@ -9,6 +9,8 @@
 @inject NavigationManager NavigationManager
 @inject HomeHelper HomeHelper;
 @inject HomeChartHelper HomeChartHelper;
+@inject FoodAdditionHelper FoodAdditionalHelper;
+@inject DailyTaskScheduler DailyTaskScheduler;
 
 @rendermode InteractiveServer
 
@@ -48,11 +50,41 @@
     </div>
 </Modal>
 
+<Modal @ref="FoodAdditionalHelper.SearchFoodWindow" Title="Add food" Class="popup_window" Modal="new ModalOptions { HideOthersOnClick = true }">
+    <div>
+        @{
+            if (firstStep)
+            {
+                <input type="text" value="@FoodAdditionalHelper.SearchFood" @oninput="OnSearchValueChanged"/>var foods = AvailableFoods;
+                foreach (var food in foods)
+                {
+                    <button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false;}">@food.Name</button>
+                }
+            }
+            else
+            {
+                if (!(FoodAdditionalHelper.SelectedFood is null))
+                {
+                    <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                }
+                else
+                {
+                    firstStep = true;
+                }
+
+                var food = FoodAdditionalHelper.SelectedFood;
+
+                <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="portionSize"/>
+                <button @onclick="() => firstStep = true">Назад</button>
+                <button @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+            }
+        }
+    </div>
+</Modal>
+
 @{
     var user = HomeHelper.FetchUserInfo();
     var track = user.Track;
-    var redirectToTrackEditing = () => NavigationManager.RedirectTo("edit");
-    var redirectToUserProfile = () => NavigationManager.RedirectTo("profile");
 }
 
 <PageTitle>Home</PageTitle>
@@ -60,8 +92,8 @@
 <div class="container">
     <div class="home-sidebar">
         <h2>@track.Name</h2>
-        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Saturday)) StaticBeeFat.Today += 1; StateHasChanged(); }">Day++</button>
-        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; StateHasChanged(); }" >Day--</button>
+        <button @onclick="() => { DailyTaskScheduler.IncrementDay(); Rerender(); }">Day++</button>
+        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; Rerender(); }" >Day--</button>
         <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
         @* <ul> *@
         @*     <li> *@
@@ -87,8 +119,8 @@
                     <div>Выполнено</div>
                 </li>
                 @{
-                    var productsFromJournal = HomeHelper.GetProductsByDay(user.Journal.FoodProducts);
-                    var productsFromTrack = HomeHelper.GetProductsByDay(user.Track.FoodProducts);
+                    var productsFromJournal = HomeHelper.GetProductsByDay(user.Journal.FoodProducts).ToList();
+                    var productsFromTrack = HomeHelper.GetProductsByDay(user.Track.FoodProducts).ToList();
                     var foodPairs = StaticBeeFat.MergeProductsFromTrackAndJournal(productsFromTrack, productsFromJournal);
 
                     // var pairs = productsFromTrack.Zip(productsFromJournal, (item1, item2) => (item1, item2));
@@ -154,13 +186,50 @@
                                     }
                                 </div>
                             </div>
-                            <button type="button" class="checkbox-button" @onclick="() => { HomeHelper.SetEatenProduct(jProduct, tProduct); }" disabled=@jProduct.IsEaten>&#10003;</button>
+                            <button type="button" class="checkbox-button" @onclick="async () => { HomeHelper.SetEatenProduct(jProduct); await Rerender();}" disabled=@jProduct.IsEaten>&#10003;</button>
                             @if (jProduct.IsEaten)
                             {
-                                <button type="button" class="checkbox-button" @onclick="() => { HomeHelper.CancelEatenProduct(jProduct); StateHasChanged(); }">&times;</button>
+                                <button type="button" class="checkbox-button" @onclick="async () => { HomeHelper.CancelEatenProduct(jProduct); await Rerender(); }">&times;</button>
                             }
                         </li>
                     }
+
+                    foreach (var jProduct in productsFromJournal)
+                    {
+                        var jFoodInfo = jProduct.Macronutrient*jProduct.PortionCoeff;
+                        <li>
+                             <div>@jProduct.Name</div>
+                            <div>
+                                <div class="indicator">
+                                    <span class="eaten-portion-size">@($"{jProduct.PortionSize} {(jProduct is JournalFoodGram ? "г" : "шт")}")</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="indicator">
+                                    <span class="eaten-portion-size">@jFoodInfo.Proteins г</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="indicator">
+                                    <span class="eaten-portion-size">@jFoodInfo.Fats г</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="indicator">
+                                    <span class="eaten-portion-size">@jFoodInfo.Carbohydrates г</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="indicator">
+                                    <span class="eaten-portion-size">@jFoodInfo.Calories ккал</span>
+                                </div>
+                            </div>
+                            <button @onclick="() => FoodAdditionalHelper.RemoveJournalFoodFromJournal(jProduct)">&times;</button>
+                        </li>
+                    }
+                    <li>
+                        <button @onclick="() => { FoodAdditionalHelper.SearchFoodWindow.Show(); }" >Съел другое</button>
+                    </li>
                 }
             </ul>
             <div class="total">
@@ -185,7 +254,7 @@
                 <SfProgressBar Type="ProgressType.Linear"
                                Value="@(HomeHelper.CalculatePercentage(totalEatenMacronutrient.Calories, totalMacronutrient.Calories))"
                                Height="60"
-                               Width="200"
+                               Width="1000"
                                TrackColor="#F8C7D8"
                                ShowProgressValue="true"
                                ProgressColor="#E3165B"
@@ -197,8 +266,8 @@
                     <ProgressBarEvents TextRender="args => HomeHelper.TextHandler(args, totalEatenMacronutrient.Calories, totalMacronutrient.Calories)"></ProgressBarEvents>
                 </SfProgressBar>
             </div>
-            <div>
-                <LineChart @ref="HomeChartHelper.LineChart" TItem="HomeChartHelper.WatcherEvent" Options="@HomeChartHelper.LineChartOptions" />
+            <div class="chart">
+                <LineChart @ref="HomeChartHelper.LineChart" TItem="HomeChartHelper.WatcherEvent" Options="@HomeChartHelper.LineChartOptions"></LineChart>
             </div>
         </div>
         <div class="next-days-plan product-list">
@@ -251,13 +320,43 @@
             <p>Пол: <span class="parameter">@(user.Gender == 0 ? "мужской" : "женский")</span></p>
             <p>Рост: <span class="parameter">@user.Height см</span></p>
             <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
+            <p>Необходимое количество калорий сегодня: <span class="parameter">@totalMacronutrient.Calories</span></p>
         </div>
     </div>
 </div>
 
 @code{
+    IEnumerable<Food> AvailableFoods = new List<Food>();
+    bool firstStep = true;
+    public int portionSize;
+    protected async Task Rerender()
+    {
+        await OnAfterRenderAsync(false);
+        StateHasChanged();
+    }
+    
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {
         await HomeChartHelper.OnAfterRenderAsync(firstRender);
+    }
+    
+    public void OnSearchValueChanged(ChangeEventArgs e)
+    {
+        AvailableFoods = FoodAdditionalHelper.SearchFoods(e.Value.ToString());
+        StateHasChanged();
+    }
+
+    public void Save(Food food, int portionSize)
+    {
+        var jFood = new JournalFoodGram(food.Name, food.Macronutrient, StaticBeeFat.Today, HomeHelper.User.Journal, portionSize, true); 
+        FoodAdditionalHelper.AddJournalFoodToJournal(jFood);
+        StateHasChanged(); 
+        FoodAdditionalHelper.SetPortionSizeWindow.Close(CloseReason.UserClosing); 
+        firstStep = true;
     }
 }

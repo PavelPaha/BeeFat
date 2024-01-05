@@ -17,7 +17,19 @@ public class JournalFoodRepository : Repository<JournalFood>
 
     public override bool DeleteById(Guid id)
     {
-        throw new NotImplementedException();
+        using var context = _context;
+        var foundEntity = context.JournalFoods.FirstOrDefault(f => f.Id == id);
+        if (foundEntity is null) return false;
+        context.Remove(foundEntity);
+        context.SaveChanges();
+        return true;
+    }
+    
+    public void Add(JournalFood entity)
+    {
+        using var context = _context;
+        context.Add(entity);
+        context.SaveChanges();
     }
 
     public override void Update(JournalFood entity)

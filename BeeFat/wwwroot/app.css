@@ -361,5 +361,9 @@ input{
 
 
 .total-progress-bar{
-    width:100%;
+    width: 100%;
+}
+
+.chart{
+    width: 100%;
 }

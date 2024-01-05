@@ -35,7 +35,24 @@ public class UserRepository: Repository<ApplicationUser>
 
     public override IEnumerable<ApplicationUser> GetCollection(Func<ApplicationUser, bool> selector)
     {
-        throw new NotImplementedException();
+        var context = _context;
+        return context.BeeFatUsers.Where(selector);
+    }
+    
+    public void RemoveUserJournalStory(Guid userId)
+    {
+        var context = _context;
+        var user = _getUserWithFoodProducts(context, userId);
+        var journalFoods = user.Journal.FoodProducts.ToList();
+        var trackFoodProducts = user.Track.FoodProducts.ToList();
+
+        var pairs = StaticBeeFat.MergeProductsFromTrackAndJournal(trackFoodProducts, journalFoods);
+        
+        foreach (var jf in journalFoods)
+        {
+            context.JournalFoods.Remove(jf);
+        }
+        context.SaveChanges();
     }
         
     readonly Func<ApplicationDbContext, Guid, ApplicationUser> _getUserWithFoodProducts = (db, id) => 

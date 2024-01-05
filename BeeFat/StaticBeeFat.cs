@@ -5,22 +5,27 @@ namespace BeeFat;
 
 public static class StaticBeeFat
 {
-    public static IEnumerable<FoodPair> MergeProductsFromTrackAndJournal(IEnumerable<FoodProduct> fpFromTrack,
-        IEnumerable<JournalFood> fpFromJournal)
+    public static IEnumerable<FoodPair> MergeProductsFromTrackAndJournal(List<FoodProduct> fpFromTrack,
+        List<JournalFood> fpFromJournal)
     {
-        var fpt = fpFromTrack.ToList();
-        var fpj = fpFromJournal.ToList();
+        var fpt = fpFromTrack;
+        var fpj = fpFromJournal;
         var result = new List<FoodPair>();
+        var fpToRemove = new List<JournalFood>();
         foreach (var p in fpj)
         {
             var foundFpt = fpt.FirstOrDefault(fp => fp.Id == p.FoodProductReference);
             if (!(foundFpt is null))
             {
                 result.Add(new FoodPair(p, foundFpt));
-                fpt.Remove(foundFpt);
+                fpToRemove.Add(p);
             }
         }
 
+        foreach (var fp in fpToRemove)
+        {
+            fpj.Remove(fp);
+        }
         return result;
     }
     

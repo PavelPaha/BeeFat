@@ -135,9 +135,9 @@ public class HomeHelper
         ChangeFoodProductInfoAndSave(false);
     }
 
-    public void SetEatenProduct(JournalFood product, FoodProduct fp)
+    public void SetEatenProduct(JournalFood product)
     {
-        RightPortionSize = fp.PortionSize;
+        // RightPortionSize = fp.PortionSize;
         SelectedJournalFood = product; 
         ShowModalWindow(product);
     }
@@ -157,7 +157,8 @@ public class HomeHelper
 
     public IEnumerable<DayMacronutrient> GetPrefixWeekMacronutrients(DayOfWeek lastDay = DayOfWeek.Sunday)
     {
-        User = UserRepository.GetById(User.Id);
+        User.Journal = JournalRepository.GetById(User.JournalId);
+        // User = UserRepository.GetById(User.Id);
         foreach (var day in StaticBeeFat.GetDays(1, 7))
         {
             yield return new DayMacronutrient(GetTotalMacronutrientsByDay(User.Journal.FoodProducts, f => f.IsEaten, day), day);

@@ -88,17 +88,15 @@ public class ApplicationDbContextTests
     }
 
 
-    // [Explicit]
-    // [Test]
-    // public void DeleteAllEntriesFromUsers()
-    // {
-    //     using (var context = new ApplicationDbContext(_options, _configuration))
-    //     {
-    //         var users = context.BeeFatUsers.ToList();
-    //         context.BeeFatUsers.RemoveRange(users);
-    //         context.SaveChanges();
-    //     }
-    // }
+    [Explicit]
+    [TestCase("b31c916a-87ac-4194-a385-010813b3d21a")]
+    public void DeleteUser(string userId)
+    {
+        using var context = new ApplicationDbContext(_options, _configuration);
+        var user = context.BeeFatUsers.First(u => u.Id == Guid.Parse(userId));
+        context.BeeFatUsers.Remove(user);
+        context.SaveChanges();
+    }
 
     [Explicit]
     [Test]

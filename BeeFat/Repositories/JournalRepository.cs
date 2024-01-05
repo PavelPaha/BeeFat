@@ -91,7 +91,7 @@ public class JournalRepository : Repository<Journal>
             switch (fp)
             {
                 case FoodProductGram fpg:
-                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.Grams, fpg.DayOfWeek, journal, 0, fpg.IsEaten);
+                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.DayOfWeek, journal, 0, fpg.IsEaten);
                     break;
                 case FoodProductPiece fpp:
                     fpToAdd = new JournalFoodPiece(fpp.Name, macronutrient, fpp.Pieces, fpp.DayOfWeek, journal, 0, fpp.IsEaten);
