@@ -6,6 +6,9 @@ using BeeFat.Components.Account;
 using BeeFat.Components.Account.Domain.Helpers;
 using BeeFat.Data;
 using BeeFat.Repositories;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Syncfusion.Blazor;
 
 namespace BeeFat;
 
@@ -18,6 +21,9 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        builder.Services.AddBlazorise()
+            .AddBootstrapProviders();
+        builder.Services.AddSyncfusionBlazor();
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<IdentityUserAccessor>();
@@ -41,6 +47,8 @@ public class Program
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
+        
+        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
         
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())

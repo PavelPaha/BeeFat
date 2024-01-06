@@ -28,6 +28,27 @@
           "buildMultiTargeting/Blazorise.props": {}
         }
       },
+      "Blazorise.Bootstrap/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "Blazorise": "1.4.0",
+          "Microsoft.AspNetCore.Components": "8.0.0",
+          "Microsoft.AspNetCore.Components.Web": "8.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
+        },
+        "compile": {
+          "lib/net8.0/Blazorise.Bootstrap.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Blazorise.Bootstrap.dll": {}
+        },
+        "build": {
+          "buildTransitive/Blazorise.Bootstrap.props": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/Blazorise.Bootstrap.props": {}
+        }
+      },
       "Blazorise.Licensing/1.2.0": {
         "type": "package",
         "compile": {
@@ -3195,6 +3216,30 @@
         "staticwebassets/vendors/inputmask.js",
         "staticwebassets/vendors/jsencrypt.js",
         "staticwebassets/vendors/sha512.js"
+      ]
+    },
+    "Blazorise.Bootstrap/1.4.0": {
+      "sha512": "QCcDVd8aIWdNUdCWxsHCTrvKoK63MfPcA1R3AWbozHhkgCpo/PheRZMbneBeVUJRBljqlCE8N/qeIADS66R8zA==",
+      "type": "package",
+      "path": "blazorise.bootstrap/1.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Blazorise.png",
+        "LICENSE.md",
+        "blazorise.bootstrap.1.4.0.nupkg.sha512",
+        "blazorise.bootstrap.nuspec",
+        "build/Blazorise.Bootstrap.props",
+        "build/Microsoft.AspNetCore.StaticWebAssets.props",
+        "buildMultiTargeting/Blazorise.Bootstrap.props",
+        "buildTransitive/Blazorise.Bootstrap.props",
+        "lib/net6.0/Blazorise.Bootstrap.dll",
+        "lib/net7.0/Blazorise.Bootstrap.dll",
+        "lib/net8.0/Blazorise.Bootstrap.dll",
+        "staticwebassets/blazorise.bootstrap.css",
+        "staticwebassets/blazorise.bootstrap.min.css",
+        "staticwebassets/modal.js",
+        "staticwebassets/tooltip.js"
       ]
     },
     "Blazorise.Licensing/1.2.0": {
@@ -8987,6 +9032,7 @@
     "net8.0": [
       "BeeFat.Domain >= 1.0.0",
       "Blazorise >= 1.4.0",
+      "Blazorise.Bootstrap >= 1.4.0",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 8.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Sqlite >= 8.0.0",
@@ -9037,6 +9083,10 @@
         "targetAlias": "net8.0",
         "dependencies": {
           "Blazorise": {
+            "target": "Package",
+            "version": "[1.4.0, )"
+          },
+          "Blazorise.Bootstrap": {
             "target": "Package",
             "version": "[1.4.0, )"
           },

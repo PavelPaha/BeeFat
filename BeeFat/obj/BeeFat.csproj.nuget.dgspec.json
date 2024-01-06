@@ -117,6 +117,10 @@
               "target": "Package",
               "version": "[1.4.0, )"
             },
+            "Blazorise.Bootstrap": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.0, )"

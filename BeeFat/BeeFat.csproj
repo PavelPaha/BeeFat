@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="Blazorise" Version="1.4.0" />
+        <PackageReference Include="Blazorise.Bootstrap" Version="1.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0"/>

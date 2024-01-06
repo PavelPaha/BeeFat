@@ -1,19 +1,18 @@
 ﻿@page "/"
 
-@inherits LayoutComponentBase
-
-@using Syncfusion.Blazor.ProgressBar
-@using Blazorise
-@using BeeFat.Domain.Infrastructure
-@using BeeFat.Components.Account.Domain.Helpers
 @using BeeFat.Data
+@using BeeFat.Domain.Infrastructure
 @using BeeFat.Repositories
+@using Blazorise
 @using Microsoft.AspNetCore.Authorization
+@using Syncfusion.Blazor.ProgressBar
+@using BeeFat.Components.Account.Domain.Helpers
+@inherits LayoutComponentBase
 
 @inject HomeHelper HomeHelper
 @inject IdentityUserAccessor UserAccessor
-@inject TrackRepository TrackRepository
 @inject UserRepository UserRepository
+@inject IHttpContextAccessor HttpContextAccessor
 
 @attribute [Authorize]
 
@@ -21,21 +20,17 @@
 
 @code{
 
-    private ApplicationUser user = default!;
-    private Track? track;
-
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    private ApplicationUser? user;
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
         user = UserRepository.GetById(Guid.Parse(user.Id));
-        track = TrackRepository.GetById(user.TrackId);
     }
 
 }
 
-@if (track == null)
+@if (user == null)
 {
     <p>
         <em>Loading...</em>
@@ -81,9 +76,9 @@ else
 
     <div class="container">
         <div class="home-sidebar">
-            <h2>@track?.Name</h2>
-            <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Saturday)) StaticBeeFat.Today += 1; StateHasChanged(); }">Day++</button>
-            <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; StateHasChanged(); }">Day--</button>
+            <h2>@user.Track.Name</h2>
+            <button @onclick="() => { if (StaticBeeFat.Today != DayOfWeek.Saturday) StaticBeeFat.Today += 1; StateHasChanged(); }">Day++</button>
+            <button @onclick="() => { if (StaticBeeFat.Today != DayOfWeek.Sunday) StaticBeeFat.Today -= 1; StateHasChanged(); }">Day--</button>
             <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
             @* <ul> *@
             @*     <li> *@
