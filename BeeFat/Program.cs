@@ -3,6 +3,7 @@ using BeeFat.Components;
 using BeeFat.Data;
 using BeeFat.Helpers;
 using BeeFat.Repositories;
+using Blazored.Modal;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ builder.Services.AddBlazorise();
 builder.Services.AddBootstrapProviders();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddBlazoredModal();
 
 
 builder.Services.AddCascadingAuthenticationState();

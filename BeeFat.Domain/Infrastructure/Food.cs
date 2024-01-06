@@ -2,14 +2,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BeeFat.Domain.Infrastructure;
 
-public class Food : Entity
+public abstract class Food : Entity 
 {
     [SetsRequiredMembers]
-    public Food(string name, Macronutrient macronutrient, int weight)
+    public Food(string name, Macronutrient macronutrient)
     {
         Name = name;
         Macronutrient = macronutrient;
-        Weight = weight;
     }
     [SetsRequiredMembers]
     public Food()

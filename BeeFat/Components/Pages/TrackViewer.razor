@@ -23,16 +23,17 @@
     var track = TrackRepository.GetFirstByCondition(t => t.Name == TrackName);
 }
 
-
-<Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window">
-    <div>
-        @if (!(TrackViewerHelper.TrackPickHelper.SelectedTrack is null))
-        {
-            <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackName ?</div>
-            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(TrackName); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing);}">Да</Blazorise.Button>
-        }
-    </div>
-</Blazorise.Modal>
+<div style="@ZIndexModalStyle">
+    <Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window" Closing="OnModalClosing">
+        <div>
+            @if (!(TrackViewerHelper.TrackPickHelper.SelectedTrack is null))
+            {
+                <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackName ?</div>
+                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(TrackName); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing);}">Да</Blazorise.Button>
+            }
+        </div>
+    </Blazorise.Modal>
+</div>
 
 <div class="container">
     <div class="main-content">
@@ -109,3 +110,28 @@
         </div>
     </div>
 </div>
+
+@code{
+    public string ZIndexModalStyle;
+
+    protected override void OnInitialized()
+    {
+        ChangeZIndex(false);
+    }
+
+    public void ChangeZIndex(bool enable)
+    {
+        if (enable)
+            ZIndexModalStyle = "pointer-events: auto;";
+        else
+            ZIndexModalStyle = "pointer-events: none;";
+        StateHasChanged();
+    }
+
+    private Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        ChangeZIndex(false);
+        e.Cancel = false;
+        return Task.CompletedTask;
+    }
+}

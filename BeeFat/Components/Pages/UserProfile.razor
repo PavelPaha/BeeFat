@@ -1,6 +1,7 @@
 ﻿@page "/profile"
 
 @using BeeFat.Helpers
+@using Blazorise
 @inherits LayoutComponentBase
 @inject UserProfileHelper UserProfileHelper;
 @inject NavigationManager NavigationManager;
@@ -14,12 +15,15 @@
    var userModel = UserProfileHelper.UserModel;
 }
 
-<Blazorise.Modal @ref="UserProfileHelper.Modal" Title="Modal title" Class="popup_window">
-    <div>
-        <div>Вы уверены, что хотите сохранить изменения?</div>
-        <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Save(); }">Да</Blazorise.Button>
-    </div>
-</Blazorise.Modal>
+<div style="@ZIndexModalStyle">
+   <Blazorise.Modal @ref="UserProfileHelper.Modal" Closing="@OnModalClosing" Title="Modal title" Class="popup_window">
+       <div>
+           <div>Вы уверены, что хотите сохранить изменения?</div>
+           <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(false); UserProfileHelper.Save(); }">Да</Blazorise.Button>
+       </div>
+   </Blazorise.Modal>
+</div>
+
 
 <div>
    <label for="firstName">Имя:</label>
@@ -62,10 +66,34 @@
    </select>
 </div>
 
-<Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Modal.Show();}">Сохранить </Button>
+<Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(true); UserProfileHelper.Modal.Show();}">Сохранить </Button>
 
 
-<Button Style="background-color: #c2cb88;" @onclick="() => { NavigationManager.RedirectTo(url); }">Подобрать подходящие треки</Button>
+<Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(true); NavigationManager.RedirectTo(url); }">Подобрать подходящие треки</Button>
 
 
 
+@code{
+   public string ZIndexModalStyle;
+
+   protected override void OnInitialized()
+   {
+      ChangeZIndex(false);
+   }
+
+   public void ChangeZIndex(bool enable)
+   {
+      if (enable)
+         ZIndexModalStyle = "pointer-events: auto;";
+      else
+         ZIndexModalStyle = "pointer-events: none;";
+      StateHasChanged();
+   }
+
+   private Task OnModalClosing(ModalClosingEventArgs e)
+   {
+      ChangeZIndex(false);
+      e.Cancel = false;
+      return Task.CompletedTask;
+   }
+}

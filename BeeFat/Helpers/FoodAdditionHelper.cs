@@ -20,9 +20,9 @@ public class FoodAdditionHelper
         JournalFoodRepository = journalFoodRepository;
         FoodRepository = foodRepository;
         SearchFoodWindow = new Modal();
-        SetPortionSizeWindow = new Modal();
         SearchFoodWindow.Hide();
-        SetPortionSizeWindow.Hide();
+        SearchFoodWindow.Visibility = Visibility.Invisible;
+        SearchFoodWindow.Visible = false;
     }
 
     public void ShowSetPortionSizeWindow(Food food)

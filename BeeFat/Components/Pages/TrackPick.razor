@@ -15,17 +15,6 @@
 }
 
 
-<Blazorise.Modal @ref="TrackPickHelper.MyModal" Title="Modal title" Class="popup_window">
-    <div>
-        @if (!(TrackPickHelper.SelectedTrack is null))
-        {
-            <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackPickHelper.SelectedTrack.Name ?</div>
-            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackPickHelper.Save(); TrackPickHelper.MyModal.Close(CloseReason.UserClosing);}">Да</Blazorise.Button>
-        }
-    </div>
-</Blazorise.Modal>
-
-
 <div class="container">
     <div class="home-sidebar">
         <h2>Текущий трек - @user.Track.Name</h2>

@@ -2,6 +2,7 @@ using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Repositories;
 using Blazorise;
+using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.ProgressBar;
 
 namespace BeeFat.Helpers;
@@ -11,6 +12,7 @@ public class HomeHelper
     private Guid _id = FakeData.HardId;
 
     public Modal SelectEatenFoodWindow = default!;
+    
     public JournalFood SelectedJournalFood;
     public int RightPortionSize;
     public int PortionSize;
@@ -27,6 +29,11 @@ public class HomeHelper
         UserRepository = userRepository;
         User = UserRepository.GetById(_id);
         TodayMacronutrient = new Macronutrient();
+        SelectEatenFoodWindow = new Blazorise.Bootstrap.Modal();
+        SelectEatenFoodWindow.Hide();
+        SelectEatenFoodWindow.Visibility = Visibility.Invisible;
+        SelectEatenFoodWindow.Visible = false;
+        
     }
 
     public void ShowModalWindow(JournalFood journalFood)

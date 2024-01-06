@@ -15,7 +15,7 @@ public class FoodRepository: Repository<Food>
         var context = _context;
         return context.Foods.First(f => f.Id == id);
     }
-
+    
     public override bool DeleteById(Guid id)
     {
         throw new NotImplementedException();

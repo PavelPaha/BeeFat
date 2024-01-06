@@ -53,7 +53,7 @@ public class HomeChartHelper
         var metabolism = MetabolismCalculator.CalculateMetabolism(_homeHelper.User);
         var weekMacronutrients = _homeHelper.GetPrefixWeekMacronutrients().ToList();
         var data = weekMacronutrients.Select(m => new WatcherEvent()
-            { Sector = StaticBeeFat.NumberToDay[m.DayOfWeek], Count = Math.Min(2*metabolism, m.Macronutrient.Calories) }).ToList();
+            { Sector = StaticBeeFat.NumberToDay[m.DayOfWeek], Count = m.Macronutrient.Calories }).ToList();
         
         return new()
         {
