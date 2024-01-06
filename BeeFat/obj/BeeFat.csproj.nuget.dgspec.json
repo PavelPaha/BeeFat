@@ -113,6 +113,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Blazorise": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -132,6 +136,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Syncfusion.Blazor": {
+              "target": "Package",
+              "version": "[24.1.44, )"
             }
           },
           "imports": [

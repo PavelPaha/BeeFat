@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeeFat.Repositories;
 
-public class TrackRepository: Repository<Track>
+public class TrackRepository : Repository<Track>
 {
-    public TrackRepository(IConfiguration configuration, DbContextOptions<ApplicationDbContext> options) : base(configuration, options)
+    public TrackRepository(IConfiguration configuration, DbContextOptions<ApplicationDbContext> options) : base(
+        configuration, options)
     {
     }
 
@@ -22,7 +23,7 @@ public class TrackRepository: Repository<Track>
                 .First(u => u.Id == id);
         }
     }
-    
+
 
     public override bool DeleteById(Guid id)
     {
@@ -41,15 +42,16 @@ public class TrackRepository: Repository<Track>
             return db.Tracks.Where(selector).ToList();
         }
     }
-    
+
     public void DeleteFoodProductFromTrack(Track track, FoodProduct fp)
     {
-        using (var db = _context){
+        using (var db = _context)
+        {
             db.Tracks.Find(track).FoodProducts.Remove(fp);
         }
     }
 
-    public Track GetFirstByCondition(Func<Track, bool> selector)
+    public Track? GetFirstByCondition(Func<Track, bool> selector)
     {
         using var db = _context;
         return db

@@ -52,7 +52,7 @@ namespace BeeFat.Data
 
         public void CloneFrom(ApplicationUser otherUser)
         {
-            if (PersonName is null)
+            if (PersonName == null)
             {
                 PersonName = new PersonName(otherUser.PersonName);
             }

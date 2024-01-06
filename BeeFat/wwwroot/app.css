@@ -13,7 +13,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -42,10 +42,324 @@ h1:focus {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-height: 70vh;
+    /*background-color: #f7f7f7;*/
+}
+
+.home-sidebar {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+    flex: 4;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user{
+    flex: 3;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.parameters {
+    font-size: 16px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #EFEFEFEF;
+    border-radius: 5px;
+}
+
+.parameters h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.parameters p {
+    color: #676767;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.daily-plan {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.daily-plan h2 {
+    margin-bottom: 10px;
+}
+
+.daily-plan ul {
+    width: 100%;
+    padding-left: 0;
+    list-style: none;
+}
+
+.daily-plan li {
+    margin-bottom: 10px;
+    display: flex;
+    flex-grow: 1;
+    font-size: 14px;
+}
+
+.daily-plan input[type=checkbox] {
+    margin-right: 10px;
+}
+
+.next-days-plan h3 {
+    margin-bottom: 10px;
+}
+
+.home-sidebar h2 {
+    margin-bottom: 10px;
+}
+
+.home-sidebar ul {
+    width: 100%;
+    padding-left: 0;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-sidebar ul li {
+    width: 100%;
+    margin: 2px 8px;
+}
+
+.home-sidebar ul li button {
+    width: 100%;
+    display: block;
+    margin-top: 3px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 20px;
+    color: #fff;
+    background-color: #9F9F9F;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.home-sidebar ul button:first-of-type {
+    margin-top: 0;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+}
+
+ul, ol {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+/*Список еды*/
+
+ul input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    color: red;
+}
+
+/*План на след дни*/
+
+/*.next-days-plan ul li {*/
+/*    margin-bottom: 10px;*/
+/*    padding: 5px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+/*Информация о пользователе*/
+
+.portion-size, .eaten-portion-size, .parameter{
+    color: #616f96;
+    border-radius: 3px;
+    background-color: #eee2dc;
+    font-weight: bold;
+    padding: 3px 5px;
+    border-radius: 3px;
+}
+
+.day-of-week{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.username{
+    font-size: 16px;
+    font-style: italic;
+}
+
+.product-list {
+    list-style: none;
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 20px;
+    background-color: #F9F9F9FF;
+    border-radius: 10px;
+}
+
+.product-list li{
+    display: table-row;
+    background-color: #EFEFEFEF;
+}
+
+.product-list li div{
+    display: table-cell;
+    padding: 5px;
+}
+
+.product-list li div .indicator{
+    display: flex;
+    flex-direction: column;
+}
+
+.action-button{
+    font-family: system-ui, sans-serif;
+    box-sizing: border-box;
+    background-color: #a6a6a6;
+    border: 1px solid #818181;
+    color: white;
+    padding: 10px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+    border-radius: 3px;
+}
+.action-buttons button:not(:last-child) {
+    border-right: none;
+}
+.action-buttons button:hover {
+    background-color: #919191;
+}
+
+.add-product{
+    max-width: 40px;
+    text-align: center;
+}
+
+.portion-size{
+    margin: 0px 10px;
+    color: red;
+}
+
+.eaten-portion-size{
+    margin: 0px 10px;
+    background-color: #fffad2;
+    color: #9b9b18;
+}
+
+.product{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    margin-right: 10px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    /*margin-right: 20px;*/
+}
+
+h2{
+    font-size: 30px;
+    margin: 10px;
+}
+
+input{
+    margin: 10px;
+    font-size: 20px;
+}
+
+.checkbox-button {
+    width: 30px;
+    height: 30px;
+    border-width: 0;
+    border-radius: 5px;
+    background-color: #a3b2be;
+    /*зеленый типа выполнено #8cb080*/
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.checkbox-button[disabled] {
+    background-color: green;
+}
+
+
+.edit-and-delete-food{
+    display: flex;
+    flex-direction: row;
+}
+
+.popup_window{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    max-height: 300px;
+}
+
+
+.disable-item{
+    background-color: #dcffd1 !important;
+}
+
+
+.total-progress-bar{
+    width:100%;
 }

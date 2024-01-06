@@ -45,6 +45,29 @@
                 <ValidationMessage For="() => Input.LastName" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
+                <select class="form-select" @bind="@Input.Gender">
+                    <option value="@Gender.Male">Male</option>
+                    <option value="@Gender.Female">Female</option>
+                </select>
+                <label for="gender">Gender</label>
+                <ValidationMessage For="() => Input.Gender" class="text-danger"/>
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Weight" class="form-control" autocomplete="off" aria-required="true" placeholder="Weight" step="any"/>
+                <label for="weight">Weight</label>
+                <ValidationMessage For="() => Input.Weight" class="text-danger"/>
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Height" class="form-control" autocomplete="off" aria-required="true" placeholder="Height"/>
+                <label for="height">Height</label>
+                <ValidationMessage For="() => Input.Height" class="text-danger"/>
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Age" class="form-control" autocomplete="off" aria-required="true" placeholder="Age"/>
+                <label for="age">Age</label>
+                <ValidationMessage For="() => Input.Age" class="text-danger"/>
+            </div>
+            <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
                 <label for="password">Password</label>
                 <ValidationMessage For="() => Input.Password" class="text-danger"/>
@@ -78,7 +101,7 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = CreateUser(Input.FirstName, Input.LastName);
+        var user = CreateUser(Input.FirstName, Input.LastName, Input.Gender);
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -113,13 +136,14 @@
         RedirectManager.RedirectTo(ReturnUrl);
     }
 
-    private ApplicationUser CreateUser(string firstName, string lastName)
+    private ApplicationUser CreateUser(string firstName, string lastName, Gender gender)
     {
         try
         {
             var journal = new Journal(new List<JournalFood>());
             var track = new Track("aboba", "something");
-            return new ApplicationUser { PersonName = new PersonName(firstName, lastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id };
+            var user = new ApplicationUser { PersonName = new PersonName(firstName, lastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id, Gender = gender, ActivityLevel = 1.2};
+            return user;
         }
         catch
         {
@@ -165,6 +189,23 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+        [Required] [Display(Name = "Gender")] public Gender Gender { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "The Height field must be a positive number.")]
+        [Display(Name = "Height")]
+        public int Height { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "The Weight field must be a positive number.")]
+        [Display(Name = "Weight")]
+        public int Weight { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "The Age field must be a positive number.")]
+        [Display(Name = "Age")]
+        public int Age { get; set; }
     }
 
 }

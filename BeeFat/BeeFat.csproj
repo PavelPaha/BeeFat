@@ -9,11 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Blazorise" Version="1.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+        <PackageReference Include="Syncfusion.Blazor" Version="24.1.44" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,6 +26,22 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BeeFat.Domain\BeeFat.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\HomePage.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackEditor.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackPick.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackViewer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\UserProfile.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Account\Domain\HomePage.razor" />
+      <AdditionalFiles Include="Components\Account\Domain\TrackEditor.razor" />
+      <AdditionalFiles Include="Components\Account\Domain\TrackPick.razor" />
+      <AdditionalFiles Include="Components\Account\Domain\TrackViewer.razor" />
+      <AdditionalFiles Include="Components\Account\Domain\UserProfile.razor" />
     </ItemGroup>
 
 </Project>

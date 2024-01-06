@@ -1,0 +1,122 @@
+@page "/tracks/{trackName}/view"
+
+@inherits LayoutComponentBase
+
+@using BeeFat.Domain.Infrastructure
+@using BeeFat.Repositories
+@using Blazorise
+@using BeeFat.Components.Account.Domain.Helpers
+@using BeeFat.Data
+@using Microsoft.AspNetCore.Authorization
+
+@inject TrackRepository TrackRepository
+@inject TrackViewerHelper TrackViewerHelper
+@inject IdentityUserAccessor UserAccessor
+
+@attribute [Authorize]
+
+@rendermode InteractiveServer
+
+<PageTitle>TrackViewer</PageTitle>
+
+<Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window">
+    <div>
+        @if (!(TrackViewerHelper.TrackPickHelper.SelectedTrack is null))
+        {
+            <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackName ?</div>
+            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(user, TrackName); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing); }">Да</Blazorise.Button>
+        }
+    </div>
+</Blazorise.Modal>
+
+<div class="container">
+    <div class="main-content">
+        <h1>Смена трека</h1>
+        @{
+            if (track is null)
+            {
+                <h1>Трека с названием @TrackName не существует(</h1>
+            }
+            else
+            {
+                <h2 class="track-header">
+                    @track.Name
+                </h2>
+                <div class="daily-plan">
+                    <ul class="daily-food-list product-list">
+                        <li>
+                            <div>Название продукта</div>
+                            <div>Масса</div>
+                            <div>Белки</div>
+                            <div>Жиры</div>
+                            <div>Углеводы</div>
+                            <div>Калории</div>
+                            <div>Действие</div>
+                        </li>
+                        @{
+                            foreach (DayOfWeek day in TrackViewerHelper.GetDays())
+                            {
+                                <h2>@StaticBeeFat.NumberToDay[day]</h2>
+                                foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
+                                {
+                                    var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                                    <li>
+                                        <div>@product.Name</div>
+                                        <div>
+                                            <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Proteins г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Fats г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Carbohydrates г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Calories ккал</span>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+                <button @onclick="() => { TrackViewerHelper.ChangeTrack(user, TrackName); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
+            }
+        }
+    </div>
+
+    <div class="home-sidebar">
+        <div class="user">
+            <div class="user-info">
+                <img src="avatar.jpg">
+                <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+            </div>
+            <button class="action-button">Выйти</button>
+        </div>
+        <div class="parameters">
+            <h3>Параметры</h3>
+            <p>Масса: <span class="parameter">xxx кг</span></p>
+            <p>Рост: <span class="parameter">xxx см</span></p>
+            <p>Желаемые калории: <span class="parameter">xxx ккал</span></p>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    private ApplicationUser user = default!;
+    private Track? track;
+    [Parameter] public string? TrackName { get; set; }
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        track = TrackRepository.GetFirstByCondition(t => t.Name == TrackName);
+    }
+
+}
