@@ -1,65 +1,29 @@
-@page "/track_pick"
+@page "/track/pick"
 
 @inherits LayoutComponentBase
 
-@using Blazorise
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Components.Account.Domain.Helpers
 @using BeeFat.Data
 @using BeeFat.Repositories
 @using Microsoft.AspNetCore.Authorization
 
-@inject TrackPickHelper TrackPickHelper
+@inject TrackPickHelper TrackPickHelper;
 @inject NavigationManager NavigationManager
-@inject IdentityUserAccessor UserAccessor
-@inject UserRepository UserRepository
-@inject IHttpContextAccessor HttpContextAccessor
-
-@attribute [Authorize]
+@inject IdentityUserAccessor UserAccessor;
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject UserRepository UserRepository;
 
 @rendermode InteractiveServer
 
-@code {
-
-    private string searchValue = "";
-    private IEnumerable<Track> tracks = default!;
-    private ApplicationUser? user;
-
-    protected override async Task OnInitializedAsync()
-    {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
-        user = UserRepository.GetById(Guid.Parse(user.Id));
-        tracks = TrackPickHelper.SearchTrack(user, "");
-    }
-
-    private void OnSearchValueChanged(ChangeEventArgs e)
-    {
-        tracks = TrackPickHelper.SearchTrack(user, e.Value.ToString());
-        StateHasChanged();
-    }
-
-}
+@attribute [Authorize]
 
 @if (user == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
 }
 else
 {
     <PageTitle>Home</PageTitle>
-
-    <Blazorise.Modal @ref="TrackPickHelper.MyModal" Title="Modal title" Class="popup_window">
-        <div>
-            @if (TrackPickHelper.SelectedTrack is not null)
-            {
-                <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackPickHelper.SelectedTrack.Name ?</div>
-                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackPickHelper.Save(user); TrackPickHelper.MyModal.Close(CloseReason.UserClosing); }">Да</Blazorise.Button>
-            }
-        </div>
-    </Blazorise.Modal>
-
 
     <div class="container">
         <div class="home-sidebar">
@@ -105,4 +69,26 @@ else
             </div>
         </div>
     </div>
+}
+
+
+@code {
+    private string searchValue;
+    private IEnumerable<Track> tracks;
+
+    private ApplicationUser? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
+        user = UserRepository.GetById(Guid.Parse(user.Id));
+        tracks = TrackPickHelper.SearchTrack(user, "");
+    }
+
+    private void OnSearchValueChanged(ChangeEventArgs e)
+    {
+        tracks = TrackPickHelper.SearchTrack(user, e.Value.ToString());
+        StateHasChanged();
+    }
+
 }

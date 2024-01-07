@@ -42,7 +42,7 @@ public class UserRepository : Repository<ApplicationUser>
     public void RemoveUserJournalStory(Guid userId)
     {
         var context = _context;
-        var user = GetUserWithFoodProducts(context, userId);
+        var user = userWithFoodProducts(context, userId);
         var journalFoods = user.Journal.FoodProducts.ToList();
         var trackFoodProducts = user.Track.FoodProducts.ToList();
 

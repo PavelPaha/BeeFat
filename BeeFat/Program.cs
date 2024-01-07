@@ -5,9 +5,11 @@ using BeeFat.Components;
 using BeeFat.Components.Account;
 using BeeFat.Components.Account.Domain.Helpers;
 using BeeFat.Data;
+using BeeFat.Helpers;
 using BeeFat.Repositories;
 using Blazorise;
 using Blazorise.Bootstrap;
+using OpenTelemetry.Metrics;
 using Syncfusion.Blazor;
 
 namespace BeeFat;
@@ -42,14 +44,14 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-        
+
         builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
-        
+
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-        
+
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
@@ -59,16 +61,23 @@ public class Program
             .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
             .Options;
 
+        builder.Services.AddSingleton<IConfiguration>(configuration);
+
+
         var userRepository = new UserRepository(configuration, dbContextOptions);
         var trackRepository = new TrackRepository(configuration, dbContextOptions);
         var journalRepository = new JournalRepository(configuration, dbContextOptions);
         var foodProductRepository = new FoodProductRepository(configuration, dbContextOptions);
         var journalFoodRepository = new JournalFoodRepository(configuration, dbContextOptions);
+        var foodRepository = new FoodRepository(configuration, dbContextOptions);
+
+        builder.Services.AddScoped<HomeChartHelper>();
 
         builder.Services.AddSingleton(userRepository);
         builder.Services.AddSingleton(trackRepository);
         builder.Services.AddSingleton(journalRepository);
         builder.Services.AddSingleton(foodProductRepository);
+        builder.Services.AddSingleton(foodRepository);
 
         builder.Services.AddSingleton(new HomeHelper(userRepository, journalRepository, journalFoodRepository));
         builder.Services.AddSingleton(new TrackPickHelper(userRepository, trackRepository, journalRepository));
@@ -78,6 +87,22 @@ public class Program
             var trackPickHelper = provider.GetRequiredService<TrackPickHelper>();
             return new TrackViewerHelper(trackPickHelper, trackRepository);
         });
+
+        builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
+        builder.Services.AddOpenTelemetry().WithMetrics(x =>
+        {
+            x.AddPrometheusExporter();
+            x.AddMeter(
+                "Microsoft.AspNetCore.Hosting",
+                "Microsoft.AspNetCore.Server.Kestrel"
+            );
+            x.AddView("request-duration",
+                new ExplicitBucketHistogramConfiguration());
+        });
+
+        var dailyTaskScheduler = new DailyTaskScheduler(journalRepository, userRepository);
+
+        builder.Services.AddSingleton(dailyTaskScheduler);
 
         var app = builder.Build();
 
@@ -104,6 +129,10 @@ public class Program
         // Add additional endpoints required by the Identity /Account Razor components.
         app.MapAdditionalIdentityEndpoints();
 
-        app.Run();
+        var mainThread = new Thread(() => app.Run());
+        mainThread.Start();
+
+        var secondThread = new Thread(async () => await dailyTaskScheduler.Start());
+        secondThread.Start();
     }
 }

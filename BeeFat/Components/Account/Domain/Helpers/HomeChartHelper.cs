@@ -1,3 +1,5 @@
+using BeeFat.Components.Account.Domain.Helpers;
+using BeeFat.Data;
 using Blazorise.Charts;
 
 namespace BeeFat.Helpers;
@@ -37,21 +39,21 @@ public class HomeChartHelper
         public DateTime Date { get; } = DateTime.Now;
     }
 
-    public async Task OnAfterRenderAsync(bool firstRender)
+    public async Task OnAfterRenderAsync(ApplicationUser user, bool firstRender)
     {
         if (firstRender)
         {
-            var dataset = GetLineChartDataset();
+            var dataset = GetLineChartDataset(user);
             await LineChart.Clear();
             await LineChart.AddDataSet(dataset);
         }
     }
 
 
-    private LineChartDataset<WatcherEvent> GetLineChartDataset()
+    private LineChartDataset<WatcherEvent> GetLineChartDataset(ApplicationUser user)
     {
-        var metabolism = MetabolismCalculator.CalculateMetabolism(_homeHelper.User);
-        var weekMacronutrients = _homeHelper.GetPrefixWeekMacronutrients().ToList();
+        var metabolism = MetabolismCalculator.CalculateMetabolism(user);
+        var weekMacronutrients = _homeHelper.GetPrefixWeekMacronutrients(user).ToList();
         var data = weekMacronutrients.Select(m => new WatcherEvent()
             { Sector = StaticBeeFat.NumberToDay[m.DayOfWeek], Count = m.Macronutrient.Calories }).ToList();
         

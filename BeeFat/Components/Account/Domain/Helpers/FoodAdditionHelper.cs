@@ -6,14 +6,14 @@ namespace BeeFat.Helpers;
 
 public class FoodAdditionHelper
 {
-    public Modal SearchFoodWindow = default!;
+    public Modal SearchFoodWindow;
     
     public Modal SetPortionSizeWindow = default!;
     public string SearchFood;
     public Food SelectedFood;
     
-    public FoodRepository FoodRepository;
-    public JournalFoodRepository JournalFoodRepository;
+    public readonly FoodRepository FoodRepository;
+    public readonly JournalFoodRepository JournalFoodRepository;
 
     public FoodAdditionHelper(FoodRepository foodRepository, JournalFoodRepository journalFoodRepository)
     {

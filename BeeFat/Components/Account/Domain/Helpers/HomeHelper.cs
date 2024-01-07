@@ -2,21 +2,17 @@ using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using BeeFat.Repositories;
 using Blazorise;
-using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.ProgressBar;
 
-namespace BeeFat.Helpers;
+namespace BeeFat.Components.Account.Domain.Helpers;
 
 public class HomeHelper
 {
-    private Guid _id = FakeData.HardId;
-
     public Modal SelectEatenFoodWindow = default!;
     
     public JournalFood SelectedJournalFood;
     public int RightPortionSize;
     public int PortionSize;
-    public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
     public UserRepository UserRepository;
     public JournalRepository JournalRepository;
@@ -27,7 +23,6 @@ public class HomeHelper
         JournalFoodRepository = journalFoodRepository;
         JournalRepository = journalRepository;
         UserRepository = userRepository;
-        User = UserRepository.GetById(_id);
         TodayMacronutrient = new Macronutrient();
         SelectEatenFoodWindow = new Blazorise.Bootstrap.Modal();
         SelectEatenFoodWindow.Hide();
@@ -116,21 +111,16 @@ public class HomeHelper
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
     }
 
-    public ApplicationUser FetchUserInfo()
-    {
-        return UserRepository.GetById(_id);
-    }
-
     public void Save()
     {
         ChangeFoodProductInfoAndSave(true);  
     }
 
-    public void CloseWindow()
+    public void CloseWindow(ApplicationUser user)
     {
         SelectEatenFoodWindow.Close(CloseReason.UserClosing); 
         Save();        
-        var fpSource = User.Journal.FoodProducts;
+        var fpSource = user.Journal.FoodProducts;
         GetTotalMacronutrientsByDay(fpSource); 
     }
 
@@ -162,13 +152,13 @@ public class HomeHelper
         args.Text = $"{totalEatenCalories}/{totalCalories}";
     }
 
-    public IEnumerable<DayMacronutrient> GetPrefixWeekMacronutrients(DayOfWeek lastDay = DayOfWeek.Sunday)
+    public IEnumerable<DayMacronutrient> GetPrefixWeekMacronutrients(ApplicationUser user, DayOfWeek lastDay = DayOfWeek.Sunday)
     {
-        User.Journal = JournalRepository.GetById(User.JournalId);
+        user.Journal = JournalRepository.GetById(user.JournalId);
         // User = UserRepository.GetById(User.Id);
         foreach (var day in StaticBeeFat.GetDays(1, 7))
         {
-            yield return new DayMacronutrient(GetTotalMacronutrientsByDay(User.Journal.FoodProducts, f => f.IsEaten, day), day);
+            yield return new DayMacronutrient(GetTotalMacronutrientsByDay(user.Journal.FoodProducts, f => f.IsEaten, day), day);
         }
     }
 }

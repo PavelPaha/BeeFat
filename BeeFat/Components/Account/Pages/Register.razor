@@ -143,7 +143,7 @@
         try
         {
             var journal = new Journal(new List<JournalFood>());
-            var track = TrackRepository.GetFirstByCondition(_ => true)!;
+            var track = new Track("adsfds", "fdlksajflksd");
             var user = new ApplicationUser { PersonName = new PersonName(Input.FirstName, Input.LastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id, Gender = Input.Gender, ActivityLevel = 1.2 };
             return user;
         }

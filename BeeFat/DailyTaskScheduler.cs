@@ -31,7 +31,7 @@ public class DailyTaskScheduler
         var users = _userRepository.GetCollection(_ => true);
         foreach (var user in users)
         {
-            _userRepository.RemoveUserJournalStory(user.Id);
+            _userRepository.RemoveUserJournalStory(Guid.Parse(user.Id));
         }
     }
 

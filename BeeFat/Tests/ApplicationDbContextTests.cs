@@ -95,7 +95,7 @@ public class ApplicationDbContextTests
     public void DeleteUser(string userId)
     {
         using var context = new ApplicationDbContext(_options, _configuration);
-        var user = context.BeeFatUsers.First(u => u.Id == Guid.Parse(userId));
+        var user = context.BeeFatUsers.First(u => u.Id == userId);
         context.BeeFatUsers.Remove(user);
         context.SaveChanges();
     }

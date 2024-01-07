@@ -8,6 +8,7 @@ namespace BeeFat.Components.Account.Domain.Helpers;
 public class UserProfileHelper
 {
     public Modal Modal { get; set; }
+    public ApplicationUser UserModel { get; set; }
 
     public UserRepository UserRepository;
     public TrackRepository TrackRepository;
