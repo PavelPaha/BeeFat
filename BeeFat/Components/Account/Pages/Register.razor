@@ -8,6 +8,7 @@
 @using BeeFat.Data
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Domain.Models.User
+@using BeeFat.Repositories
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
@@ -16,6 +17,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject TrackRepository TrackRepository
 
 <PageTitle>Register</PageTitle>
 
@@ -101,7 +103,7 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = CreateUser(Input.FirstName, Input.LastName, Input.Gender);
+        var user = CreateUser();
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -136,13 +138,13 @@
         RedirectManager.RedirectTo(ReturnUrl);
     }
 
-    private ApplicationUser CreateUser(string firstName, string lastName, Gender gender)
+    private ApplicationUser CreateUser()
     {
         try
         {
             var journal = new Journal(new List<JournalFood>());
-            var track = new Track("aboba", "something");
-            var user = new ApplicationUser { PersonName = new PersonName(firstName, lastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id, Gender = gender, ActivityLevel = 1.2};
+            var track = TrackRepository.GetFirstByCondition(_ => true)!;
+            var user = new ApplicationUser { PersonName = new PersonName(Input.FirstName, Input.LastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id, Gender = Input.Gender, ActivityLevel = 1.2 };
             return user;
         }
         catch

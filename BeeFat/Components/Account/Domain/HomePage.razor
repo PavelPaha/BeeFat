@@ -80,14 +80,6 @@ else
             <button @onclick="() => { if (StaticBeeFat.Today != DayOfWeek.Saturday) StaticBeeFat.Today += 1; StateHasChanged(); }">Day++</button>
             <button @onclick="() => { if (StaticBeeFat.Today != DayOfWeek.Sunday) StaticBeeFat.Today -= 1; StateHasChanged(); }">Day--</button>
             <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
-            @* <ul> *@
-            @*     <li> *@
-            @*         <button @onclick="redirectToTrackEditing">Редактировать трек</button> *@
-            @*     </li> *@
-            @*     <li> *@
-            @*         <button @onclick="redirectToUserProfile">Изменить параметры тела</button> *@
-            @*     </li> *@
-            @* </ul> *@
         </div>
 
         <div class="main-content">

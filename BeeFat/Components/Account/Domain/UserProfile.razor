@@ -4,85 +4,97 @@
 
 @using BeeFat.Components.Account.Domain.Helpers
 @using BeeFat.Data
+@using BeeFat.Repositories
 @using Microsoft.AspNetCore.Authorization
 
 @inject UserProfileHelper UserProfileHelper
 @inject NavigationManager NavigationManager
 @inject IdentityUserAccessor UserAccessor
+@inject UserRepository UserRepository
+@inject IHttpContextAccessor HttpContextAccessor
 
 @attribute [Authorize]
 
 @rendermode InteractiveServer
 
-<h1>Профиль пользователя</h1>
-
-<Blazorise.Modal @ref="UserProfileHelper.Modal" Title="Modal title" Class="popup_window">
-    <div>
-        <div>Вы уверены, что хотите сохранить изменения?</div>
-        <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Save(user); }">Да</Blazorise.Button>
-    </div>
-</Blazorise.Modal>
-
-<div>
-    <label for="firstName">Имя:</label>
-    <input type="text" id="firstName" @bind="user.PersonName.FirstName"/>
-</div>
-
-<div>
-    <label for="lastName">Фамилия:</label>
-    <input type="text" id="lastName" @bind="user.PersonName.LastName"/>
-</div>
-
-<div>
-    <label for="gender">Пол:</label>
-    <select id="gender" @bind=@genderString>
-        <option value="Male">Мужской</option>
-        <option value="Female">Женский</option>
-    </select>
-</div>
-
-
-<div>
-    <label for="weight">Масса (в кг):</label>
-    <input type="number" id="weight" @bind="user.Weight"/>
-</div>
-
-<div>
-    <label for="height">Рост (в см):</label>
-    <input type="number" id="height" @bind="user.Height"/>
-</div>
-
-<div>
-    <label for="gender">Тип активности:</label>
-    <select id="gender" @bind=@activityString>
-        @{
-            foreach (var activityName in StaticBeeFat.ActivityToLevel.Keys)
-            {
-                <option value="@(activityName)">@activityName</option>
-            }
-        }
-    </select>
-</div>
-
-<Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Modal.Show(); }">Сохранить </Button>
-
-
-<Button Style="background-color: #c2cb88;" @onclick="() => { NavigationManager.RedirectTo(urlToTrackPickPage); }">Подобрать подходящие треки</Button>
-
 @code{
 
-    private ApplicationUser user = default!;
-    private string activityString = default!;
-    private string genderString = default!;
-    private readonly string urlToTrackPickPage = "track/pick";
+    private ApplicationUser? user;
+    private string? activityString;
+    private string? genderString;
+    private const string UrlToTrackPickPage = "track_pick";
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
+        user = UserRepository.GetById(Guid.Parse(user.Id));
         activityString = UserProfileHelper.GetActivityString(user);
         genderString = UserProfileHelper.GetGenderString(user);
     }
 
+}
+
+@if (user == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h1>Профиль пользователя</h1>
+
+    <Blazorise.Modal @ref="UserProfileHelper.Modal" Title="Modal title" Class="popup_window">
+        <div>
+            <div>Вы уверены, что хотите сохранить изменения?</div>
+            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Save(user); }">Да</Blazorise.Button>
+        </div>
+    </Blazorise.Modal>
+
+    <div>
+        <label for="firstName">Имя:</label>
+        <input type="text" id="firstName" @bind="user.PersonName.FirstName"/>
+    </div>
+
+    <div>
+        <label for="lastName">Фамилия:</label>
+        <input type="text" id="lastName" @bind="user.PersonName.LastName"/>
+    </div>
+
+    <div>
+        <label for="gender">Пол:</label>
+        <select id="gender" @bind=@genderString>
+            <option value="Male">Мужской</option>
+            <option value="Female">Женский</option>
+        </select>
+    </div>
+
+
+    <div>
+        <label for="weight">Масса (в кг):</label>
+        <input type="number" id="weight" @bind="user.Weight"/>
+    </div>
+
+    <div>
+        <label for="height">Рост (в см):</label>
+        <input type="number" id="height" @bind="user.Height"/>
+    </div>
+
+    <div>
+        <label for="gender">Тип активности:</label>
+        <select id="gender" @bind=@activityString>
+            @{
+                foreach (var activityName in StaticBeeFat.ActivityToLevel.Keys)
+                {
+                    <option value="@(activityName)">@activityName</option>
+                }
+            }
+        </select>
+    </div>
+
+    <Button Style="background-color: #c2cb88;" @onclick="() => { UserProfileHelper.Modal.Show(); }">Сохранить </Button>
+
+
+    <Button Style="background-color: #c2cb88;" @onclick="() => { NavigationManager.RedirectTo(UrlToTrackPickPage); }">Подобрать подходящие треки</Button>
 }
