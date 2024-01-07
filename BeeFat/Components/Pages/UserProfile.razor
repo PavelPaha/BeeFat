@@ -1,11 +1,13 @@
 ﻿@page "/profile"
 
+@inherits LayoutComponentBase
+
 @using BeeFat.Data
 @using BeeFat.Repositories
 @using Blazorise
 @using BeeFat.Components.Account.Domain.Helpers
 @using Microsoft.AspNetCore.Authorization
-@inherits LayoutComponentBase
+@using BeeFat.Components.Account
 
 @inject UserProfileHelper UserProfileHelper;
 @inject NavigationManager NavigationManager;
@@ -20,6 +22,9 @@
 
 @if (user == null)
 {
+    <p>
+        <em>Loading...</em>
+    </p>
 }
 else
 {

@@ -113,6 +113,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Blazored.Modal": {
+              "target": "Package",
+              "version": "[7.1.0, )"
+            },
             "Blazorise": {
               "target": "Package",
               "version": "[1.4.0, )"

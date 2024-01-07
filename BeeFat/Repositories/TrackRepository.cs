@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.ComTypes;
 using BeeFat.Data;
 using BeeFat.Domain.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +26,12 @@ public class TrackRepository : Repository<Track>
 
     public override bool DeleteById(Guid id)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public override void Update(Track entity)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public override IEnumerable<Track> GetCollection(Func<Track, bool> selector)

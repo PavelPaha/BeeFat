@@ -3,7 +3,7 @@ using BeeFat.Data;
 
 namespace BeeFat.Components.Account;
 
-internal sealed class IdentityUserAccessor(
+public sealed class IdentityUserAccessor(
     UserManager<ApplicationUser> userManager,
     IdentityRedirectManager redirectManager)
 {

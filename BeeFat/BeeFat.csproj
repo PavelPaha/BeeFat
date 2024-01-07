@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Blazored.Modal" Version="7.1.0" />
         <PackageReference Include="Blazorise" Version="1.4.0" />
         <PackageReference Include="Blazorise.Bootstrap" Version="1.4.0" />
         <PackageReference Include="Blazorise.Charts" Version="1.4.0" />
@@ -44,14 +45,16 @@
       <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\HomePage.razor" />
       <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\TrackPick.razor" />
       <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\UserProfile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\Chart.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\HomePage.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\TrackPick.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\TrackViewer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\UserProfile.razor" />
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Components\Account\Domain\Pages\Chart.razor" />
-      <AdditionalFiles Include="Components\Account\Domain\Pages\Error.razor" />
-      <AdditionalFiles Include="Components\Account\Domain\Pages\HomePage.razor" />
-      <AdditionalFiles Include="Components\Account\Domain\Pages\TrackPick.razor" />
-      <AdditionalFiles Include="Components\Account\Domain\Pages\UserProfile.razor" />
+      <AdditionalFiles Include="Components\Pages\TrackViewer.razor" />
     </ItemGroup>
 
 </Project>

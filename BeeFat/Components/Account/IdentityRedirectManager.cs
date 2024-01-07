@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BeeFat.Components.Account;
 
-internal sealed class IdentityRedirectManager(NavigationManager navigationManager)
+public sealed class IdentityRedirectManager(NavigationManager navigationManager)
 {
     public const string StatusCookieName = "Identity.StatusMessage";
 

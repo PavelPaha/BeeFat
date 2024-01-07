@@ -11,6 +11,7 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using OpenTelemetry.Metrics;
 using Syncfusion.Blazor;
+using Blazored.Modal;
 
 namespace BeeFat;
 
@@ -25,7 +26,9 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddBlazorise()
             .AddBootstrapProviders();
+        builder.Services.AddServerSideBlazor();
         builder.Services.AddSyncfusionBlazor();
+        builder.Services.AddBlazoredModal();
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<IdentityUserAccessor>();
@@ -113,7 +116,7 @@ public class Program
         }
         else
         {
-            app.UseExceptionHandler("/Error");
+            app.UseExceptionHandler("/Error", createScopeForErrors: true);
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }

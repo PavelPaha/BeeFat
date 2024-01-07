@@ -10,6 +10,7 @@
 @using BeeFat.Data
 @using BeeFat.Repositories
 @using Microsoft.AspNetCore.Authorization
+@using BeeFat.Components.Account
 
 @inject HomeHelper HomeHelper;
 @inject HomeChartHelper HomeChartHelper;
@@ -24,6 +25,9 @@
 
 @if (user == null)
 {
+    <p>
+        <em>Loading...</em>
+    </p>
 }
 else
 {
