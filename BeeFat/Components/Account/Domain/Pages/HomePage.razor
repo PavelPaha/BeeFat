@@ -30,7 +30,7 @@ else
     <div style="@ZIndexSelectEatenFoodWindow">
         <Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window" Closing="@OnModalSetEatenFoodWindowClosing">
             <BodyTemplate>
-                @if (!(HomeHelper.SelectedJournalFood is null))
+                @if (HomeHelper.SelectedJournalFood is not null)
                 {
                     <h2>@HomeHelper.SelectedJournalFood.Name</h2>
                     @switch (HomeHelper.SelectedJournalFood)
