@@ -89,7 +89,7 @@
                         }
                     </ul>
                 </div>
-                <button @onclick="() => { TrackViewerHelper.ChangeTrack(TrackName); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
+                <button @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ChangeTrack(TrackName); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
             }
         }
     </div>
@@ -117,6 +117,7 @@
     protected override void OnInitialized()
     {
         ChangeZIndex(false);
+        StateHasChanged();
     }
 
     public void ChangeZIndex(bool enable)
@@ -132,6 +133,7 @@
     {
         ChangeZIndex(false);
         e.Cancel = false;
+        StateHasChanged();
         return Task.CompletedTask;
     }
 }

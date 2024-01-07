@@ -4,7 +4,7 @@
 @using BeeFat.Helpers
 @using BeeFat.Domain.Infrastructure
 @using Blazorise.Charts
-
+@using Syncfusion.Blazor.ProgressBar;
 @inject HomeHelper HomeHelper;
 @inject HomeChartHelper HomeChartHelper;
 @inject FoodAdditionHelper FoodAdditionalHelper;
@@ -13,72 +13,75 @@
 @rendermode InteractiveServer
 
 
-
-<Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window" Closing="@OnModalSetEatenFoodWindowClosing">
-    <BodyTemplate>
-        @if (!(HomeHelper.SelectedJournalFood is null))
-        {
-            <h2>@HomeHelper.SelectedJournalFood.Name</h2>
-            @switch (HomeHelper.SelectedJournalFood)
+<div style="@ZIndexSelectEatenFoodWindow">
+    <Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window" Closing="@OnModalSetEatenFoodWindowClosing">
+        <BodyTemplate>
+            @if (!(HomeHelper.SelectedJournalFood is null))
             {
-                case JournalFoodGram:
-                    <div>
-                        Запланированная масса - @HomeHelper.RightPortionSize г
-                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="HomeHelper.PortionSize"/>
-                    </div>
-                    break;
-                case JournalFoodPiece:
-                    <div>
-                        Запланированное количество - @HomeHelper.RightPortionSize штук
-                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
-                    </div>
-                    break;
-                default:
-                    throw new ArgumentException("Неизвестный тип еды");
-                    <div>
-                        Запланированное количество - @HomeHelper.SelectedJournalFood.PortionSize штук
-                        <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
-                    </div>
-                    break;
-            }
-        }
-
-        <Button Style="background-color: #c2cb88;" @onclick="() => { HomeHelper.CloseWindow(); StateHasChanged(); }">Сохранить</Button>
-    </BodyTemplate>
-</Modal>
-
-<Modal @ref="FoodAdditionalHelper.SearchFoodWindow" Title="Add food" Class="popup_window" Modal="new ModalOptions { HideOthersOnClick = true }" Closing="@OnModalSearchFoodWindowClosing">
-    <BodyTemplate>
-        @{
-            if (firstStep)
-            {
-                <input type="text" value="@FoodAdditionalHelper.SearchFood" @oninput="OnSearchValueChanged"/>var foods = AvailableFoods;
-                foreach (var food in foods)
+                <h2>@HomeHelper.SelectedJournalFood.Name</h2>
+                @switch (HomeHelper.SelectedJournalFood)
                 {
-                    <button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false;}">@food.Name</button>
+                    case JournalFoodGram:
+                        <div>
+                            Запланированная масса - @HomeHelper.RightPortionSize г
+                            <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="HomeHelper.PortionSize"/>
+                        </div>
+                        break;
+                    case JournalFoodPiece:
+                        <div>
+                            Запланированное количество - @HomeHelper.RightPortionSize штук
+                            <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
+                        </div>
+                        break;
+                    default:
+                        throw new ArgumentException("Неизвестный тип еды");
+                        <div>
+                            Запланированное количество - @HomeHelper.SelectedJournalFood.PortionSize штук
+                            <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
+                        </div>
+                        break;
                 }
             }
-            else
-            {
-                if (!(FoodAdditionalHelper.SelectedFood is null))
+
+            <Button Style="background-color: #c2cb88;" @onclick="() => { HomeHelper.CloseWindow(); StateHasChanged(); }">Сохранить</Button>
+        </BodyTemplate>
+    </Modal>
+</div>
+
+<div style="@ZIndexSearchFoodWindow">
+    <Modal @ref="FoodAdditionalHelper.SearchFoodWindow" Title="Add food" Class="popup_window" Modal="new ModalOptions { HideOthersOnClick = true }" Closing="@OnModalSearchFoodWindowClosing">
+        <BodyTemplate>
+            @{
+                if (firstStep)
                 {
-                    <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                    <input type="text" value="@FoodAdditionalHelper.SearchFood" @oninput="OnSearchValueChanged"/>var foods = AvailableFoods;
+                    foreach (var food in foods)
+                    {
+                        <button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false;}">@food.Name</button>
+                    }
                 }
                 else
                 {
-                    firstStep = true;
-                }
+                    if (!(FoodAdditionalHelper.SelectedFood is null))
+                    {
+                        <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                    }
+                    else
+                    {
+                        firstStep = true;
+                    }
 
-                var food = FoodAdditionalHelper.SelectedFood;
-                var portionType = food is FoodPiece ? "шт" : "гр";
-                var placeholder = $"Напишите количество съеденной еды в {portionType}";
-                <InputNumber min="0" class="form-control" placeholder="@placeholder" @bind-Value="portionSize"/>
-                <button @onclick="() => firstStep = true">Назад</button>
-                <button @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+                    var food = FoodAdditionalHelper.SelectedFood;
+                    var portionType = food is FoodPiece ? "шт" : "гр";
+                    var placeholder = $"Напишите количество съеденной еды в {portionType}";
+                    <InputNumber min="0" class="form-control" placeholder="@placeholder" @bind-Value="portionSize"/>
+                    <button @onclick="() => firstStep = true">Назад</button>
+                    <button @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+                }
             }
-        }
-    </BodyTemplate>
-</Modal>
+        </BodyTemplate>
+    </Modal>
+</div>
 
 @{
     var user = HomeHelper.FetchUserInfo();
@@ -90,9 +93,9 @@
 <div class="container">
     <div class="home-sidebar">
         <h2>@track.Name</h2>
-        <button @onclick="() => { DailyTaskScheduler.IncrementDay(); Rerender(); }">Day++</button>
-        <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; Rerender(); }" >Day--</button>
-        <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
+        @* <button @onclick="() => { DailyTaskScheduler.IncrementDay(); Rerender(); }">Day++</button> *@
+        @* <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; Rerender(); }" >Day--</button> *@
+        @* <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span> *@
         @* <ul> *@
         @*     <li> *@
         @*         <button @onclick="redirectToTrackEditing">Редактировать трек</button> *@
@@ -185,7 +188,7 @@
                                         }
                                     </div>
                                 </div>
-                                <button type="button" class="checkbox-button" @onclick="async () => { SetSelectEatenFoodWindowAsVisible(); HomeHelper.SetEatenProduct(jProduct); await Rerender();}" disabled=@jProduct.IsEaten>&#10003;</button>
+                                <button type="button" class="checkbox-button" @onclick="async () => { SetSelectEatenFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSelectEatenFoodWindow, true); HomeHelper.SetEatenProduct(jProduct); await Rerender();}" disabled=@jProduct.IsEaten>&#10003;</button>
                                 @if (jProduct.IsEaten)
                                 {
                                     <button type="button" class="checkbox-button" @onclick="async () => { HomeHelper.CancelEatenProduct(jProduct); await Rerender(); }">&times;</button>
@@ -227,7 +230,7 @@
                             </li>
                         }
                         <li>
-                            <button @onclick="() => { SetSearchFoodWindowAsVisible(); FoodAdditionalHelper.SearchFoodWindow.Show(); }" >Съел другое</button>
+                            <button @onclick="() => { SetSearchFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSearchFoodWindow, true); FoodAdditionalHelper.SearchFoodWindow.Show(); }" >Съел другое</button>
                         </li>
                     }
                 </ul>
@@ -252,20 +255,20 @@
             </div>
             <div class="total-progress-bar">
                 Калории: 
-                @* <SfProgressBar Type="ProgressType.Linear" *@
-                @*                Value="@(HomeHelper.CalculatePercentage(totalEatenMacronutrient.Calories, totalMacronutrient.Calories))" *@
-                @*                Height="60" *@
-                @*                Width="100" *@
-                @*                TrackColor="#F8C7D8" *@
-                @*                ShowProgressValue="true" *@
-                @*                ProgressColor="#E3165B" *@
-                @*                TrackThickness="24" *@
-                @*                CornerRadius="CornerType.Round" *@
-                @*                ProgressThickness="24" *@
-                @*                Minimum="0" *@
-                @*                Maximum="100"> *@
-                @*     <ProgressBarEvents TextRender="args => HomeHelper.TextHandler(args, totalEatenMacronutrient.Calories, totalMacronutrient.Calories)"></ProgressBarEvents> *@
-                @* </SfProgressBar> *@
+                <SfProgressBar Type="ProgressType.Linear"
+                               Value="@(HomeHelper.CalculatePercentage(totalEatenMacronutrient.Calories, totalMacronutrient.Calories))"
+                               Height="60"
+                               Width="700"
+                               TrackColor="#F8C7D8"
+                               ShowProgressValue="true"
+                               ProgressColor="#E3165B"
+                               TrackThickness="24"
+                               CornerRadius="CornerType.Round"
+                               ProgressThickness="24"
+                               Minimum="0"
+                               Maximum="100">
+                    <ProgressBarEvents TextRender="args => HomeHelper.TextHandler(args, totalEatenMacronutrient.Calories, totalMacronutrient.Calories)"></ProgressBarEvents>
+                </SfProgressBar>
             </div>
             <div class="chart">
                 <LineChart @ref="HomeChartHelper.LineChart" TItem="HomeChartHelper.WatcherEvent" Options="@HomeChartHelper.LineChartOptions"></LineChart>
@@ -331,8 +334,8 @@
     bool firstStep = true;
     public int portionSize;
 
-    public string ZIndexSetEatenFoodWindow;
-    public string ZIndexSearchFoodWindow;
+    public string ZIndexSelectEatenFoodWindow = "pointer-events: none;";
+    public string ZIndexSearchFoodWindow = "pointer-events: none;";
     
     protected async Task Rerender()
     {
@@ -343,8 +346,6 @@
     protected override void OnInitialized()
     {
         StateHasChanged();
-        ChangeZIndex(ref ZIndexSetEatenFoodWindow, false);
-        ChangeZIndex(ref ZIndexSearchFoodWindow, false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -382,7 +383,10 @@
 
     public void ChangeZIndex(ref string param, bool enable)
     {
-        param = enable ? "pointer-events: auto;" : "pointer-events: none;";
+        if (enable)
+            param = "pointer-events: auto;";
+        else
+            param = "pointer-events: none;";
         StateHasChanged();
     }
 
@@ -390,12 +394,13 @@
     {
         ChangeZIndex(ref param, false);
         e.Cancel = false;
+        StateHasChanged();
         return Task.CompletedTask;
     }
 
     private Task OnModalSetEatenFoodWindowClosing(ModalClosingEventArgs e)
     {
-        return OnModalClosing(ref ZIndexSetEatenFoodWindow, e);
+        return OnModalClosing(ref ZIndexSelectEatenFoodWindow, e);
     }
     
     private Task OnModalSearchFoodWindowClosing(ModalClosingEventArgs e)
