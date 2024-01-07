@@ -55,6 +55,8 @@ public class TrackPickHelper
             RecommendentTracks.Clear();
             foreach (var track in result)
             {
+                if (RecommendentTracks.Count > 10) 
+                    break;
                 RecommendentTracks.Add(track.Id);
             }
             return CollectSuitableTracks();

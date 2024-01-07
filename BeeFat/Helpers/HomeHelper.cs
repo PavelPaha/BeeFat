@@ -142,9 +142,9 @@ public class HomeHelper
         ChangeFoodProductInfoAndSave(false);
     }
 
-    public void SetEatenProduct(JournalFood product)
+    public void SetEatenProduct(JournalFood product, FoodProduct fp)
     {
-        // RightPortionSize = fp.PortionSize;
+        RightPortionSize = fp.PortionSize;
         SelectedJournalFood = product; 
         ShowModalWindow(product);
     }

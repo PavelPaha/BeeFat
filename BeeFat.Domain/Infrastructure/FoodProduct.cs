@@ -21,7 +21,7 @@ public abstract class FoodProduct : Entity
 
     public abstract int PortionSize { get; set; }
 
-    public double PortionCoeff => (double)PortionSize / 100;
+    public virtual double PortionCoeff => (double)PortionSize / 100;
 
     [SetsRequiredMembers]
     protected FoodProduct() { }

@@ -8,7 +8,7 @@
 @inject HomeHelper HomeHelper;
 @inject HomeChartHelper HomeChartHelper;
 @inject FoodAdditionHelper FoodAdditionalHelper;
-@inject DailyTaskScheduler DailyTaskScheduler;
+@inject BrowserService Service;
 
 @rendermode InteractiveServer
 
@@ -43,7 +43,7 @@
                 }
             }
 
-            <Button Style="background-color: #c2cb88;" @onclick="() => { HomeHelper.CloseWindow(); StateHasChanged(); }">Сохранить</Button>
+            <Button  class="action-button" @onclick="() => { HomeHelper.CloseWindow(); StateHasChanged(); }">Сохранить</Button>
         </BodyTemplate>
     </Modal>
 </div>
@@ -54,17 +54,25 @@
             @{
                 if (firstStep)
                 {
+                    <span>Введите интересующий вас продукт</span>
                     <input type="text" value="@FoodAdditionalHelper.SearchFood" @oninput="OnSearchValueChanged"/>var foods = AvailableFoods;
                     foreach (var food in foods)
                     {
-                        <button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false;}">@food.Name</button>
+                        <button class="action-button" @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false;}">@food.Name</button>
                     }
                 }
                 else
                 {
                     if (!(FoodAdditionalHelper.SelectedFood is null))
                     {
+                        var macronutrient = FoodAdditionalHelper.SelectedFood.Macronutrient;
                         <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                        <div>
+                            <span class="parameter">@macronutrient.Proteins г</span> белков,
+                            <span class="parameter">@macronutrient.Fats г</span> жиров,
+                            <span class="parameter">@macronutrient.Carbohydrates г</span> углеводов,
+                            <span class="parameter">@macronutrient.Calories</span> калорий.
+                        </div>
                     }
                     else
                     {
@@ -74,9 +82,11 @@
                     var food = FoodAdditionalHelper.SelectedFood;
                     var portionType = food is FoodPiece ? "шт" : "гр";
                     var placeholder = $"Напишите количество съеденной еды в {portionType}";
-                    <InputNumber min="0" class="form-control" placeholder="@placeholder" @bind-Value="portionSize"/>
-                    <button @onclick="() => firstStep = true">Назад</button>
-                    <button @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+                    <InputNumber min="0" class="form-control" placeholder="@placeholder" @bind-Value="portionSize"/>  
+                    <div class="action-buttons">
+                        <button class="action-button" @onclick="() => firstStep = true">Назад</button>
+                        <button class="action-button" @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+                    </div>
                 }
             }
         </BodyTemplate>
@@ -112,13 +122,14 @@
             <div class="food-table">
                 <ul class="daily-food-list product-list">
                     <li>
+                        @{ var threshold = 1024;}
                         <div>Название продукта</div>
                         <div>Масса</div>
-                        <div>Белки</div>
-                        <div>Жиры</div>
-                        <div>Углеводы</div>
-                        <div>Калории</div>
-                        <div>Выполнено</div>
+                        <div>@(screenWidth >= threshold ? "Белки" : "Б")</div>
+                        <div>@(screenWidth >= threshold ? "Жиры" : "Ж")</div>
+                        <div>@(screenWidth >= threshold ? "Углеводы" : "У")</div>
+                        <div>@(screenWidth >= threshold ? "Калории" : "Ккал")</div>
+                        <div>@(screenWidth >= threshold ? "Выполнено" : "\u2713")</div>
                     </li>
                     @{
                         var productsFromJournal = HomeHelper.GetProductsByDay(user.Journal.FoodProducts).ToList();
@@ -146,49 +157,49 @@
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="portion-size">@foodInfo.Proteins г</span>
+                                        <span class="portion-size">@foodInfo.Proteins</span>
                                         @{
                                             if (jProduct.IsEaten)
                                             {
-                                                <span class="eaten-portion-size">@jFoodInfo.Proteins г</span>
+                                                <span class="eaten-portion-size">@jFoodInfo.Proteins</span>
                                             }
                                         }
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="portion-size">@foodInfo.Fats г</span>
+                                        <span class="portion-size">@foodInfo.Fats</span>
                                         @{
                                             if (jProduct.IsEaten)
                                             {
-                                                <span class="eaten-portion-size">@jFoodInfo.Fats г</span>
+                                                <span class="eaten-portion-size">@jFoodInfo.Fats</span>
                                             }
                                         }
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="portion-size">@foodInfo.Carbohydrates г</span>
+                                        <span class="portion-size">@foodInfo.Carbohydrates</span>
                                         @{
                                             if (jProduct.IsEaten)
                                             {
-                                                <span class="eaten-portion-size">@jFoodInfo.Carbohydrates г</span>
+                                                <span class="eaten-portion-size">@jFoodInfo.Carbohydrates</span>
                                             }
                                         }
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="portion-size">@foodInfo.Calories ккал</span>
+                                        <span class="portion-size">@foodInfo.Calories</span>
                                         @{
                                             if (jProduct.IsEaten)
                                             {
-                                                <span class="eaten-portion-size">@jFoodInfo.Calories ккал</span>
+                                                <span class="eaten-portion-size">@jFoodInfo.Calories</span>
                                             }
                                         }
                                     </div>
                                 </div>
-                                <button type="button" class="checkbox-button" @onclick="async () => { SetSelectEatenFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSelectEatenFoodWindow, true); HomeHelper.SetEatenProduct(jProduct); await Rerender();}" disabled=@jProduct.IsEaten>&#10003;</button>
+                                <button type="button" class="checkbox-button" @onclick="async () => { SetSelectEatenFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSelectEatenFoodWindow, true); HomeHelper.SetEatenProduct(jProduct, tProduct); await Rerender();}" disabled=@jProduct.IsEaten>&#10003;</button>
                                 @if (jProduct.IsEaten)
                                 {
                                     <button type="button" class="checkbox-button" @onclick="async () => { HomeHelper.CancelEatenProduct(jProduct); await Rerender(); }">&times;</button>
@@ -208,29 +219,29 @@
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="eaten-portion-size">@jFoodInfo.Proteins г</span>
+                                        <span class="eaten-portion-size">@jFoodInfo.Proteins</span>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="eaten-portion-size">@jFoodInfo.Fats г</span>
+                                        <span class="eaten-portion-size">@jFoodInfo.Fats</span>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="eaten-portion-size">@jFoodInfo.Carbohydrates г</span>
+                                        <span class="eaten-portion-size">@jFoodInfo.Carbohydrates</span>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="indicator">
-                                        <span class="eaten-portion-size">@jFoodInfo.Calories ккал</span>
+                                        <span class="eaten-portion-size">@jFoodInfo.Calories</span>
                                     </div>
                                 </div>
-                                <button @onclick="() => FoodAdditionalHelper.RemoveJournalFoodFromJournal(jProduct)">&times;</button>
+                                <button class="checkbox-button" @onclick="() => FoodAdditionalHelper.RemoveJournalFoodFromJournal(jProduct)">&times;</button>
                             </li>
                         }
                         <li>
-                            <button @onclick="() => { SetSearchFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSearchFoodWindow, true); FoodAdditionalHelper.SearchFoodWindow.Show(); }" >Съел другое</button>
+                            <button class="action-button" id="eaten-other-food-button" @onclick="() => { SetSearchFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSearchFoodWindow, true); FoodAdditionalHelper.SearchFoodWindow.Show(); }" >Съел другое</button>
                         </li>
                     }
                 </ul>
@@ -241,24 +252,14 @@
                     var totalEatenMacronutrient = HomeHelper.GetTotalMacronutrientsByDay(user.Journal.FoodProducts, food => food.IsEaten, StaticBeeFat.Today);
                 }
                 Потреблено:
-                <span class="parameter">@totalEatenMacronutrient.Proteins г</span> белков,
-                <span class="parameter">@totalEatenMacronutrient.Fats г</span> жиров,
-                <span class="parameter">@totalEatenMacronutrient.Carbohydrates г</span> углеводов,
-                <span class="parameter">@totalEatenMacronutrient.Calories</span> калорий.
-                <br/>
-                Требуется:
-                <span class="parameter">@totalMacronutrient.Proteins г</span> белков,
-                <span class="parameter">@totalMacronutrient.Fats г</span> жиров,
-                <span class="parameter">@totalMacronutrient.Carbohydrates г</span> углеводов,
-                <span class="parameter">@totalMacronutrient.Calories</span> калорий.
-                <br/>
+                <span class="parameter scoreboard">@totalEatenMacronutrient.Calories / @totalMacronutrient.Calories</span> калорий.
             </div>
             <div class="total-progress-bar">
-                Калории: 
                 <SfProgressBar Type="ProgressType.Linear"
+                               ID="progress-bar"
                                Value="@(HomeHelper.CalculatePercentage(totalEatenMacronutrient.Calories, totalMacronutrient.Calories))"
-                               Height="60"
-                               Width="700"
+                               Height="30"
+                               Width="@barWidth"
                                TrackColor="#F8C7D8"
                                ShowProgressValue="true"
                                ProgressColor="#E3165B"
@@ -267,7 +268,7 @@
                                ProgressThickness="24"
                                Minimum="0"
                                Maximum="100">
-                    <ProgressBarEvents TextRender="args => HomeHelper.TextHandler(args, totalEatenMacronutrient.Calories, totalMacronutrient.Calories)"></ProgressBarEvents>
+                    <ProgressBarEvents TextRender="args => args.Text = String.Empty"></ProgressBarEvents>
                 </SfProgressBar>
             </div>
             <div class="chart">
@@ -313,7 +314,7 @@
     <div class="home-sidebar">
         <div class="user">
             <div class="user-info">
-                <img src="avatar.jpg">
+                <img src="wwwroot/avatar.jpg">
                 <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
             </div>
             <button class="action-button">Выйти</button>
@@ -329,6 +330,24 @@
     </div>
 </div>
 
+
+<script type="text/javascript">
+    window.getDimensions = function() {
+        return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+    };
+    
+    window.getProgressBarWidth = function() {
+          var element = document.getElementById("progress-bar");
+          var width = element.offsetWidth;
+          return width;
+    }
+</script>
+
+
+
 @code{
     IEnumerable<Food> AvailableFoods = new List<Food>();
     bool firstStep = true;
@@ -336,6 +355,9 @@
 
     public string ZIndexSelectEatenFoodWindow = "pointer-events: none;";
     public string ZIndexSearchFoodWindow = "pointer-events: none;";
+    
+    private int screenWidth = 0;
+    private string barWidth;
     
     protected async Task Rerender()
     {
@@ -352,6 +374,10 @@
     {
         await base.OnAfterRenderAsync(firstRender);
         await HomeChartHelper.OnAfterRenderAsync(firstRender);
+        
+        var dimension = await Service.GetDimensions();
+        screenWidth = dimension.Width;
+        barWidth = Service.GetElemWidth().ToString();
     }
 
     

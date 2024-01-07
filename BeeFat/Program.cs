@@ -7,6 +7,8 @@ using Blazored.Modal;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.WebAssembly;
 using OpenTelemetry.Metrics;
 using Syncfusion.Blazor;
 
@@ -70,6 +72,7 @@ builder.Services.AddSingleton<TrackViewerHelper>(provider =>
 });
 
 builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
+builder.Services.AddScoped<BrowserService>();
 builder.Services.AddOpenTelemetry().WithMetrics(x =>
 {
     x.AddPrometheusExporter();
