@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 1.1rem;
+    /*padding-top: 1.1rem;*/
 }
 
 h1:focus {
@@ -361,5 +361,48 @@ input{
 
 
 .total-progress-bar{
-    width:100%;
+    width: 100%;
+}
+
+.chart{
+    width: 100%;
+}
+
+svg{
+    width: 100%;
+}
+svg g{
+    width: 100%;
+}
+
+
+@media screen and (max-width : 1024px) {
+    body{
+        color: red;
+    }
+
+    .container {
+        display: block;
+        width: 100%;
+    }
+    
+    .home-sidebar{
+        display: none;
+    }
+    
+    .main-content{
+        margin: 0px;
+        padding: 5px;
+    }
+    
+    .food-table{
+        display: block;
+        max-width: 350px;
+        overflow: auto;
+    }
+    
+    .popup_window{
+        top: 70%;
+        /*z-index: -10;*/
+    }
 }

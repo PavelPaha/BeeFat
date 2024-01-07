@@ -1,0 +1,99 @@
+﻿@page "/profile"
+
+@using BeeFat.Helpers
+@using Blazorise
+@inherits LayoutComponentBase
+@inject UserProfileHelper UserProfileHelper;
+@inject NavigationManager NavigationManager;
+
+@rendermode InteractiveServer
+
+<h1>Профиль пользователя</h1>
+
+@{
+   var url = "track/pick";
+   var userModel = UserProfileHelper.UserModel;
+}
+
+<div style="@ZIndexModalStyle">
+   <Blazorise.Modal @ref="UserProfileHelper.Modal" Closing="@OnModalClosing" Title="Modal title" Class="popup_window">
+       <div>
+           <div>Вы уверены, что хотите сохранить изменения?</div>
+           <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(false); UserProfileHelper.Save(); }">Да</Blazorise.Button>
+       </div>
+   </Blazorise.Modal>
+</div>
+
+
+<div>
+   <label for="firstName">Имя:</label>
+   <input type="text" id="firstName" @bind="userModel.PersonName.FirstName" />
+</div>
+
+<div>
+   <label for="lastName">Фамилия:</label>
+   <input type="text" id="lastName" @bind="userModel.PersonName.LastName" />
+</div>
+
+<div>
+   <label for="gender">Пол:</label>
+   <select id="gender" @bind=@UserProfileHelper.GenderString>
+       <option value="Male">Мужской</option>
+       <option value="Female">Женский</option>
+   </select>
+</div>
+
+
+<div>
+   <label for="weight">Масса (в кг):</label>
+   <input type="number" id="weight" @bind="userModel.Weight" />
+</div>
+
+<div>
+   <label for="height">Рост (в см):</label>
+   <input type="number" id="height" @bind="userModel.Height" />
+</div>
+
+<div>
+   <label for="gender">Тип активности:</label>
+   <select id="gender" @bind=@UserProfileHelper.ActivityString>
+      @{
+         foreach (var activityName in StaticBeeFat.ActivityToLevel.Keys)
+         {
+            <option value="@(activityName)">@activityName</option>
+         }
+      }
+   </select>
+</div>
+
+<Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(true); UserProfileHelper.Modal.Show();}">Сохранить </Button>
+
+
+<Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(true); NavigationManager.RedirectTo(url); }">Подобрать подходящие треки</Button>
+
+
+
+@code{
+   public string ZIndexModalStyle;
+
+   protected override void OnInitialized()
+   {
+      ChangeZIndex(false);
+   }
+
+   public void ChangeZIndex(bool enable)
+   {
+      if (enable)
+         ZIndexModalStyle = "pointer-events: auto;";
+      else
+         ZIndexModalStyle = "pointer-events: none;";
+      StateHasChanged();
+   }
+
+   private Task OnModalClosing(ModalClosingEventArgs e)
+   {
+      ChangeZIndex(false);
+      e.Cancel = false;
+      return Task.CompletedTask;
+   }
+}

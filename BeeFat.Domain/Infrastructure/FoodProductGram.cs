@@ -13,7 +13,7 @@ public class FoodProductGram : FoodProduct
     
 
     [SetsRequiredMembers]
-    public FoodProductGram(Food food, int grams, DayOfWeek dayOfWeek, Track track, bool isEaten)
+    public FoodProductGram(FoodGram food, int grams, DayOfWeek dayOfWeek, Track track, bool isEaten)
         : base(food, dayOfWeek, track, isEaten)
     {
         // Track = track;

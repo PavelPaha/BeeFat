@@ -35,13 +35,30 @@ public class UserRepository : Repository<ApplicationUser>
 
     public override IEnumerable<ApplicationUser> GetCollection(Func<ApplicationUser, bool> selector)
     {
-        throw new NotSupportedException();
+        var context = _context;
+        return context.BeeFatUsers.Where(selector);
+    }
+
+    public void RemoveUserJournalStory(Guid userId)
+    {
+        var context = _context;
+        var user = GetUserWithFoodProducts(context, userId);
+        var journalFoods = user.Journal.FoodProducts.ToList();
+        var trackFoodProducts = user.Track.FoodProducts.ToList();
+
+        var pairs = StaticBeeFat.MergeProductsFromTrackAndJournal(trackFoodProducts, journalFoods);
+
+        foreach (var jf in journalFoods)
+        {
+            context.JournalFoods.Remove(jf);
+        }
+
+        context.SaveChanges();
     }
 
     private readonly Func<ApplicationDbContext, Guid, ApplicationUser> userWithFoodProducts = (db, id) => db.BeeFatUsers
         .Include(u => u.Journal)
         .ThenInclude(j => j.FoodProducts)
-        // .ThenInclude(fp => fp.Journal)
         .Include(u => u.Track)
         .ThenInclude(t => t.FoodProducts)
         .ThenInclude(fp => fp.Food)

@@ -1,3 +1,5 @@
+using BeeFat.Data;
+
 namespace BeeFat;
 
 public static class MetabolismCalculator
@@ -32,5 +34,15 @@ public static class MetabolismCalculator
     // 1,375 — низкая активность;
     // 1,550 — умеренная активность;
     // 1,725 — высокая активность;
-    // 1,900 — очень высокая активность.         
+    // 1,900 — очень высокая активность.
+    
+    public static int CalculateMetabolism(ApplicationUser user)
+    {
+        if (user.Gender == Gender.Female)
+            return
+                CalculateBMRForFemaleWithActivity(user.Weight, user.Height, user.Age,
+                    user.ActivityLevel);
+        return CalculateBMRForMaleWithActivity(user.Weight, user.Height, user.Age,
+            user.ActivityLevel);
+    }
 }
