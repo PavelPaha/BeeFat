@@ -4,7 +4,7 @@ using BeeFat.Repositories;
 using Blazorise;
 using Microsoft.AspNetCore.Components;
 
-namespace BeeFat.Components.Account.Domain.Helpers;
+namespace BeeFat.Helpers;
 
 public class TrackViewerHelper
 {

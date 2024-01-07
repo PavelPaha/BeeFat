@@ -52,7 +52,6 @@ public class HomeChartHelper
 
     private LineChartDataset<WatcherEvent> GetLineChartDataset(ApplicationUser user)
     {
-        var metabolism = MetabolismCalculator.CalculateMetabolism(user);
         var weekMacronutrients = _homeHelper.GetPrefixWeekMacronutrients(user).ToList();
         var data = weekMacronutrients.Select(m => new WatcherEvent()
             { Sector = StaticBeeFat.NumberToDay[m.DayOfWeek], Count = m.Macronutrient.Calories }).ToList();

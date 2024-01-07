@@ -5,9 +5,9 @@
 @using BeeFat.Data
 @using BeeFat.Repositories
 @using Blazorise
-@using BeeFat.Components.Account.Domain.Helpers
 @using Microsoft.AspNetCore.Authorization
 @using BeeFat.Components.Account
+@using BeeFat.Helpers
 
 @inject UserProfileHelper UserProfileHelper;
 @inject NavigationManager NavigationManager;
@@ -34,7 +34,7 @@ else
         <Blazorise.Modal @ref="UserProfileHelper.Modal" Closing="@OnModalClosing" Title="Modal title" Class="popup_window">
             <div>
                 <div>Вы уверены, что хотите сохранить изменения?</div>
-                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(false); UserProfileHelper.Save(user!); }">Да</Blazorise.Button>
+                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { ChangeZIndex(false); UserProfileHelper.Save(user!, genderString, activityString); }">Да</Blazorise.Button>
             </div>
         </Blazorise.Modal>
     </div>
@@ -102,7 +102,7 @@ else
         user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
         user = UserRepository.GetById(Guid.Parse(user.Id));
         genderString = UserProfileHelper.GetGenderString(user);
-        activityString = UserProfileHelper.GetGenderString(user);
+        activityString = UserProfileHelper.GetActivityString(user);
         ChangeZIndex(false);
     }
 
@@ -121,5 +121,4 @@ else
         e.Cancel = false;
         return Task.CompletedTask;
     }
-
 }

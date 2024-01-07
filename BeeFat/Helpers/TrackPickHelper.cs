@@ -3,7 +3,7 @@ using BeeFat.Domain.Infrastructure;
 using BeeFat.Repositories;
 using Blazorise;
 
-namespace BeeFat.Components.Account.Domain.Helpers;
+namespace BeeFat.Helpers;
 
 public class TrackPickHelper
 {
@@ -35,21 +35,10 @@ public class TrackPickHelper
         SelectedTrack = track;
     }
     
-    public IEnumerable<Track> CollectSuitableTracks(ApplicationUser user)
+    public IEnumerable<Track> CollectSuitableTracks(ApplicationUser user, int take = 4)
     {
-        user = UserRepository.GetById(Guid.Parse(user.Id));
-        var metabolism = CalculateMetabolism(user);
-        return TrackRepository.GetCollection(_ => true).OrderBy(t => Math.Abs(t.CaloriesByDay - metabolism)).Take(4);
-    }
-
-    private int CalculateMetabolism(ApplicationUser user)
-    {
-        if (user.Gender == Gender.Female)
-            return
-                MetabolismCalculator.CalculateBMRForFemaleWithActivity(user.Weight, user.Height, user.Age,
-                    user.ActivityLevel);
-        return MetabolismCalculator.CalculateBMRForMaleWithActivity(user.Weight, user.Height, user.Age,
-            user.ActivityLevel);
+        var metabolism = MetabolismCalculator.CalculateMetabolism(user);
+        return TrackRepository.GetCollection(_ => true).OrderBy(t => Math.Abs(t.CaloriesByDay - metabolism)).Take(take);
     }
 
     public IEnumerable<Track> SearchTrack(ApplicationUser user, string searchValue)
