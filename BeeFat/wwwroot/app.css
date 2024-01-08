@@ -54,7 +54,6 @@ h1:focus {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-height: 70vh;
     /*background-color: #f7f7f7;*/
 }
 
@@ -273,6 +272,14 @@ ul input[type="checkbox"]:checked + label {
     float: left;
     border-radius: 3px;
 }
+
+.action-buttons{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 .action-buttons button:not(:last-child) {
     border-right: none;
 }
@@ -286,7 +293,8 @@ ul input[type="checkbox"]:checked + label {
 }
 
 .portion-size{
-    margin: 0px 10px;
+    margin: 0px 1px;
+    white-space: nowrap;
     color: red;
 }
 
@@ -362,6 +370,8 @@ input{
 
 .total-progress-bar{
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .chart{
@@ -369,10 +379,16 @@ input{
 }
 
 svg{
-    width: 100%;
+    /*width: 100%;*/
 }
 svg g{
     width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.scoreboard{
+    font-size: 50px;
 }
 
 
@@ -397,12 +413,30 @@ svg g{
     
     .food-table{
         display: block;
-        max-width: 350px;
+        max-width: 400px;
         overflow: auto;
     }
     
     .popup_window{
         top: 70%;
         /*z-index: -10;*/
+    }
+    
+    /*.total-progress-bar{*/
+    /*    flex-basis: 250px !important;*/
+    /*}*/
+
+    /*.daily-food-list > div:first-child {*/
+    /*    max-width: 200px;*/
+    /*}*/
+
+    .product-list li div{
+        display: table-cell;
+        padding: 2px;
+    }
+    
+    .daily-food-list > li > div:first-child {
+        max-width: 30px;
+        overflow: auto;
     }
 }

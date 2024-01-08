@@ -1,17 +1,21 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using BeeFat;
 using BeeFat.Components;
 using BeeFat.Components.Account;
 using BeeFat.Components.Account.Domain.Helpers;
 using BeeFat.Data;
 using BeeFat.Helpers;
 using BeeFat.Repositories;
+using Blazored.Modal;
 using Blazorise;
 using Blazorise.Bootstrap;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.WebAssembly;
 using OpenTelemetry.Metrics;
 using Syncfusion.Blazor;
 using Blazored.Modal;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace BeeFat;
 
@@ -91,17 +95,18 @@ public class Program
             return new TrackViewerHelper(trackPickHelper, trackRepository);
         });
 
-        builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
-        builder.Services.AddOpenTelemetry().WithMetrics(x =>
-        {
-            x.AddPrometheusExporter();
-            x.AddMeter(
-                "Microsoft.AspNetCore.Hosting",
-                "Microsoft.AspNetCore.Server.Kestrel"
-            );
-            x.AddView("request-duration",
-                new ExplicitBucketHistogramConfiguration());
-        });
+builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
+builder.Services.AddScoped<BrowserService>();
+builder.Services.AddOpenTelemetry().WithMetrics(x =>
+{
+    x.AddPrometheusExporter();
+    x.AddMeter(
+        "Microsoft.AspNetCore.Hosting",
+        "Microsoft.AspNetCore.Server.Kestrel"
+        );
+    x.AddView("request-duration",
+        new ExplicitBucketHistogramConfiguration());
+});
 
         var dailyTaskScheduler = new DailyTaskScheduler(journalRepository, userRepository);
 

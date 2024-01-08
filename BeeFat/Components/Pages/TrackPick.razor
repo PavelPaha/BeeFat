@@ -10,7 +10,11 @@
 @using BeeFat.Components.Account
 @using BeeFat.Helpers
 
+@using BeeFat.Repositories
+@using BeeFat.Data
+@using Microsoft.AspNetCore.Authorization
 @inject TrackPickHelper TrackPickHelper;
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @inject IdentityUserAccessor UserAccessor;
 @inject IHttpContextAccessor HttpContextAccessor;
@@ -59,23 +63,23 @@ else
             </div>
         </div>
 
-        <div class="home-sidebar">
-            <div class="user">
-                <div class="user-info">
-                    <img src="avatar.jpg">
-                    <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
-                </div>
-                <button class="action-button">Выйти</button>
-            </div>
-            <div class="parameters">
-                <h3>Параметры</h3>
-                <p>Масса: <span class="parameter">@user.Weight кг</span></p>
-                <p>Рост: <span class="parameter">@user.Height см</span></p>
-            </div>
-        </div>
-    </div>
-}
-
+    <div class="home-sidebar">
+               <div class="user">
+                   <div class="user-info">
+                       <img src="avatar.jpg">
+                       <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+                   </div>
+                   <button class="action-button">Выйти</button>
+               </div>
+               <div class="parameters">
+                   <h3>Параметры</h3>
+                   <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+                   <p>Пол: <span class="parameter">@(user.Gender == 0 ? "мужской" : "женский")</span></p>
+                   <p>Рост: <span class="parameter">@user.Height см</span></p>
+                   <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
+               </div>
+           </div>
+</div>
 
 @code {
     private string searchValue;
@@ -95,5 +99,4 @@ else
         tracks = TrackPickHelper.SearchTrack(user, e.Value.ToString());
         StateHasChanged();
     }
-
 }

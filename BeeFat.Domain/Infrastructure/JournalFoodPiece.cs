@@ -16,5 +16,7 @@ public class JournalFoodPiece: JournalFood
         Pieces = pieces;
     }
 
+    public override double PortionCoeff => PortionSize;
+
     public required int Pieces { get; set; }
 }

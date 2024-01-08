@@ -5,7 +5,6 @@
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Repositories
 @using Blazorise
-@using BeeFat.Components.Account.Domain.Helpers
 @using BeeFat.Data
 @using Microsoft.AspNetCore.Authorization
 @using BeeFat.Components.Account
@@ -30,79 +29,76 @@
 else
 {
     <PageTitle>TrackViewer</PageTitle>
+    
+<div style="@ZIndexModalStyle">
+    <Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window" Closing="OnModalClosing">
+        <div>
+            <div>Вы уверены, что хотите поменять трек @user.Track.Name на @track.Name ?</div>
+            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(user, track.Name); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing);}">Да</Blazorise.Button>
+        </div>
+    </Blazorise.Modal>
+</div>
 
-    <div style="@ZIndexModalStyle">
-        <Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window" Closing="OnModalClosing">
-            <div>
-                @if (track is not null)
-                {
-                    <div>Вы уверены, что хотите поменять трек @user.Track.Name на @track.Name ?</div>
-                    <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(user, track.Name); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing); }">Да</Blazorise.Button>
-                }
-            </div>
-        </Blazorise.Modal>
-    </div>
-
-    <div class="container">
-        <div class="main-content">
-            <h1>Смена трека</h1>
-            @{
-                if (track is null)
-                {
-                    <h1>Трека с названием @TrackName не существует(</h1>
-                }
-                else
-                {
-                    <h2 class="track-header">
-                        @track.Name
-                    </h2>
-                    <div class="daily-plan">
-                        <ul class="daily-food-list product-list">
-                            <li>
-                                <div>Название продукта</div>
-                                <div>Масса</div>
-                                <div>Белки</div>
-                                <div>Жиры</div>
-                                <div>Углеводы</div>
-                                <div>Калории</div>
-                                <div>Действие</div>
-                            </li>
-                            @{
-                                foreach (DayOfWeek day in StaticBeeFat.GetDays())
+<div class="container">
+    <div class="main-content">
+        <h1>Смена трека</h1>
+        @{
+            if (track is null)
+            {
+                <h1>Трека с названием @TrackName не существует(</h1>
+            }
+            else
+            {
+                <h2 class="track-header">
+                    @track.Name
+                </h2>
+                <div class="daily-plan">
+                    <ul class="daily-food-list product-list">
+                        <li>
+                            <div>Название продукта</div>
+                            <div>Масса</div>
+                            <div>Белки</div>
+                            <div>Жиры</div>
+                            <div>Углеводы</div>
+                            <div>Калории</div>
+                            <div>Действие</div>
+                        </li>
+                        @{
+                            foreach (DayOfWeek day in StaticBeeFat.GetDays())
+                            {
+                                <h2>@StaticBeeFat.NumberToDay[day]</h2>
+                                foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
                                 {
-                                    <h2>@StaticBeeFat.NumberToDay[day]</h2>
-                                    foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
-                                    {
-                                        var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
-                                        <li>
-                                            <div>@product.Name</div>
-                                            <div>
-                                                <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Proteins г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Fats г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Carbohydrates г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Calories ккал</span>
-                                            </div>
-                                        </li>
-                                    }
+                                    var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                                    <li>
+                                        <div>@product.Name</div>
+                                        <div>
+                                            <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Proteins г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Fats г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Carbohydrates г</span>
+                                        </div>
+                                        <div>
+                                            <span class="portion-size">@foodInfo.Calories ккал</span>
+                                        </div>
+                                    </li>
                                 }
                             }
-                        </ul>
-                    </div>
-                    <button @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
-                }
+                        }
+                    </ul>
+                </div>
+                <button class="action-button" @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
             }
-        </div>
+        }
+    </div>
 
-        <div class="home-sidebar">
+    <div class="home-sidebar">
             <div class="user">
                 <div class="user-info">
                     <img src="avatar.jpg">
@@ -118,9 +114,7 @@ else
                 <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
             </div>
         </div>
-    </div>
-}
-
+</div>
 
 @code{
     public string? ZIndexModalStyle;
@@ -152,5 +146,4 @@ else
         e.Cancel = false;
         return Task.CompletedTask;
     }
-
 }

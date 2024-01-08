@@ -20,6 +20,8 @@ public class FoodProductPiece : FoodProduct
         Name = food.Name;
     }
 
+    public override double PortionCoeff => PortionSize;
+    
     public override int PortionSize
     {
         get => Pieces;
