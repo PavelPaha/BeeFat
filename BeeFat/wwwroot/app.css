@@ -378,15 +378,6 @@ input{
     width: 100%;
 }
 
-svg{
-    /*width: 100%;*/
-}
-svg g{
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .scoreboard{
     font-size: 50px;
 }
@@ -413,7 +404,7 @@ svg g{
     
     .food-table{
         display: block;
-        max-width: 400px;
+        max-width: 600px;
         overflow: auto;
     }
     

@@ -96,7 +96,6 @@ public class Program
         });
 
 builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
-builder.Services.AddScoped<BrowserService>();
 builder.Services.AddOpenTelemetry().WithMetrics(x =>
 {
     x.AddPrometheusExporter();
