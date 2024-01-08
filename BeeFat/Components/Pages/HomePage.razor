@@ -18,6 +18,7 @@
 @inject UserRepository UserRepository;
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject IdentityUserAccessor UserAccessor;
+@inject DailyTaskScheduler DailyTaskScheduler;
 
 @rendermode InteractiveServer
 
@@ -124,18 +125,10 @@ else
     
     <div class="container">
         <div class="home-sidebar">
-            <div class="product-name">@track.Name</div>
+            <h2>@track.Name</h2>
             @* <button @onclick="() => { DailyTaskScheduler.IncrementDay(); Rerender(); }">Day++</button> *@
             @* <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; Rerender(); }" >Day--</button> *@
-            @* <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span> *@
-            @* <ul> *@
-            @*     <li> *@
-            @*         <button @onclick="redirectToTrackEditing">Редактировать трек</button> *@
-            @*     </li> *@
-            @*     <li> *@
-            @*         <button @onclick="redirectToUserProfile">Изменить параметры тела</button> *@
-            @*     </li> *@
-            @* </ul> *@
+            <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span>
         </div>
 
         <div class="main-content">

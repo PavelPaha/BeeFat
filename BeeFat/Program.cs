@@ -68,48 +68,45 @@ public class Program
             .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
             .Options;
 
+        builder.Services.AddSingleton(dbContextOptions);
+
         builder.Services.AddSingleton<IConfiguration>(configuration);
-
-
-        var userRepository = new UserRepository(configuration, dbContextOptions);
-        var trackRepository = new TrackRepository(configuration, dbContextOptions);
-        var journalRepository = new JournalRepository(configuration, dbContextOptions);
-        var foodProductRepository = new FoodProductRepository(configuration, dbContextOptions);
-        var journalFoodRepository = new JournalFoodRepository(configuration, dbContextOptions);
-        var foodRepository = new FoodRepository(configuration, dbContextOptions);
 
         builder.Services.AddScoped<HomeChartHelper>();
 
-        builder.Services.AddSingleton(userRepository);
-        builder.Services.AddSingleton(trackRepository);
-        builder.Services.AddSingleton(journalRepository);
-        builder.Services.AddSingleton(foodProductRepository);
-        builder.Services.AddSingleton(foodRepository);
-
-        builder.Services.AddSingleton(new HomeHelper(userRepository, journalRepository, journalFoodRepository));
-        builder.Services.AddSingleton(new TrackPickHelper(userRepository, trackRepository, journalRepository));
-        builder.Services.AddSingleton(new UserProfileHelper(userRepository, trackRepository));
-        builder.Services.AddSingleton<TrackViewerHelper>(provider =>
+        builder.Services.AddSingleton<UserRepository>();
+        builder.Services.AddSingleton<TrackRepository>();
+        builder.Services.AddSingleton<JournalRepository>();
+        builder.Services.AddSingleton<FoodProductRepository>();
+        builder.Services.AddSingleton<JournalFoodRepository>();
+        builder.Services.AddSingleton<FoodRepository>();
+        
+        builder.Services.AddScoped<HomeHelper>();
+        builder.Services.AddScoped<TrackPickHelper>();
+        builder.Services.AddScoped<UserProfileHelper>();
+        builder.Services.AddScoped<TrackViewerHelper>();
+        builder.Services.AddScoped<FoodAdditionHelper>();
+        
+        
+        builder.Services.AddSingleton<DailyTaskScheduler>(provider =>
         {
-            var trackPickHelper = provider.GetRequiredService<TrackPickHelper>();
-            return new TrackViewerHelper(trackPickHelper, trackRepository);
+            var journalRepository = provider.GetRequiredService<JournalRepository>();
+            var userRepository = provider.GetRequiredService<UserRepository>();
+            return new DailyTaskScheduler(journalRepository, userRepository);
+        });
+        
+        builder.Services.AddOpenTelemetry().WithMetrics(x =>
+        {
+            x.AddPrometheusExporter();
+            x.AddMeter(
+                "Microsoft.AspNetCore.Hosting",
+                "Microsoft.AspNetCore.Server.Kestrel"
+                );
+            x.AddView("request-duration",
+                new ExplicitBucketHistogramConfiguration());
         });
 
-builder.Services.AddSingleton(new FoodAdditionHelper(foodRepository, journalFoodRepository));
-builder.Services.AddOpenTelemetry().WithMetrics(x =>
-{
-    x.AddPrometheusExporter();
-    x.AddMeter(
-        "Microsoft.AspNetCore.Hosting",
-        "Microsoft.AspNetCore.Server.Kestrel"
-        );
-    x.AddView("request-duration",
-        new ExplicitBucketHistogramConfiguration());
-});
-
-        var dailyTaskScheduler = new DailyTaskScheduler(journalRepository, userRepository);
-
-        builder.Services.AddSingleton(dailyTaskScheduler);
+        
 
         var app = builder.Build();
 
@@ -139,6 +136,7 @@ builder.Services.AddOpenTelemetry().WithMetrics(x =>
         var mainThread = new Thread(() => app.Run());
         mainThread.Start();
 
+        var dailyTaskScheduler = app.Services.GetRequiredService<DailyTaskScheduler>();
         var secondThread = new Thread(async () => await dailyTaskScheduler.Start());
         secondThread.Start();
     }

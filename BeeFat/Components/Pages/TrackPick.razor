@@ -44,7 +44,8 @@ else
                         {
                             var url = $"/tracks/{currentTrack.Name}/view";
                             <div>
-                                <button class="select-track" @onclick="() => { NavigationManager.RedirectTo(url); }">@currentTrack.Name</button>
+                                <button class="select-track action-button" @onclick="() => { NavigationManager.RedirectTo(url); }">@currentTrack.Name</button>
+                                <br>
                                 @{
                                     if (TrackPickHelper.RecommendentTracks.Contains(currentTrack.Id))
                                     {

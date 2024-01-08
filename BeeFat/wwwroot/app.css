@@ -255,6 +255,10 @@ ul input[type="checkbox"]:checked + label {
     text-align: center;
 }
 
+.product-list li div:first-child{
+    text-align: left;
+}
+
 .product-list li div .indicator{
     display: flex;
     flex-direction: column;
@@ -297,7 +301,7 @@ ul input[type="checkbox"]:checked + label {
 }
 
 .portion-size{
-    margin: 0px 1px;
+    margin: 1px;
     color: red;
 }
 
@@ -483,6 +487,6 @@ input{
     }
 
     .product-list li div{
-        padding: 0px;
+        padding: 2px;
     }
 }

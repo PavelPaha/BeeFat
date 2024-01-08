@@ -17,6 +17,7 @@ public class DailyTaskScheduler
     public async Task Start()
     {
         var now = DateTime.Now;
+        StaticBeeFat.Today = DateTime.Today.DayOfWeek;
         var nextMidnight = now.AddDays(1).Date;
         var timeUntilMidnight = nextMidnight.Subtract(now);
         await Task.Delay(timeUntilMidnight);
