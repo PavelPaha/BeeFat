@@ -52,48 +52,49 @@ else
                     <h2 class="track-header">
                         @track.Name
                     </h2>
-                    <div class="daily-plan">
-                        <ul class="daily-food-list product-list">
-                            <li>
-                                <div>Название продукта</div>
-                                <div>Масса</div>
-                                <div>Белки</div>
-                                <div>Жиры</div>
-                                <div>Углеводы</div>
-                                <div>Калории</div>
-                                <div>Действие</div>
-                            </li>
-                            @{
-                                foreach (DayOfWeek day in StaticBeeFat.GetDays())
-                                {
-                                    <h2>@StaticBeeFat.NumberToDay[day]</h2>
-                                    foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
+                    <div class="track-view-container">
+                        <div class="daily-plan food-table">
+                            <ul class="daily-food-list product-list">
+                                <li>
+                                    <div>Название</div>
+                                    <div>Порция</div>
+                                    <div>Б</div>
+                                    <div>Ж</div>
+                                    <div>У</div>
+                                    <div>Ккал</div>
+                                </li>
+                                @{
+                                    foreach (DayOfWeek day in StaticBeeFat.GetDays())
                                     {
-                                        var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
-                                        <li>
-                                            <div>@product.Name</div>
-                                            <div>
-                                                <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Proteins г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Fats г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Carbohydrates г</span>
-                                            </div>
-                                            <div>
-                                                <span class="portion-size">@foodInfo.Calories ккал</span>
-                                            </div>
-                                        </li>
+                                        <h3>@StaticBeeFat.NumberToDay[day]</h3>
+                                        foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
+                                        {
+                                            var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                                            <li>
+                                                <div>@product.Name</div>
+                                                <div>
+                                                    <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Proteins</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Fats</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Carbohydrates</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Calories</span>
+                                                </div>
+                                            </li>
+                                        }
                                     }
                                 }
-                            }
-                        </ul>
-                    </div>
-                    <button class="action-button" @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
+                            </ul>
+                        </div>
+                        <button class="action-button join-to-track-button" @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
+                     </div>
                 }
             }
         </div>

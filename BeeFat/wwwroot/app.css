@@ -219,6 +219,8 @@ ul input[type="checkbox"]:checked + label {
     font-weight: bold;
     padding: 3px 5px;
     border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .day-of-week{
@@ -237,9 +239,9 @@ ul input[type="checkbox"]:checked + label {
     display: table;
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 20px;
+    border-spacing: 0 14px;
     background-color: #F9F9F9FF;
-    border-radius: 10px;
+    border-radius: 3px;
 }
 
 .product-list li{
@@ -250,11 +252,13 @@ ul input[type="checkbox"]:checked + label {
 .product-list li div{
     display: table-cell;
     padding: 5px;
+    text-align: center;
 }
 
 .product-list li div .indicator{
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .action-button{
@@ -294,12 +298,11 @@ ul input[type="checkbox"]:checked + label {
 
 .portion-size{
     margin: 0px 1px;
-    white-space: nowrap;
     color: red;
 }
 
 .eaten-portion-size{
-    margin: 0px 10px;
+    /*margin: 0px 10px;*/
     background-color: #fffad2;
     color: #9b9b18;
 }
@@ -348,7 +351,7 @@ input{
 
 .popup_window{
     position: fixed;
-    top: 50%;
+    top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
@@ -382,15 +385,23 @@ input{
     font-size: 50px;
 }
 
+.product-name{
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.food-table {
+    width: 100%;
+}
+
 
 @media screen and (max-width : 1024px) {
-    body{
-        color: red;
-    }
-
     .container {
         display: block;
         width: 100%;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
     
     .home-sidebar{
@@ -400,17 +411,20 @@ input{
     .main-content{
         margin: 0px;
         padding: 5px;
+        margin-bottom: 50px;
     }
     
     .food-table{
         display: block;
-        max-width: 600px;
+        max-width: 400px;
+        /*width: 100%;*/
         overflow: auto;
     }
-    
-    .popup_window{
-        top: 70%;
-        /*z-index: -10;*/
+
+    .track-view-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
     /*.total-progress-bar{*/
@@ -420,14 +434,55 @@ input{
     /*.daily-food-list > div:first-child {*/
     /*    max-width: 200px;*/
     /*}*/
-
-    .product-list li div{
+    
+    .product-list > li > div{
+        width: 10%;
+        max-width: 30px;
         display: table-cell;
         padding: 2px;
     }
     
     .daily-food-list > li > div:first-child {
-        max-width: 30px;
+        min-width: 20px;
+        max-width: 60px;
         overflow: auto;
+    }
+    
+    .join-to-track-button{
+        align-content: center;
+    }
+    
+    .about{
+        visibility: hidden;
+    }
+
+    .scoreboard{
+        font-size: 35px;
+    }
+    
+    .eaten-other-food-button{
+        margin: 10px;
+    }
+
+    .action-button{
+        margin: 2px;
+    }
+
+    .popup_window{
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        border-radius: 10px;
+        padding: 10px;
+        word-wrap: break-word;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 270px;
+        max-height: 260px;
+    }
+
+    .product-list li div{
+        padding: 0px;
     }
 }

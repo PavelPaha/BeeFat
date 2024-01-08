@@ -23,6 +23,8 @@
 
 @attribute [Authorize]
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
 @if (user == null)
 {
     <p>
@@ -44,14 +46,14 @@ else
                     {
                         case JournalFoodGram:
                             <div>
-                                Запланированная масса - @HomeHelper.RightPortionSize г
-                                <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды в граммах" @bind-Value="HomeHelper.PortionSize"/>
+                                Запланированная масса - <div class="parameter">@HomeHelper.RightPortionSize г</div>
+                                <InputNumber min="0" class="form-control" placeholder="Граммы" @bind-Value="HomeHelper.PortionSize"/>
                             </div>
                             break;
                         case JournalFoodPiece:
                             <div>
-                                Запланированное количество - @HomeHelper.RightPortionSize штук
-                                <InputNumber min="0" class="form-control" placeholder="Напишите количество съеденной еды" @bind-Value="HomeHelper.PortionSize"/>
+                                Запланированное количество - <div class="parameter">@HomeHelper.RightPortionSize штук </div>
+                                <InputNumber min="0" class="form-control" placeholder="Штуки" @bind-Value="HomeHelper.PortionSize"/>
                             </div>
                             break;
                         default:
@@ -63,8 +65,9 @@ else
                             break;
                     }
                 }
-
-                <Button class="action-button" @onclick="() => { HomeHelper.CloseWindow(user); StateHasChanged(); }">Сохранить</Button>
+                <div class="action-buttons">
+                    <Button class="action-button" @onclick="() => { HomeHelper.CloseWindow(user); StateHasChanged(); }">Сохранить</Button>
+                </div>
             </BodyTemplate>
         </Modal>
     </div>
@@ -88,12 +91,14 @@ else
                         if (!(FoodAdditionalHelper.SelectedFood is null))
                         {
                             var macronutrient = FoodAdditionalHelper.SelectedFood.Macronutrient;
-                            <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                            <div class="product-name">
+                                 <span>@FoodAdditionalHelper.SelectedFood.Name</span>
+                            </div>
                             <div>
-                                <span class="parameter">@macronutrient.Proteins г</span> белков,
-                                <span class="parameter">@macronutrient.Fats г</span> жиров,
-                                <span class="parameter">@macronutrient.Carbohydrates г</span> углеводов,
-                                <span class="parameter">@macronutrient.Calories</span> калорий.
+                                <span class="parameter">@macronutrient.Proteins г</span> белков, <br>
+                                <span class="parameter">@macronutrient.Fats г</span> жиров, <br>
+                                <span class="parameter">@macronutrient.Carbohydrates г</span> углеводов, <br>
+                                <span class="parameter">@macronutrient.Calories</span> калорий. <br>
                             </div>
                         }
                         else
@@ -116,10 +121,10 @@ else
     </div>
 
     <PageTitle>Home</PageTitle>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    
     <div class="container">
         <div class="home-sidebar">
-            <h2>@track.Name</h2>
+            <div class="product-name">@track.Name</div>
             @* <button @onclick="() => { DailyTaskScheduler.IncrementDay(); Rerender(); }">Day++</button> *@
             @* <button @onclick="() => { if (!(StaticBeeFat.Today == DayOfWeek.Sunday)) StaticBeeFat.Today -= 1; Rerender(); }" >Day--</button> *@
             @* <span>@StaticBeeFat.NumberToDay[StaticBeeFat.Today]</span> *@
@@ -134,19 +139,18 @@ else
         </div>
 
         <div class="main-content">
-            <div class="daily-plan">
+            <div class="daily-plan track-view-container">
                 <h2>План питания на сегодня</h2>
                 <div class="food-table">
                     <ul class="daily-food-list product-list">
                         <li>
-                            @{ var threshold = 1024; }
                             <div>Название продукта</div>
-                            <div>Масса</div>
-                            <div>@(screenWidth >= threshold ? "Белки" : "Б")</div>
-                            <div>@(screenWidth >= threshold ? "Жиры" : "Ж")</div>
-                            <div>@(screenWidth >= threshold ? "Углеводы" : "У")</div>
-                            <div>@(screenWidth >= threshold ? "Калории" : "Ккал")</div>
-                            <div>@(screenWidth >= threshold ? "Выполнено" : "\u2713")</div>
+                            <div>Порция</div>
+                            <div>Б</div>
+                            <div>Ж</div>
+                            <div>У</div>
+                            <div>Ккал</div>
+                            <div>&#10003;</div>
                         </li>
                         @{
                             var productsFromJournal = HomeHelper.GetProductsByDay(user.Journal.FoodProducts).ToList();
@@ -257,12 +261,11 @@ else
                                     <button class="checkbox-button" @onclick="() => FoodAdditionalHelper.RemoveJournalFoodFromJournal(jProduct)">&times;</button>
                                 </li>
                             }
-
-                            <li>
-                                <button class="action-button" id="eaten-other-food-button" @onclick="() => { SetSearchFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSearchFoodWindow, true); FoodAdditionalHelper.SearchFoodWindow.Show(); }">Съел другое</button>
-                            </li>
                         }
                     </ul>
+                </div>
+                <div class="eaten-other-food-button">
+                    <button class="action-button" @onclick="() => { SetSearchFoodWindowAsVisible(); ChangeZIndex(ref ZIndexSearchFoodWindow, true); FoodAdditionalHelper.SearchFoodWindow.Show(); }">Съел другое</button>
                 </div>
                 <div class="total">
                     @{
@@ -271,11 +274,11 @@ else
                         var percentage = HomeHelper.CalculatePercentage(totalEatenMacronutrient.Calories, totalMacronutrient.Calories);
                     }
                     <span>
-                        <span class="parameter scoreboard">@totalEatenMacronutrient.Calories / @totalMacronutrient.Calories</span> калорий
+                        <span class="parameter scoreboard">@totalEatenMacronutrient.Calories / @totalMacronutrient.Calories ккал</span>
                     </span>
                 </div>
                 <div class="total-progress-bar">
-                    <SfProgressBar Type="ProgressType.Circular" Value="@((int)percentage)" Height="260" EnablePieProgress="true" Minimum="0" Maximum="100">
+                    <SfProgressBar Type="ProgressType.Circular" Value="@((int)percentage)" Height="260" Width="260" EnablePieProgress="true" Minimum="0" Maximum="100">
                     </SfProgressBar>
                 </div>
                 <div class="chart">
@@ -284,7 +287,7 @@ else
             </div>
             <div class="next-days-plan product-list">
                 <h3>План питания на следующие дни</h3>
-                <ul class="product-list">
+                <ul>
                     @{
                         foreach (var products in HomeHelper.GetNextDaysFoodProducts(user.Journal.FoodProducts, StaticBeeFat.Today))
                         {
@@ -429,5 +432,4 @@ else
     {
         return OnModalClosing(ref ZIndexSearchFoodWindow, e);
     }
-
 }
