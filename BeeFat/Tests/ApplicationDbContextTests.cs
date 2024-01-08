@@ -529,9 +529,14 @@ public class ApplicationDbContextTests
         List<DayItem> days = JsonConvert.DeserializeObject<List<DayItem>>(jsonTrack);
 
         var fpsToDb = new List<FoodProduct>();
-        var newTrack = new Track("Стандартный трек 2", "");
-        newTrack.CaloriesByDay = 3800;
+        var newTrack1 = new Track("Стандартный трек 1", "");
+        newTrack1.CaloriesByDay = 4000;
         
+        var newTrack2 = new Track("Стандартный трек 2", "");
+        newTrack2.CaloriesByDay = 3000;
+        
+        var newTrack3 = new Track("Стандартный трек 3", "");
+        newTrack3.CaloriesByDay = 2000;
         
         for (int i = 0; i < 7; i++)
         {
@@ -545,32 +550,44 @@ public class ApplicationDbContextTests
             foreach (var mealItem in fpItems)
             {
                 var food = foodByIdFromJson[mealItem.Продукт];
-                FoodProduct fp;
+                FoodProduct fp1;
+                FoodProduct fp2;
+                FoodProduct fp3;
                 var curDay = Enum.Parse<DayOfWeek>(dayNumber.ToString());
                 if (mealItem.Граммовка is null)
                 {
                     if (food is FoodPiece piece)
                     {
-                        fp = new FoodProductPiece(piece, (int)mealItem.Количество, curDay, newTrack, false);
+                        fp1 = new FoodProductPiece(piece, (int)mealItem.Количество, curDay, newTrack1, false);
+                        fp2 = new FoodProductPiece(piece, (int)(mealItem.Количество*0.8), curDay, newTrack2, false);
+                        fp3 = new FoodProductPiece(piece, (int)(mealItem.Количество*0.6), curDay, newTrack3, false);
                     }
                     else
                     {
                         var changedFood = new FoodPiece(food.Name, food.Macronutrient);
                         foodByIdFromJson[mealItem.Продукт] = changedFood;
-                        fp = new FoodProductPiece(changedFood, (int)mealItem.Количество, curDay, newTrack, false);
+                        fp1 = new FoodProductPiece(changedFood, (int)mealItem.Количество, curDay, newTrack1, false);
+                        fp2 = new FoodProductPiece(changedFood, (int)(mealItem.Количество*0.8), curDay, newTrack2, false);
+                        fp3 = new FoodProductPiece(changedFood, (int)(mealItem.Количество*0.6), curDay, newTrack3, false);
                     }
                 }
                 else
                 {
-                    fp = new FoodProductGram((FoodGram)food, (int)mealItem.Граммовка, curDay, newTrack, false);
+                    fp1 = new FoodProductGram((FoodGram)food, (int)mealItem.Граммовка, curDay, newTrack1, false);
+                    fp2 = new FoodProductGram((FoodGram)food, (int)(mealItem.Количество*0.8), curDay, newTrack2, false);
+                    fp3 = new FoodProductGram((FoodGram)food, (int)(mealItem.Количество*0.6), curDay, newTrack3, false);
                 }
-                fpsToDb.Add(fp);
+                fpsToDb.Add(fp1);
+                fpsToDb.Add(fp2);
+                fpsToDb.Add(fp3);
             }
         }
         
         using (var context = new ApplicationDbContext(_options, _configuration))
         {
-            context.Tracks.Add(newTrack);
+            context.Tracks.Add(newTrack1);
+            context.Tracks.Add(newTrack2);
+            context.Tracks.Add(newTrack3);
             foreach (var food in foodByIdFromJson.Keys)
             {
                 context.Foods.Add(foodByIdFromJson[food]);
