@@ -8,6 +8,7 @@
 @using BeeFat.Data
 @using BeeFat.Domain.Infrastructure
 @using BeeFat.Domain.Models.User
+@using BeeFat.Helpers
 @using BeeFat.Repositories
 
 @inject UserManager<ApplicationUser> UserManager
@@ -17,7 +18,8 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@inject TrackRepository TrackRepository
+@inject TrackPickHelper TrackPickHelper;
+@inject JournalRepository JournalRepository;
 
 <PageTitle>Register</PageTitle>
 
@@ -109,6 +111,7 @@
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
+        JournalRepository.UpdateByChangingUserTrack(user.TrackId, user.JournalId);
 
         if (!result.Succeeded)
         {
@@ -143,8 +146,11 @@
         try
         {
             var journal = new Journal(new List<JournalFood>());
-            var track = new Track("adsfds", "fdlksajflksd");
-            var user = new ApplicationUser { PersonName = new PersonName(Input.FirstName, Input.LastName), Journal = journal, JournalId = journal.Id, Track = track, TrackId = track.Id, Gender = Input.Gender, ActivityLevel = 1.2 };
+            JournalRepository.Add(journal);
+            
+            var user = new ApplicationUser { PersonName = new PersonName(Input.FirstName, Input.LastName), JournalId = journal.Id, Gender = Input.Gender, ActivityLevel = 1.2, Weight = Input.Weight, Height = Input.Height, Age = Input.Age};
+            var track = TrackPickHelper.CollectSuitableTracks(user, 1).First();
+            user.TrackId = track.Id;
             return user;
         }
         catch

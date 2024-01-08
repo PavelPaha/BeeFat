@@ -31,6 +31,9 @@
 }
 else
 {
+    user = UserRepository.GetById(Guid.Parse(user.Id));
+    track = user.Track;
+    
     <div style="@ZIndexSelectEatenFoodWindow">
         <Modal @ref="HomeHelper.SelectEatenFoodWindow" Title="Modal title" Class="popup_window" Closing="@OnModalSetEatenFoodWindowClosing">
             <BodyTemplate>
@@ -61,7 +64,7 @@ else
                     }
                 }
 
-                <Button Style="background-color: #c2cb88;" @onclick="() => { HomeHelper.CloseWindow(user); StateHasChanged(); }">Сохранить</Button>
+                <Button Style="background-color: #c2cb88;" @onclick="async () => { HomeHelper.CloseWindow(user); await Rerender(); }">Сохранить</Button>
             </BodyTemplate>
         </Modal>
     </div>
@@ -76,7 +79,7 @@ else
                         var foods = AvailableFoods;
                         foreach (var food in foods)
                         {
-                            <button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false; }">@food.Name</button>
+                            <Button @onclick="() => { FoodAdditionalHelper.SelectedFood = food; firstStep = false; }">@food.Name</Button>
                         }
                     }
                     else
@@ -94,8 +97,8 @@ else
                         var portionType = food is FoodPiece ? "шт" : "гр";
                         var placeholder = $"Напишите количество съеденной еды в {portionType}";
                         <InputNumber min="0" class="form-control" placeholder="@placeholder" @bind-Value="portionSize"/>
-                        <button @onclick="() => firstStep = true">Назад</button>
-                        <button @onclick="() => { Save(food, portionSize); }">Сохранить</button>
+                        <Button @onclick="() => firstStep = true">Назад</Button>
+                        <Button @onclick="async () => { Save(food, portionSize); await FoodAdditionalHelper.SearchFoodWindow.Close(CloseReason.UserClosing); await Rerender();}">Сохранить</Button>
                     }
                 }
             </BodyTemplate>
@@ -359,22 +362,24 @@ else
 
     protected async Task Rerender()
     {
-        await OnAfterRenderAsync(false);
+        // await OnAfterRenderAsync(false);
         StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
         user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
-        user = UserRepository.GetById(Guid.Parse(user.Id));
-        track = user.Track;
         StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        await HomeChartHelper.OnAfterRenderAsync(user!, firstRender);
+        while (user == null)
+        {
+            await Task.Delay(100);
+        }
+        await HomeChartHelper.OnAfterRenderAsync(user, firstRender);
     }
 
 
@@ -430,5 +435,4 @@ else
     {
         return OnModalClosing(ref ZIndexSearchFoodWindow, e);
     }
-
 }

@@ -27,7 +27,7 @@ public class TrackPickHelper
         user.TrackId = SelectedTrack.Id;
         user.Track = TrackRepository.GetById(SelectedTrack.Id);
         UserRepository.Update(user);
-        JournalRepository.UpdateByChangingUserTrack(user);
+        JournalRepository.UpdateByChangingUserTrack(user.Track, user.Journal);
     }
 
     public void ChangeSelectedTrack(Track track)

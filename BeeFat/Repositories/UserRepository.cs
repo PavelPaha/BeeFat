@@ -45,9 +45,7 @@ public class UserRepository : Repository<ApplicationUser>
         var user = userWithFoodProducts(context, userId);
         var journalFoods = user.Journal.FoodProducts.ToList();
         var trackFoodProducts = user.Track.FoodProducts.ToList();
-
-        var pairs = StaticBeeFat.MergeProductsFromTrackAndJournal(trackFoodProducts, journalFoods);
-
+        StaticBeeFat.MergeProductsFromTrackAndJournal(trackFoodProducts, journalFoods);
         foreach (var jf in journalFoods)
         {
             context.JournalFoods.Remove(jf);
