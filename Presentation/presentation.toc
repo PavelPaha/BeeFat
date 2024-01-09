@@ -1,0 +1,7 @@
+\babel@toc {russian}{}\relax 
+\beamer@sectionintoc {1}{Роли в команде}{2}{0}{1}
+\beamer@sectionintoc {2}{Проблема}{3}{0}{2}
+\beamer@sectionintoc {3}{Решение}{4}{0}{3}
+\beamer@sectionintoc {4}{User-story}{11}{0}{4}
+\beamer@sectionintoc {5}{Ключевая метрика}{12}{0}{5}
+\beamer@sectionintoc {6}{Отзывы}{14}{0}{6}
