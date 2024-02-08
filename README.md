@@ -12,6 +12,8 @@
 
 ## Примерный интерфейс
 
-![Example screenshot 1](Screenshots/image1.jpg)
+![Example screenshot 1](Presentation/images/screenshot1.jpg)
 
-![Example screenshot 2](Screenshots/image2.jpg)
+![Example screenshot 2](Presentation/images/screenshot2.jpg)
+
+![Example screenshot 3](Presentation/images/screenshot3.jpg)
