@@ -12,7 +12,7 @@ public class FoodProductPiece : FoodProduct
     }
 
     [SetsRequiredMembers]
-    public FoodProductPiece(Food food, int pieces, DayOfWeek dayOfWeek, Track track, bool isEaten)
+    public FoodProductPiece(FoodPiece food, int pieces, DayOfWeek dayOfWeek, Track track, bool isEaten)
         : base(food, dayOfWeek, track, isEaten)
     {
         // Track = track;
@@ -20,6 +20,8 @@ public class FoodProductPiece : FoodProduct
         Name = food.Name;
     }
 
+    public override double PortionCoeff => PortionSize;
+    
     public override int PortionSize
     {
         get => Pieces;

@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 1.1rem;
+    /*padding-top: 1.1rem;*/
 }
 
 h1:focus {
@@ -54,7 +54,6 @@ h1:focus {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-height: 70vh;
     /*background-color: #f7f7f7;*/
 }
 
@@ -220,6 +219,8 @@ ul input[type="checkbox"]:checked + label {
     font-weight: bold;
     padding: 3px 5px;
     border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .day-of-week{
@@ -238,9 +239,9 @@ ul input[type="checkbox"]:checked + label {
     display: table;
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 20px;
+    border-spacing: 0 14px;
     background-color: #F9F9F9FF;
-    border-radius: 10px;
+    border-radius: 3px;
 }
 
 .product-list li{
@@ -251,11 +252,17 @@ ul input[type="checkbox"]:checked + label {
 .product-list li div{
     display: table-cell;
     padding: 5px;
+    text-align: center;
+}
+
+.product-list li div:first-child{
+    text-align: left;
 }
 
 .product-list li div .indicator{
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .action-button{
@@ -273,6 +280,14 @@ ul input[type="checkbox"]:checked + label {
     float: left;
     border-radius: 3px;
 }
+
+.action-buttons{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 .action-buttons button:not(:last-child) {
     border-right: none;
 }
@@ -286,12 +301,12 @@ ul input[type="checkbox"]:checked + label {
 }
 
 .portion-size{
-    margin: 0px 10px;
+    margin: 1px;
     color: red;
 }
 
 .eaten-portion-size{
-    margin: 0px 10px;
+    /*margin: 0px 10px;*/
     background-color: #fffad2;
     color: #9b9b18;
 }
@@ -339,12 +354,12 @@ input{
 }
 
 .popup_window{
-    position: fixed; 
-    top: 50%;
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    background-color: white; 
-    border-radius: 10px; 
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 10px;
     padding: 20px;
     word-wrap: break-word;
     display: flex;
@@ -361,5 +376,117 @@ input{
 
 
 .total-progress-bar{
-    width:100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.chart{
+    width: 100%;
+}
+
+.scoreboard{
+    font-size: 50px;
+}
+
+.product-name{
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.food-table {
+    width: 100%;
+}
+
+
+@media screen and (max-width : 1024px) {
+    .container {
+        display: block;
+        width: 100%;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    .home-sidebar{
+        display: none;
+    }
+    
+    .main-content{
+        margin: 0px;
+        padding: 5px;
+        margin-bottom: 50px;
+    }
+    
+    .food-table{
+        display: block;
+        max-width: 400px;
+        /*width: 100%;*/
+        overflow: auto;
+    }
+
+    .track-view-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    /*.total-progress-bar{*/
+    /*    flex-basis: 250px !important;*/
+    /*}*/
+
+    /*.daily-food-list > div:first-child {*/
+    /*    max-width: 200px;*/
+    /*}*/
+    
+    .product-list > li > div{
+        width: 10%;
+        max-width: 30px;
+        display: table-cell;
+        padding: 2px;
+    }
+    
+    .daily-food-list > li > div:first-child {
+        min-width: 20px;
+        max-width: 60px;
+        overflow: auto;
+    }
+    
+    .join-to-track-button{
+        align-content: center;
+    }
+    
+    .about{
+        visibility: hidden;
+    }
+
+    .scoreboard{
+        font-size: 35px;
+    }
+    
+    .eaten-other-food-button{
+        margin: 10px;
+    }
+
+    .action-button{
+        margin: 2px;
+    }
+
+    .popup_window{
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        border-radius: 10px;
+        padding: 10px;
+        word-wrap: break-word;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 270px;
+        max-height: 260px;
+    }
+
+    .product-list li div{
+        padding: 2px;
+    }
 }

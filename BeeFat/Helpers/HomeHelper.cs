@@ -4,64 +4,54 @@ using BeeFat.Repositories;
 using Blazorise;
 using Syncfusion.Blazor.ProgressBar;
 
-namespace BeeFat.Helpers;
+namespace BeeFat.Components.Account.Domain.Helpers;
 
 public class HomeHelper
 {
-    public static Dictionary<int, string> Days = new()
-    {
-        { 1, "Понедельник" },
-        { 2, "Вторник" },
-        { 3, "Среда" },
-        { 4, "Четверг" },
-        { 5, "Пятница" },
-        { 6, "Суббота" },
-        { 0, "Воскресенье" }
-    };
-
-    private Guid _id = FakeData.HardId;
-
-    public Modal Modal = default!;
-    public JournalFood SelectedFoodProduct;
+    public Modal SelectEatenFoodWindow = default!;
+    
+    public JournalFood SelectedJournalFood;
     public int RightPortionSize;
     public int PortionSize;
-    public DayOfWeek Today = DayOfWeek.Monday;
-    public ApplicationUser User;
     public Macronutrient TodayMacronutrient;
     public UserRepository UserRepository;
     public JournalRepository JournalRepository;
-    public JournalFoodRepository FoodProductRepository;
+    public JournalFoodRepository JournalFoodRepository;
     
-    public HomeHelper(UserRepository userRepository, JournalRepository journalRepository, JournalFoodRepository foodProductRepository)
+    public HomeHelper(UserRepository userRepository, JournalRepository journalRepository, JournalFoodRepository journalFoodRepository)
     {
-        FoodProductRepository = foodProductRepository;
+        JournalFoodRepository = journalFoodRepository;
         JournalRepository = journalRepository;
         UserRepository = userRepository;
-        User = UserRepository.GetById(_id);
         TodayMacronutrient = new Macronutrient();
+        SelectEatenFoodWindow = new Blazorise.Bootstrap.Modal();
+        SelectEatenFoodWindow.Hide();
+        SelectEatenFoodWindow.Visibility = Visibility.Invisible;
+        SelectEatenFoodWindow.Visible = false;
+        
     }
 
     public void ShowModalWindow(JournalFood journalFood)
     {
-        SelectedFoodProduct = journalFood;
-        Modal.Show();
+        SelectedJournalFood = journalFood;
+        SelectEatenFoodWindow.Show();
     }
 
     public void ChangeFoodProductInfoAndSave(bool isEaten)
     {
-        SelectedFoodProduct.PortionSize = PortionSize;
-        SelectedFoodProduct.IsEaten = isEaten;
-        FoodProductRepository.Update(SelectedFoodProduct);
+        SelectedJournalFood.PortionSize = PortionSize;
+        SelectedJournalFood.IsEaten = isEaten;
+        JournalFoodRepository.Update(SelectedJournalFood);
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource)
     {
-        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, StaticBeeFat.Today);
     }
     
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<FoodProduct> fpsource)
     {
-        return GetTotalMacronutrientsByDay(fpsource, _ => true, Today);
+        return GetTotalMacronutrientsByDay(fpsource, _ => true, StaticBeeFat.Today);
     }
 
     public Macronutrient GetTotalMacronutrientsByDay(IEnumerable<JournalFood> fpsource, Func<JournalFood, bool> selector,  DayOfWeek dayOfWeek)
@@ -101,12 +91,12 @@ public class HomeHelper
 
     public IEnumerable<JournalFood> GetProductsByDay(IEnumerable<JournalFood> fpSource)
     {
-        return GetProductsByDay(fpSource, Today);
+        return GetProductsByDay(fpSource, StaticBeeFat.Today);
     }
     
     public IEnumerable<FoodProduct> GetProductsByDay(IEnumerable<FoodProduct> fpSource)
     {
-        return GetProductsByDay(fpSource, Today);
+        return GetProductsByDay(fpSource, StaticBeeFat.Today);
     }
 
     public IEnumerable<JournalFood> GetProductsByDay(IEnumerable<JournalFood> fpSource, DayOfWeek dayOfWeek)
@@ -121,21 +111,16 @@ public class HomeHelper
             .Where(fp => fp.DayOfWeek.Equals(dayOfWeek));
     }
 
-    public ApplicationUser FetchUserInfo()
-    {
-        return UserRepository.GetById(_id);
-    }
-
     public void Save()
     {
         ChangeFoodProductInfoAndSave(true);  
     }
 
-    public void CloseWindow()
+    public void CloseWindow(ApplicationUser user)
     {
-        Modal.Close(CloseReason.UserClosing); 
+        SelectEatenFoodWindow.Close(CloseReason.UserClosing); 
         Save();        
-        var fpSource = User.Journal.FoodProducts;
+        var fpSource = user.Journal.FoodProducts;
         GetTotalMacronutrientsByDay(fpSource); 
     }
 
@@ -143,14 +128,14 @@ public class HomeHelper
     {
         product.IsEaten = false;
         product.PortionSize = 0;
-        SelectedFoodProduct = product; 
+        SelectedJournalFood = product; 
         ChangeFoodProductInfoAndSave(false);
     }
 
     public void SetEatenProduct(JournalFood product, FoodProduct fp)
     {
         RightPortionSize = fp.PortionSize;
-        SelectedFoodProduct = product; 
+        SelectedJournalFood = product; 
         ShowModalWindow(product);
     }
 
@@ -165,5 +150,28 @@ public class HomeHelper
     public void TextHandler(TextRenderEventArgs args, int totalEatenCalories, int totalCalories)
     {
         args.Text = $"{totalEatenCalories}/{totalCalories}";
+    }
+
+    public IEnumerable<DayMacronutrient> GetPrefixWeekMacronutrients(ApplicationUser user, DayOfWeek lastDay = DayOfWeek.Sunday)
+    {
+        user.Journal = JournalRepository.GetById(user.JournalId);
+        // User = UserRepository.GetById(User.Id);
+        foreach (var day in StaticBeeFat.GetDays(1, 7))
+        {
+            yield return new DayMacronutrient(GetTotalMacronutrientsByDay(user.Journal.FoodProducts, f => f.IsEaten, day), day);
+        }
+    }
+}
+
+
+public class DayMacronutrient
+{
+    public Macronutrient Macronutrient;
+    public DayOfWeek DayOfWeek;
+
+    public DayMacronutrient(Macronutrient macronutrient, DayOfWeek dayOfWeek)
+    {
+        Macronutrient = macronutrient;
+        DayOfWeek = dayOfWeek;
     }
 }

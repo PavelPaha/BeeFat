@@ -20,18 +20,18 @@ public static class FakeData
     static FakeData()
     {
         var eggMacronutrients = new Macronutrient(5, 10, 55, 100);
-        var egg = new Food("Яйцо куриное", eggMacronutrients, 100);
+        var egg = new FoodPiece("Яйцо куриное", eggMacronutrients);
 
-        var water = new Food("Вода питьевая", new Macronutrient(), 100);
+        var water = new FoodGram("Вода питьевая", new Macronutrient());
 
         var porridgeMacronutrient = new Macronutrient(10, 29, 3, 199);
-        var porridge = new Food("Каша овсяная", porridgeMacronutrient, 101);
+        var porridge = new FoodGram("Каша овсяная", porridgeMacronutrient);
 
         var watermelonMacronutrient = new Macronutrient(0, 0, 30, 1000);
-        var watermelon = new Food("Арбуз", watermelonMacronutrient, 99);
+        var watermelon = new FoodGram("Арбуз", watermelonMacronutrient);
 
         var buckwheatMacronutrient = new Macronutrient(3, 1, 10, 200);
-        var buckwheat = new Food("Греча", buckwheatMacronutrient, 300);
+        var buckwheat = new FoodGram("Греча", buckwheatMacronutrient);
         FakeTrack = new Track("FakeTrack", "Some fake description");
         FoodProducts = new List<FoodProduct>()
         {
@@ -56,7 +56,6 @@ public static class FakeData
             Age = 46,
             Height = 178,
             Weight = 80,
-            RightCalories = 2000,
             Id = default,
         };
         

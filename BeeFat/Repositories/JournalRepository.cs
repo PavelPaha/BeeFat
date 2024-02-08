@@ -16,7 +16,7 @@ public class JournalRepository : Repository<Journal>
         using var context = _context;
         return context.Journals
             .Include(j => j.FoodProducts)
-            // .ThenInclude(fp => fp.)
+            .ThenInclude(fp => fp.Macronutrient)
             .First(j => j.Id == id);
     }
 
@@ -30,38 +30,37 @@ public class JournalRepository : Repository<Journal>
         throw new NotImplementedException();
     }
 
+    public void Add(Journal entity)
+    {
+        var context = _context;
+        context.Journals.Add(entity);
+        context.SaveChanges();
+    }
+
     public override IEnumerable<Journal> GetCollection(Func<Journal, bool> selector)
     {
         throw new NotImplementedException();
     }
 
-    public void UpdateByChangingUserTrack(ApplicationUser user)
+    public void UpdateByChangingUserTrack(Guid trackId, Guid journalId)
     {
         Track track;
         using (var context = _context)
         {
-            var foundUser1 = context.BeeFatUsers
-                .Include(u => u.Track)
-                .ThenInclude(j => j.FoodProducts)
-                .ThenInclude(fp => fp.Food)
-                .First(u => u.Id == user.Id);
-            track = foundUser1.Track;
+            track = context.Tracks.Include(track => track.FoodProducts).ThenInclude(foodProduct => foodProduct.Food)
+                .ThenInclude(food => food.Macronutrient).First(t => t.Id == trackId);
         }
-        
+
         Journal journal;
         using (var context = _context)
         {
-            var foundUser = context.BeeFatUsers
-                .Include(u => u.Journal)
-                .ThenInclude(j => j.FoodProducts)
-                // .ThenInclude(fp => fp.Macronutrient)
-                // .Include(u => u.Track)
-                // .ThenInclude(j => j.FoodProducts)
-                // .ThenInclude(fp => fp.Food)
-                .First(u => u.Id == user.Id);
-            journal = foundUser.Journal;
+            journal = context.Journals.Include(journal => journal.FoodProducts).First(j => j.Id == journalId);
         }
-        
+        UpdateByChangingUserTrack(track, journal);
+    }
+
+    public void UpdateByChangingUserTrack(Track track, Journal journal)
+    {
         using (var context = _context)
         {
             foreach (var jfp in journal.FoodProducts)
@@ -69,7 +68,6 @@ public class JournalRepository : Repository<Journal>
                 context.JournalFoods.Remove(jfp);
                 context.SaveChanges();
             }
-            
             RemoveAllFoodProductsFromJournal(journal);
             context.SaveChanges();
             AddFoodProductsFromTrackToJournal(context, track, journal);
@@ -91,7 +89,7 @@ public class JournalRepository : Repository<Journal>
             switch (fp)
             {
                 case FoodProductGram fpg:
-                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.Grams, fpg.DayOfWeek, journal, 0, fpg.IsEaten);
+                    fpToAdd = new JournalFoodGram(fpg.Name, macronutrient, fpg.DayOfWeek, journal, 0, fpg.IsEaten);
                     break;
                 case FoodProductPiece fpp:
                     fpToAdd = new JournalFoodPiece(fpp.Name, macronutrient, fpp.Pieces, fpp.DayOfWeek, journal, 0, fpp.IsEaten);
@@ -103,15 +101,5 @@ public class JournalRepository : Repository<Journal>
             fpToAdd.FoodProductReference = fp.Id;
             context.JournalFoods.Add(fpToAdd);
         }
-    }
-
-    public void UpdatePortionSize(Journal userJournal, FoodProduct selectedFoodProduct)
-    {
-        using var context = _context;
-        
-        var existingFoodProduct = userJournal.FoodProducts.First(fp => fp.Id == selectedFoodProduct.Id);
-        existingFoodProduct.PortionSize = selectedFoodProduct.PortionSize;
-        existingFoodProduct.IsEaten = selectedFoodProduct.IsEaten;
-        context.SaveChanges();
     }
 }

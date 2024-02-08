@@ -1,73 +1,60 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-BeeFat-3b25a96c-8d67-4610-b617-e979a9fbfb43</UserSecretsId>
-    <LangVersion>12</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>aspnet-BeeFat-3E60B0F5-C969-449A-B223-5DF4D58BF6D5</UserSecretsId>
+        <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Blazorise" Version="1.3.3" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="1.3.3" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.3.3" />
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0-preview-23531-01" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-    <PackageReference Include="NUnit" Version="4.0.0-beta.1" />
-    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="24.1.43" />
-    <ProjectReference Include="..\BeeFat.Client\BeeFat.Client.csproj" />
-    <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <ProjectReference Include="..\BeeFat.Domain\BeeFat.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+        <PackageReference Include="Blazorise" Version="1.4.0" />
+        <PackageReference Include="Blazorise.Bootstrap" Version="1.4.0" />
+        <PackageReference Include="Blazorise.Charts" Version="1.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+        <PackageReference Include="OpenTelemetry" Version="1.7.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.7.0-rc.1" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
+        <PackageReference Include="Syncfusion.Blazor" Version="24.1.44" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ConfirmEmail.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ConfirmEmailChange.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ExternalLogin.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ForgotPassword.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ForgotPasswordConfirmation.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\InvalidPasswordReset.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\InvalidUser.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Lockout.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Login.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\LoginWith2fa.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\LoginWithRecoveryCode.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\ChangePassword.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\DeletePersonalData.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\Disable2fa.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\Email.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\EnableAuthenticator.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\ExternalLogins.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\GenerateRecoveryCodes.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\Index.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\PersonalData.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\ResetAuthenticator.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\SetPassword.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\TwoFactorAuthentication.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\_Imports.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\Register.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\RegisterConfirmation.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ResendEmailConfirmation.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ResetPassword.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\ResetPasswordConfirmation.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Pages\_Imports.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\AccountLayout.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\ExternalLoginPicker.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\ManageLayout.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\ManageNavMenu.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\ShowRecoveryCodes.razor" />
-    <_ContentIncludedByDefault Remove="Components\Account\Shared\StatusMessage.razor" />
-  </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BeeFat.Domain\BeeFat.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\HomePage.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackEditor.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackPick.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\TrackViewer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Pages\Domain\UserProfile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\Chart.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\HomePage.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\TrackPick.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Helpers\Pages\UserProfile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\Chart.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\HomePage.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\TrackPick.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\TrackViewer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Account\Domain\Pages\UserProfile.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Pages\TrackViewer.razor" />
+    </ItemGroup>
 
 </Project>

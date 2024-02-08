@@ -1,0 +1,151 @@
+﻿@page "/tracks/{trackName}/view"
+
+@inherits LayoutComponentBase
+
+@using BeeFat.Domain.Infrastructure
+@using BeeFat.Repositories
+@using Blazorise
+@using BeeFat.Data
+@using Microsoft.AspNetCore.Authorization
+@using BeeFat.Components.Account
+@using BeeFat.Helpers
+
+@inject TrackRepository TrackRepository;
+@inject TrackViewerHelper TrackViewerHelper;
+@inject IdentityUserAccessor UserAccessor;
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject UserRepository UserRepository;
+
+@attribute [Authorize]
+
+@rendermode InteractiveServer
+
+@if (user == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <PageTitle>TrackViewer</PageTitle>
+
+    <div style="@ZIndexModalStyle">
+        <Blazorise.Modal @ref="TrackViewerHelper.ConfirmModal" Title="Modal title" Class="popup_window" Closing="OnModalClosing">
+            <div>
+                <div>Вы уверены, что хотите поменять трек @user.Track.Name на @track.Name ?</div>
+                <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackViewerHelper.ChangeTrack(user, track.Name); TrackViewerHelper.ConfirmModal.Close(CloseReason.UserClosing); }">Да</Blazorise.Button>
+            </div>
+        </Blazorise.Modal>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <h1>Смена трека</h1>
+            @{
+                if (track is null)
+                {
+                    <h1>Трека с названием @TrackName не существует(</h1>
+                }
+                else
+                {
+                    <h2 class="track-header">
+                        @track.Name
+                    </h2>
+                    <div class="track-view-container">
+                        <div class="daily-plan food-table">
+                            <ul class="daily-food-list product-list">
+                                <li>
+                                    <div>Название</div>
+                                    <div>Порция</div>
+                                    <div>Б</div>
+                                    <div>Ж</div>
+                                    <div>У</div>
+                                    <div>Ккал</div>
+                                </li>
+                                @{
+                                    foreach (DayOfWeek day in StaticBeeFat.GetDays())
+                                    {
+                                        <h3>@StaticBeeFat.NumberToDay[day]</h3>
+                                        foreach (var product in TrackViewerHelper.GetProductsByDay(track.FoodProducts, day))
+                                        {
+                                            var foodInfo = product.Food.Macronutrient * product.PortionCoeff;
+                                            <li>
+                                                <div>@product.Name</div>
+                                                <div>
+                                                    <span class="portion-size">@String.Format("{0} {1}", product.PortionSize, (product is FoodProductGram) ? "г" : "шт")</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Proteins</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Fats</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Carbohydrates</span>
+                                                </div>
+                                                <div>
+                                                    <span class="portion-size">@foodInfo.Calories</span>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <button class="action-button join-to-track-button" @onclick="() => { ChangeZIndex(true); TrackViewerHelper.ConfirmModal.Show(); }">Присоединиться к треку</button>
+                     </div>
+                }
+            }
+        </div>
+
+        <div class="home-sidebar">
+            <div class="user">
+                <div class="user-info">
+                    <img src="avatar.jpg">
+                    <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+                </div>
+                <button class="action-button">Выйти</button>
+            </div>
+            <div class="parameters">
+                <h3>Параметры</h3>
+                <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+                <p>Пол: <span class="parameter">@(user.Gender == 0 ? "мужской" : "женский")</span></p>
+                <p>Рост: <span class="parameter">@user.Height см</span></p>
+                <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
+            </div>
+        </div>
+    </div>
+}
+
+@code{
+    public string? ZIndexModalStyle;
+
+    [Parameter] public string? TrackName { get; set; }
+    private ApplicationUser? user;
+    private Track? track;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
+        user = UserRepository.GetById(Guid.Parse(user.Id));
+        track = TrackRepository.GetFirstByCondition(t => t.Name == TrackName);
+        ChangeZIndex(false);
+    }
+
+    public void ChangeZIndex(bool enable)
+    {
+        if (enable)
+            ZIndexModalStyle = "pointer-events: auto;";
+        else
+            ZIndexModalStyle = "pointer-events: none;";
+        StateHasChanged();
+    }
+
+    private Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        ChangeZIndex(false);
+        e.Cancel = false;
+        return Task.CompletedTask;
+    }
+}

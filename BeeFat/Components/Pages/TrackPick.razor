@@ -1,82 +1,99 @@
 @page "/track/pick"
 
 @inherits LayoutComponentBase
-@using Blazorise
+
 @using BeeFat.Domain.Infrastructure
+@using BeeFat.Data
+@using BeeFat.Repositories
+@using Microsoft.AspNetCore.Authorization
+@using BeeFat.Components.Account
 @using BeeFat.Helpers
 @inject TrackPickHelper TrackPickHelper;
+
+@inject NavigationManager NavigationManager
+@inject IdentityUserAccessor UserAccessor;
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject UserRepository UserRepository;
+
 @rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+@attribute [Authorize]
 
-@{
-    var user = TrackPickHelper.User;
+@if (user == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
 }
+else
+{
+    <PageTitle>Home</PageTitle>
 
+    <div class="container">
+        <div class="home-sidebar">
+            <h2>Текущий трек - @user.Track.Name</h2>
+        </div>
 
-<Blazorise.Modal @ref="TrackPickHelper.MyModal" Title="Modal title" Class="popup_window">
-    <div>
-        @if (!(TrackPickHelper.SelectedTrack is null))
-        {
-            <div>Вы уверены, что хотите поменять трек @user.Track.Name на @TrackPickHelper.SelectedTrack.Name ?</div>
-            <Blazorise.Button Style="background-color: #c2cb88;" @onclick="() => { TrackPickHelper.Save(); TrackPickHelper.MyModal.Close(CloseReason.UserClosing);}">Да</Blazorise.Button>
-        }
-    </div>
-</Blazorise.Modal>
-
-
-<div class="container">
-    <div class="home-sidebar">
-        <h2>Текущий трек - @user.Track.Name</h2>
-    </div>
-
-    <div class="main-content">
-        <div class="daily-plan">
-            <h2>Доступные треки</h2>
-            <input type="text" value="@searchValue" @oninput="OnSearchValueChanged" />
-            <div>
-                @{
-                    foreach (var currentTrack in tracks)
-                    {
-                        <div>
-                            <button class="select-track" @onclick="() => { TrackPickHelper.ChangeSelectedTrack(currentTrack); TrackPickHelper.MyModal.Show(); }">@currentTrack.Name</button>
-                        </div>
+        <div class="main-content">
+            <div class="daily-plan">
+                <h2>Доступные треки</h2>
+                <input type="text" value="@searchValue" @oninput="OnSearchValueChanged"/>
+                <div>
+                    @{
+                        foreach (var currentTrack in tracks)
+                        {
+                            var url = $"/tracks/{currentTrack.Name}/view";
+                            <div>
+                                <button class="select-track action-button" @onclick="() => { NavigationManager.RedirectTo(url); }">@currentTrack.Name</button>
+                                <br>
+                                @{
+                                    if (TrackPickHelper.RecommendentTracks.Contains(currentTrack.Id))
+                                    {
+                                        <span>Этот трек рекомендован для Вас.</span>
+                                    }
+                                }
+                            </div>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="home-sidebar">
-        <div class="user">
-            <div class="user-info">
-                <img src="avatar.jpg">
-                <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+        <div class="home-sidebar">
+            <div class="user">
+                <div class="user-info">
+                    <img src="avatar.jpg">
+                    <span class="username">@user.PersonName.FirstName @user.PersonName.LastName</span>
+                </div>
+                <button class="action-button">Выйти</button>
             </div>
-            <button class="action-button">Выйти</button>
-        </div>
-        <div class="parameters">
-            <h3>Параметры</h3>
-            <p>Масса: <span class="parameter">@user.Weight кг</span></p>
-            <p>Рост: <span class="parameter">@user.Height см</span></p>
-            <p>Желаемые калории: <span class="parameter">@user.RightCalories ккал</span></p>
+            <div class="parameters">
+                <h3>Параметры</h3>
+                <p>Масса: <span class="parameter">@user.Weight кг</span></p>
+                <p>Пол: <span class="parameter">@(user.Gender == 0 ? "мужской" : "женский")</span></p>
+                <p>Рост: <span class="parameter">@user.Height см</span></p>
+                <p>Тип активности: <span class="parameter">@StaticBeeFat.LevelToActivity[user.ActivityLevel]</span></p>
+            </div>
         </div>
     </div>
-</div>
+}
 
 @code {
     private string searchValue;
     private IEnumerable<Track> tracks;
 
-    protected override void OnInitialized()
+    private ApplicationUser? user;
+
+    protected override async Task OnInitializedAsync()
     {
-        tracks = TrackPickHelper.TrackRepository.GetCollection(_ => true);
+        user = await UserAccessor.GetRequiredUserAsync(HttpContextAccessor.HttpContext!);
+        user = UserRepository.GetById(Guid.Parse(user.Id));
+        tracks = TrackPickHelper.SearchTrack(user, "");
     }
 
     private void OnSearchValueChanged(ChangeEventArgs e)
     {
-        searchValue = e.Value.ToString();
-        tracks = TrackPickHelper.TrackRepository.GetCollection(t => t.Name.ToLower().Contains(searchValue.ToLower()));
+        tracks = TrackPickHelper.SearchTrack(user, e.Value.ToString());
         StateHasChanged();
     }
 }
